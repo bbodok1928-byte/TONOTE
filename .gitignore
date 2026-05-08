@@ -1,0 +1,8 @@
+# PDF (130MB — exceeds GitHub 100MB limit)
+*.pdf
+
+# macOS
+.DS_Store
+
+# Claude Code settings
+.claude/
