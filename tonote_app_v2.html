@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>TONOTE</title>
+  <style>
+    /* ─── Google Fonts fallback (system) ─── */
+    :root {
+      --noir:        #0C0A08;
+      --noir-2:      #131009;
+      --noir-3:      #1C1814;
+      --noir-4:      #252018;
+      --gold:        #C8A96E;
+      --gold-light:  #E8D5A8;
+      --gold-dark:   #8B7040;
+      --rose:        #C4907A;
+      --cream:       #F5F0E8;
+      --cream-dim:   #C8C0B4;
+      --text-1:      #F0EBE2;
+      --text-2:      #A89E94;
+      --text-3:      #6A6058;
+      --border:      rgba(200,169,110,.14);
+      --border-hi:   rgba(200,169,110,.35);
+      --r-s:  12px;
+      --r-m:  20px;
+      --r-l:  28px;
+      --serif: Georgia, 'Times New Roman', serif;
+      --sans:  'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+      --nav-h: 64px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #060504; }
+    body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+    .app {
+      max-width: 420px;
+      width: 100%;
+      height: 100svh;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      background: var(--noir);
+    }
+
+    /* ═══════════════════════════════════════
+       SPLASH
+    ═══════════════════════════════════════ */
+    #splash {
+      position: absolute; inset: 0; z-index: 999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--noir);
+      overflow: hidden;
+      transition: opacity .9s ease, transform .9s ease;
+    }
+    #splash.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+
+    /* mist particles */
+    #mist { position: absolute; inset: 0; pointer-events: none; }
+
+    /* radial background glow */
+    .splash-bg-glow {
+      position: absolute; width: 460px; height: 460px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,110,.07) 0%, transparent 65%);
+      top: 50%; left: 50%; transform: translate(-50%, -60%);
+      animation: glowBreath 4s ease-in-out infinite;
+    }
+    @keyframes glowBreath {
+      0%,100% { transform: translate(-50%,-60%) scale(1); opacity:.7; }
+      50%      { transform: translate(-50%,-60%) scale(1.15); opacity:1; }
+    }
+
+    /* oval logo */
+    .splash-oval-wrap {
+      position: relative;
+      width: 148px; height: 110px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 30px;
+    }
+    .splash-oval-svg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+    }
+    .oval-path {
+      stroke: var(--gold);
+      stroke-width: 1.2;
+      fill: none;
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      animation: drawOval 1.6s .2s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes drawOval { to { stroke-dashoffset: 0; } }
+
+    .splash-icon {
+      font-size: 42px;
+      opacity: 0;
+      animation: fadeUp .7s 1.4s ease forwards;
+      position: relative; z-index: 1;
+      filter: drop-shadow(0 0 20px rgba(200,169,110,.4));
+    }
+
+    /* logo text */
+    .splash-logo {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 400;
+      letter-spacing: .28em;
+      color: var(--cream);
+      opacity: 0;
+      animation: revealLogo .9s 1.7s cubic-bezier(.4,0,.2,1) forwards;
+      position: relative; z-index: 1;
+    }
+    @keyframes revealLogo {
+      from { opacity:0; letter-spacing:.5em; }
+      to   { opacity:1; letter-spacing:.28em; }
+    }
+
+    /* thin gold rule */
+    .splash-rule {
+      width: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 18px 0;
+      opacity: 0;
+      animation: growRule .8s 2.3s ease forwards;
+    }
+    @keyframes growRule {
+      to { width: 60px; opacity: .7; }
+    }
+
+    /* tagline */
+    .splash-tagline {
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp .8s 2.6s ease forwards;
+    }
+    .splash-tagline p {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 13px;
+      color: var(--text-3);
+      letter-spacing: .06em;
+      line-height: 1.9;
+    }
+    .splash-tagline p:first-child { color: var(--text-2); }
+
+    /* loading dots */
+    .splash-dots {
+      display: flex; gap: 6px; margin-top: 44px;
+      opacity: 0;
+      animation: fadeUp .5s 3s ease forwards;
+    }
+    .sdot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--text-3);
+      animation: dotWave 1.4s 3s ease-in-out infinite;
+    }
+    .sdot:nth-child(2) { animation-delay: 3.15s; }
+    .sdot:nth-child(3) { animation-delay: 3.3s; }
+    @keyframes dotWave {
+      0%,80%,100% { transform: scaleY(1); background: var(--text-3); }
+      40%          { transform: scaleY(1.8); background: var(--gold); }
+    }
+
+    /* ═══════════════════════════════════════
+       HOME
+    ═══════════════════════════════════════ */
+    #home {
+      position: absolute; inset: 0;
+      overflow-y: auto; overflow-x: hidden;
+      scrollbar-width: none;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity .9s ease, transform .9s ease;
+      padding-bottom: var(--nav-h);
+    }
+    #home.visible { opacity: 1; transform: none; }
+    #home::-webkit-scrollbar { display: none; }
+
+    /* ambient light blobs */
+    .amb {
+      position: fixed; border-radius: 50%;
+      pointer-events: none; filter: blur(90px);
+      will-change: transform;
+    }
+    .amb-1 {
+      width: 340px; height: 340px;
+      background: var(--gold); opacity: .055;
+      top: -140px; right: -100px;
+      animation: amb1 9s ease-in-out infinite;
+    }
+    .amb-2 {
+      width: 240px; height: 240px;
+      background: var(--rose); opacity: .06;
+      bottom: 60px; left: -80px;
+      animation: amb2 11s ease-in-out infinite;
+    }
+    @keyframes amb1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,50px)} }
+    @keyframes amb2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(28px,-36px)} }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      position: sticky; top: 0; z-index: 40;
+      padding: 18px 22px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(180deg, var(--noir) 60%, transparent);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 400;
+      letter-spacing: .22em; color: var(--cream);
+    }
+    .nav-right { display: flex; gap: 10px; }
+    .nb {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .nb:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 4px 22px 28px;
+      position: relative;
+    }
+    .hero-eyebrow {
+      font-size: 10px; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--gold);
+      font-weight: 600; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 20px; height: 1px; background: var(--gold);
+    }
+    .hero-h1 {
+      font-family: var(--serif);
+      font-size: 34px; font-weight: 400;
+      line-height: 1.3; color: var(--cream);
+      margin-bottom: 12px;
+    }
+    .hero-h1 em { font-style: italic; color: var(--gold); }
+    .hero-p {
+      font-size: 13px; color: var(--text-3);
+      line-height: 1.85; letter-spacing: .02em;
+    }
+
+    /* ── AI INPUT CARD ── */
+    .ai-section { padding: 0 18px 28px; }
+
+    .ai-card {
+      position: relative; overflow: hidden;
+      border-radius: var(--r-l);
+      border: 1px solid var(--border);
+      background: var(--noir-3);
+      padding: 22px 20px 18px;
+      cursor: pointer;
+      transition: border-color .3s;
+    }
+    .ai-card:hover { border-color: var(--border-hi); }
+
+    /* gradient border glow on hover */
+    .ai-card::after {
+      content: ''; position: absolute; inset: -1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg,
+        rgba(200,169,110,.25) 0%,
+        transparent 45%,
+        rgba(196,144,122,.18) 100%);
+      opacity: 0; transition: opacity .4s;
+    }
+    .ai-card:hover::after { opacity: 1; }
+
+    /* floating glow orb inside card */
+    .ai-orb {
+      position: absolute; width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,110,.1), transparent 70%);
+      top: -60px; right: -50px;
+      animation: orbDrift 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes orbDrift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(-12px,14px) scale(1.08); }
+    }
+
+    .ai-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-bottom: 14px; position: relative; z-index: 1;
+    }
+    .ai-pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(200,169,110,.4); }
+      50%      { opacity:.6; box-shadow: 0 0 0 5px rgba(200,169,110,0); }
+    }
+    .ai-badge-text {
+      font-size: 10px; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--gold); font-weight: 700;
+    }
+
+    .ai-prompt-text {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 15.5px;
+      color: var(--text-2);
+      line-height: 1.65;
+      min-height: 50px;
+      margin-bottom: 20px;
+      position: relative; z-index: 1;
+      transition: opacity .35s;
+    }
+
+    .ai-bottom-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+    .ai-hint {
+      font-size: 11px; color: var(--text-3); letter-spacing: .02em;
+    }
+    .ai-cta {
+      display: flex; align-items: center; gap: 7px;
+      background: linear-gradient(135deg, var(--gold) 0%, #A88040 100%);
+      color: var(--noir);
+      font-size: 12px; font-weight: 700;
+      padding: 10px 18px; border-radius: 50px;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(200,169,110,.3);
+      transition: transform .18s, box-shadow .18s;
+      letter-spacing: .04em;
+    }
+    .ai-cta:active { transform: scale(.97); box-shadow: 0 2px 8px rgba(200,169,110,.2); }
+
+    /* ── SECTION WRAPPER ── */
+    .sec { padding: 0 18px 30px; }
+    .sec-head {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; margin-bottom: 16px;
+    }
+    .sec-title {
+      font-family: var(--serif);
+      font-size: 19px; font-weight: 400;
+      color: var(--cream); letter-spacing: .04em;
+    }
+    .sec-sub {
+      font-size: 11px; color: var(--text-3); margin-top: 3px;
+    }
+    .sec-more {
+      font-size: 11px; color: var(--gold);
+      letter-spacing: .1em; cursor: pointer; opacity: .8;
+    }
+
+    /* ── MOOD CHIPS ── */
+    .mood-row {
+      display: flex; gap: 8px; overflow-x: auto;
+      scrollbar-width: none; padding-bottom: 2px;
+      margin: 0 -18px; padding-left: 18px; padding-right: 18px;
+    }
+    .mood-row::-webkit-scrollbar { display: none; }
+    .mchip {
+      flex: 0 0 auto; padding: 8px 16px;
+      border-radius: 50px; font-size: 12px; font-weight: 500;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text-2); cursor: pointer;
+      transition: all .2s; white-space: nowrap;
+    }
+    .mchip.on {
+      background: var(--gold); border-color: var(--gold);
+      color: var(--noir); font-weight: 700;
+    }
+
+    /* ── FEATURED PERFUME CARDS (vertical) ── */
+    .pf-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .pf-card {
+      background: var(--noir-3);
+      border-radius: var(--r-m); border: 1px solid var(--border);
+      display: flex; overflow: hidden;
+      cursor: pointer;
+      transition: border-color .25s, transform .18s;
+      position: relative;
+    }
+    .pf-card:active { transform: scale(.99); }
+    .pf-card:hover { border-color: var(--border-hi); }
+
+    .pf-vis {
+      width: 96px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 46px;
+      position: relative;
+    }
+    /* gradient fade from vis to body */
+    .pf-vis::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 50%, var(--noir-3));
+    }
+
+    .pf-body { padding: 16px 14px 16px 4px; flex: 1; min-width: 0; }
+    .pf-brand {
+      font-size: 9px; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--gold);
+      font-weight: 700; margin-bottom: 3px;
+    }
+    .pf-name {
+      font-family: var(--serif);
+      font-size: 16px; font-weight: 400;
+      color: var(--cream); margin-bottom: 8px;
+    }
+    .pf-poem {
+      font-family: var(--serif); font-style: italic;
+      font-size: 11.5px; color: var(--text-3);
+      line-height: 1.65; margin-bottom: 10px;
+    }
+    .pf-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .ptag {
+      font-size: 10px; color: var(--text-3);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      padding: 3px 9px; border-radius: 50px;
+    }
+    .pf-heart {
+      position: absolute; top: 12px; right: 12px;
+      font-size: 16px; cursor: pointer;
+      transition: transform .15s;
+    }
+    .pf-heart:active { transform: scale(1.3); }
+
+    /* ── DISCOVER (horizontal) ── */
+    .disc-row {
+      display: flex; gap: 11px; overflow-x: auto;
+      scrollbar-width: none;
+      margin: 0 -18px; padding: 0 18px 6px;
+    }
+    .disc-row::-webkit-scrollbar { display: none; }
+
+    .dc {
+      flex: 0 0 154px;
+      background: var(--noir-3);
+      border-radius: var(--r-m); border: 1px solid var(--border);
+      overflow: hidden; cursor: pointer;
+      transition: border-color .25s, transform .18s;
+    }
+    .dc:active { transform: scale(.98); }
+    .dc:hover { border-color: var(--border-hi); }
+
+    .dc-top {
+      height: 124px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; position: relative;
+    }
+    .dc-like {
+      position: absolute; top: 9px; right: 9px;
+      font-size: 16px; cursor: pointer;
+    }
+    .dc-body { padding: 12px; }
+    .dc-brand {
+      font-size: 9px; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--gold);
+      font-weight: 700; margin-bottom: 3px;
+    }
+    .dc-name {
+      font-family: var(--serif);
+      font-size: 13px; color: var(--cream); margin-bottom: 5px;
+    }
+    .dc-poem {
+      font-family: var(--serif); font-style: italic;
+      font-size: 10px; color: var(--text-3); line-height: 1.55;
+    }
+
+    /* ── SAMPLE KIT BANNER ── */
+    .kit-banner {
+      margin: 0 18px 28px;
+      border-radius: var(--r-l);
+      border: 1px solid rgba(196,144,122,.3);
+      background: linear-gradient(135deg, #1A120E 0%, #251A14 100%);
+      padding: 22px 20px;
+      position: relative; overflow: hidden;
+    }
+    .kit-banner::before {
+      content: ''; position: absolute;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,144,122,.08), transparent 70%);
+      top: -60px; right: -40px;
+    }
+    .kit-label {
+      font-size: 9px; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--rose);
+      font-weight: 700; margin-bottom: 8px;
+    }
+    .kit-title {
+      font-family: var(--serif);
+      font-size: 19px; font-weight: 400;
+      color: var(--cream); line-height: 1.35; margin-bottom: 6px;
+    }
+    .kit-desc {
+      font-size: 12px; color: var(--text-3);
+      line-height: 1.7; margin-bottom: 18px;
+    }
+    .kit-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--rose); color: #fff;
+      font-size: 12px; font-weight: 700;
+      padding: 10px 20px; border-radius: 50px;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(196,144,122,.35);
+      transition: transform .18s;
+    }
+    .kit-btn:active { transform: scale(.97); }
+    .kit-emoji {
+      position: absolute; right: 20px; bottom: 18px;
+      font-size: 48px; opacity: .55;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bnav {
+      position: fixed;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 420px;
+      height: var(--nav-h);
+      background: rgba(10, 8, 6, .94);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: stretch;
+      z-index: 50;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .bni {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer;
+      color: var(--text-3); font-size: 10px; font-weight: 500;
+      transition: color .2s; padding-bottom: 2px;
+    }
+    .bni.on { color: var(--gold); }
+    .bni-icon { font-size: 20px; line-height: 1; }
+    .bni-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--gold); margin-top: -1px;
+    }
+
+    /* ═══════════════════════════════════════
+       AI CHAT OVERLAY
+    ═══════════════════════════════════════ */
+    #ai-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--noir);
+      max-width: 420px; margin: 0 auto;
+      display: flex; flex-direction: column;
+      opacity: 0; transform: translateY(100%);
+      transition: opacity .5s cubic-bezier(.4,0,.2,1),
+                  transform .5s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+    }
+    #ai-overlay.open {
+      opacity: 1; transform: none; pointer-events: all;
+    }
+
+    .aio-header {
+      padding: 18px 22px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .aio-title {
+      font-family: var(--serif); font-style: italic;
+      font-size: 18px; color: var(--cream);
+    }
+    .aio-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--border); background: none;
+      color: var(--text-2); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: border-color .2s, color .2s;
+    }
+    .aio-close:hover { border-color: var(--gold); color: var(--gold); }
+
+    .aio-chat {
+      flex: 1; overflow-y: auto; padding: 20px 18px;
+      display: flex; flex-direction: column; gap: 14px;
+      scrollbar-width: none;
+    }
+    .aio-chat::-webkit-scrollbar { display: none; }
+
+    .msg {
+      max-width: 86%; padding: 13px 16px;
+      border-radius: 16px;
+      font-size: 13.5px; line-height: 1.65;
+      animation: fadeUp .3s ease both;
+    }
+    .msg-bot {
+      background: var(--noir-4); border: 1px solid var(--border);
+      border-radius: 4px 16px 16px 16px;
+      color: var(--text-2);
+      font-family: var(--serif); font-style: italic;
+      align-self: flex-start;
+    }
+    .msg-user {
+      background: linear-gradient(135deg, var(--gold), #A88040);
+      color: var(--noir); font-weight: 600;
+      border-radius: 16px 4px 16px 16px;
+      align-self: flex-end;
+    }
+
+    .typing {
+      display: flex; gap: 5px; padding: 14px 16px;
+      align-self: flex-start;
+    }
+    .typing span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--text-3);
+      animation: bounce .9s ease-in-out infinite;
+    }
+    .typing span:nth-child(2) { animation-delay: .15s; }
+    .typing span:nth-child(3) { animation-delay: .3s; }
+    @keyframes bounce {
+      0%,80%,100% { transform: translateY(0); background: var(--text-3); }
+      40%          { transform: translateY(-6px); background: var(--gold); }
+    }
+
+    .aio-inputbar {
+      padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px));
+      border-top: 1px solid var(--border);
+      display: flex; gap: 10px; align-items: flex-end;
+      flex-shrink: 0;
+    }
+    .aio-ta {
+      flex: 1;
+      background: var(--noir-3); border: 1px solid var(--border);
+      border-radius: 14px; padding: 11px 14px;
+      color: var(--cream); font-family: var(--serif);
+      font-style: italic; font-size: 13.5px;
+      resize: none; outline: none;
+      line-height: 1.5; min-height: 44px; max-height: 110px;
+      transition: border-color .2s;
+    }
+    .aio-ta::placeholder { color: var(--text-3); }
+    .aio-ta:focus { border-color: rgba(200,169,110,.3); }
+    .aio-send {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold), #A88040);
+      border: none; color: var(--noir);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 17px;
+      transition: transform .15s;
+    }
+    .aio-send:active { transform: scale(.93); }
+
+    /* ═══════════════════════════════════════
+       SHARED UTILS
+    ═══════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:none; }
+    }
+
+    /* desktop frame */
+    @media (min-width: 420px) {
+      .app { box-shadow: 0 0 100px rgba(0,0,0,.6); }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ══ AMBIENT ══ -->
+  <div class="amb amb-1"></div>
+  <div class="amb amb-2"></div>
+
+  <!-- ══════════════════════════════════
+       SPLASH
+  ══════════════════════════════════ -->
+  <div id="splash">
+    <canvas id="mist"></canvas>
+    <div class="splash-bg-glow"></div>
+
+    <div class="splash-oval-wrap">
+      <svg class="splash-oval-svg" viewBox="0 0 148 110">
+        <ellipse class="oval-path" cx="74" cy="55" rx="68" ry="48"/>
+      </svg>
+      <span class="splash-icon">🌿</span>
+    </div>
+
+    <p class="splash-logo">TONOTE</p>
+    <div class="splash-rule"></div>
+
+    <div class="splash-tagline">
+      <p>당신의 기억 속에 잠든 향을,</p>
+      <p>오늘 다시 꺼내드립니다.</p>
+    </div>
+
+    <div class="splash-dots">
+      <div class="sdot"></div>
+      <div class="sdot"></div>
+      <div class="sdot"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       HOME
+  ══════════════════════════════════ -->
+  <div id="home">
+
+    <!-- TOP NAV -->
+    <nav class="top-nav">
+      <span class="nav-logo">TONOTE</span>
+      <div class="nav-right">
+        <button class="nb" aria-label="알림">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <button class="nb" aria-label="프로필">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <p class="hero-eyebrow">AI 퍼스널 센트 큐레이터</p>
+      <h1 class="hero-h1">오늘의 감정이<br><em>향이 됩니다.</em></h1>
+      <p class="hero-p">감정을 말하면, AI가 그 순간에 어울리는<br>향수를 시(詩)로 건네드립니다.</p>
+    </div>
+
+    <!-- AI INPUT CARD -->
+    <div class="ai-section">
+      <div class="ai-card" id="ai-trigger">
+        <div class="ai-orb"></div>
+        <div class="ai-badge">
+          <div class="ai-pulse"></div>
+          <span class="ai-badge-text">Scent AI · 대화 중</span>
+        </div>
+        <p class="ai-prompt-text" id="ai-ph">"오늘은 왠지 조용한 곳에서<br>혼자 있고 싶어..."</p>
+        <div class="ai-bottom-row">
+          <span class="ai-hint">감정, 기억, 장면을 말해보세요</span>
+          <button class="ai-cta" id="ai-open">
+            향 찾기
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOOD FILTER -->
+    <div class="sec">
+      <div class="sec-head">
+        <div>
+          <p class="sec-title">지금 내 무드는?</p>
+          <p class="sec-sub">감정과 상황으로 향을 찾아보세요</p>
+        </div>
+      </div>
+      <div class="mood-row">
+        <button class="mchip on">전체</button>
+        <button class="mchip">🌧️ 비 오는 날</button>
+        <button class="mchip">🌿 고요한 숲</button>
+        <button class="mchip">🕯️ 늦은 밤</button>
+        <button class="mchip">🌸 봄 산책</button>
+        <button class="mchip">☕ 카페 오후</button>
+        <button class="mchip">🌊 바다 바람</button>
+        <button class="mchip">🍂 가을 골목</button>
+      </div>
+    </div>
+
+    <!-- FEATURED — AI CURATED -->
+    <div class="sec">
+      <div class="sec-head">
+        <div>
+          <p class="sec-title">오늘의 큐레이션</p>
+          <p class="sec-sub">AI가 오늘을 위해 고른 향수</p>
+        </div>
+        <span class="sec-more">더 보기 →</span>
+      </div>
+      <div class="pf-list">
+
+        <div class="pf-card">
+          <div class="pf-vis" style="background:linear-gradient(135deg,#191511,#2C231A);">🌿</div>
+          <div class="pf-body">
+            <p class="pf-brand">LE LABO</p>
+            <p class="pf-name">Santal 33</p>
+            <p class="pf-poem">"비 온 뒤 숲 속 오솔길,<br>젖은 나무의 조용한 숨결"</p>
+            <div class="pf-tags">
+              <span class="ptag">고요한</span>
+              <span class="ptag">우디</span>
+              <span class="ptag">가을·겨울</span>
+            </div>
+          </div>
+          <span class="pf-heart">🤍</span>
+        </div>
+
+        <div class="pf-card">
+          <div class="pf-vis" style="background:linear-gradient(135deg,#17121A,#261B2C);">🪷</div>
+          <div class="pf-body">
+            <p class="pf-brand">BYREDO</p>
+            <p class="pf-name">Mojave Ghost</p>
+            <p class="pf-poem">"아무도 없는 새벽,<br>창문을 스치는 서늘한 공기"</p>
+            <div class="pf-tags">
+              <span class="ptag">미스터리</span>
+              <span class="ptag">파우더리</span>
+              <span class="ptag">사계절</span>
+            </div>
+          </div>
+          <span class="pf-heart">❤️</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DISCOVER -->
+    <div class="sec">
+      <div class="sec-head">
+        <div>
+          <p class="sec-title">발견하기</p>
+          <p class="sec-sub">입문자를 위한 감성 향수</p>
+        </div>
+        <span class="sec-more">전체 →</span>
+      </div>
+      <div class="disc-row">
+
+        <div class="dc">
+          <div class="dc-top" style="background:linear-gradient(135deg,#1A1612,#2E2218);">
+            🍊 <span class="dc-like">🤍</span>
+          </div>
+          <div class="dc-body">
+            <p class="dc-brand">JO MALONE</p>
+            <p class="dc-name">Wood Sage & Sea Salt</p>
+            <p class="dc-poem">"파도, 바람, 그리고 소금기"</p>
+          </div>
+        </div>
+
+        <div class="dc">
+          <div class="dc-top" style="background:linear-gradient(135deg,#1A1418,#281820);">
+            🌸 <span class="dc-like">🤍</span>
+          </div>
+          <div class="dc-body">
+            <p class="dc-brand">MAISON MARGIELA</p>
+            <p class="dc-name">Flower Market</p>
+            <p class="dc-poem">"이른 봄날, 꽃집 앞 골목"</p>
+          </div>
+        </div>
+
+        <div class="dc">
+          <div class="dc-top" style="background:linear-gradient(135deg,#181512,#261E10);">
+            🪵 <span class="dc-like">❤️</span>
+          </div>
+          <div class="dc-body">
+            <p class="dc-brand">DIPTYQUE</p>
+            <p class="dc-name">Philosykos</p>
+            <p class="dc-poem">"무화과 나무 그늘 아래"</p>
+          </div>
+        </div>
+
+        <div class="dc">
+          <div class="dc-top" style="background:linear-gradient(135deg,#141618,#1C2220);">
+            🤍 <span class="dc-like">🤍</span>
+          </div>
+          <div class="dc-body">
+            <p class="dc-brand">CLEAN RESERVE</p>
+            <p class="dc-name">Warm Cotton</p>
+            <p class="dc-poem">"햇살에 말린 흰 린넨"</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SAMPLE KIT -->
+    <div class="kit-banner">
+      <p class="kit-label">✦ 셀프 시향 키트</p>
+      <h3 class="kit-title">집에서, 눈치 없이<br>맡아보세요</h3>
+      <p class="kit-desc">관심 향수 최대 3개를 소량 샘플로<br>집에서 받아볼 수 있어요.</p>
+      <button class="kit-btn">
+        키트 신청하기
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <span class="kit-emoji">📦</span>
+    </div>
+
+  </div><!-- /home -->
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <nav class="bnav">
+    <div class="bni on">
+      <span class="bni-icon">✦</span>
+      <span>홈</span>
+      <span class="bni-dot"></span>
+    </div>
+    <div class="bni">
+      <span class="bni-icon">🔍</span>
+      <span>탐색</span>
+    </div>
+    <div class="bni">
+      <span class="bni-icon">⚖️</span>
+      <span>비교</span>
+    </div>
+    <div class="bni">
+      <span class="bni-icon">📍</span>
+      <span>시향 공간</span>
+    </div>
+    <div class="bni">
+      <span class="bni-icon">👤</span>
+      <span>마이</span>
+    </div>
+  </nav>
+
+  <!-- ══ AI CHAT OVERLAY ══ -->
+  <div id="ai-overlay">
+    <div class="aio-header">
+      <span class="aio-title">나의 향을 찾아서</span>
+      <button class="aio-close" id="ai-close">✕</button>
+    </div>
+    <div class="aio-chat" id="chat"></div>
+    <div class="aio-inputbar">
+      <textarea class="aio-ta" id="ta" placeholder="지금 이 순간을 표현해 보세요..." rows="1"></textarea>
+      <button class="aio-send" id="send">→</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+/* ── Mist Particles ── */
+(function(){
+  const c = document.getElementById('mist');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = c.offsetWidth; c.height = c.offsetHeight; }
+  resize(); window.addEventListener('resize', resize);
+  const pts = Array.from({length:90}, () => ({
+    x: Math.random()*c.width, y: Math.random()*c.height,
+    r: Math.random()*1.4+.3, a: Math.random()*.35+.04,
+    vx:(Math.random()-.5)*.18, vy:-Math.random()*.35-.08
+  }));
+  (function loop(){
+    ctx.clearRect(0,0,c.width,c.height);
+    pts.forEach((p,i)=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,169,110,${p.a})`; ctx.fill();
+      p.x+=p.vx; p.y+=p.vy; p.a-=.0008;
+      if(p.y<-4||p.a<=0){
+        pts[i]={x:Math.random()*c.width,y:c.height+4,
+          r:Math.random()*1.4+.3,a:Math.random()*.35+.04,
+          vx:(Math.random()-.5)*.18,vy:-Math.random()*.35-.08};
+      }
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ── Splash → Home ── */
+setTimeout(()=>{
+  document.getElementById('splash').classList.add('out');
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    document.getElementById('home').classList.add('visible');
+  }, 900);
+}, 3800);
+
+/* ── AI Prompt Rotation ── */
+const prompts = [
+  '"오늘은 왠지 조용한 곳에서<br>혼자 있고 싶어..."',
+  '"비 오는 날 서점 창가,<br>그 느낌이 그리워"',
+  '"새로운 시작을 앞두고<br>설레는 마음"',
+  '"가을 오후, 낙엽이 지는<br>공원 벤치에서"',
+  '"오늘은 나를 조금 더<br>특별하게 대하고 싶어"',
+];
+let pi=0;
+setInterval(()=>{
+  const el=document.getElementById('ai-ph');
+  el.style.opacity='0';
+  el.style.transition='opacity .35s';
+  setTimeout(()=>{ pi=(pi+1)%prompts.length; el.innerHTML=prompts[pi]; el.style.opacity='1'; }, 380);
+}, 3800);
+
+/* ── AI Overlay ── */
+const overlay=document.getElementById('ai-overlay');
+document.getElementById('ai-trigger').addEventListener('click',()=>overlay.classList.add('open'));
+document.getElementById('ai-open').addEventListener('click',e=>{e.stopPropagation();overlay.classList.add('open');});
+document.getElementById('ai-close').addEventListener('click',()=>overlay.classList.remove('open'));
+
+/* ── Chat ── */
+const replies=[
+  '그 감정이 느껴져요. 조용하고 깊은 향이 필요한 순간이네요.\n\n✦ Le Labo — Santal 33\n"젖은 나무와 가죽의 조화, 혼자만의 공간에서 더 빛나는 향"\n\n✦ Byredo — Mojave Ghost\n"새벽의 서늘함, 아무도 없는 공간의 자유로운 숨결"',
+  '그 장면이 선명하게 보이네요. 촉촉하고 서늘한 향이 잘 어울릴 것 같아요.\n\n✦ Diptyque — Philosykos\n"나무 그늘 아래, 시간이 멈춘 듯한 무화과 향"\n\n✦ Jo Malone — Wood Sage & Sea Salt\n"바람, 나무, 그리고 기억의 소금기"',
+  '설레는 기분엔 가볍고 투명한 향이 어울려요.\n\n✦ Maison Margiela — Flower Market\n"이른 봄날 꽃집 앞, 아직 차가운 공기 속 꽃향기"\n\n✦ Clean Reserve — Warm Cotton\n"햇살 아래 말린 린넨, 새 출발의 청결함"',
+];
+let ri=0;
+const chat=document.getElementById('chat');
+
+// Initial bot msg
+appendMsg('bot','지금 이 순간, 어떤 감정이나 장면이 떠오르시나요?\n기억 속 한 장면이어도 좋고, 지금의 기분을 그냥 말씀해 주셔도 좋아요.');
+
+function appendMsg(type, text){
+  const d=document.createElement('div');
+  d.className='msg msg-'+type;
+  d.style.whiteSpace='pre-line';
+  d.textContent=text;
+  chat.appendChild(d);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+function sendMsg(){
+  const ta=document.getElementById('ta');
+  const txt=ta.value.trim(); if(!txt) return;
+  appendMsg('user',txt); ta.value='';
+
+  const typing=document.createElement('div');
+  typing.className='typing';
+  typing.innerHTML='<span></span><span></span><span></span>';
+  chat.appendChild(typing); chat.scrollTop=chat.scrollHeight;
+
+  setTimeout(()=>{
+    typing.remove();
+    appendMsg('bot', replies[ri%replies.length]); ri++;
+  }, 1200);
+}
+
+document.getElementById('send').addEventListener('click', sendMsg);
+document.getElementById('ta').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}
+});
+
+/* ── Mood chips ── */
+document.querySelectorAll('.mchip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('.mchip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');
+  });
+});
+
+/* ── Hearts ── */
+document.querySelectorAll('.pf-heart,.dc-like').forEach(h=>{
+  h.addEventListener('click',e=>{
+    e.stopPropagation();
+    h.textContent=h.textContent.trim()==='🤍'?'❤️':'🤍';
+  });
+});
+
+/* ── Bottom nav ── */
+document.querySelectorAll('.bni').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.bni').forEach(x=>{
+      x.classList.remove('on');
+      x.querySelector('.bni-dot')?.remove();
+    });
+    b.classList.add('on');
+    const dot=document.createElement('span');
+    dot.className='bni-dot'; b.appendChild(dot);
+  });
+});
+</script>
+</body>
+</html>

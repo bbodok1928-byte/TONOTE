@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TONOTE — UI/UX 기획안</title>
+  <style>
+    :root {
+      --noir:   #0E0C0A;
+      --gold:   #C8A96E;
+      --gold-lt:#E8D5A8;
+      --rose:   #C4907A;
+      --cream:  #F5F0E8;
+      --ink:    #2A2420;
+      --ink-2:  #5A5048;
+      --ink-3:  #8A8078;
+      --line:   #E8E0D4;
+      --bg:     #FDFAF6;
+      --serif:  Georgia,'Times New Roman',serif;
+      --sans:   'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ── PAGE SHELL ── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto 2mm;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+      page-break-after: always;
+    }
+
+    /* ── COVER PAGE ── */
+    .cover {
+      background: var(--noir);
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 0 56px;
+      min-height: 297mm;
+    }
+
+    .cover-bg-circle {
+      position: absolute;
+      width: 460px; height: 460px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,110,.09), transparent 65%);
+      top: -100px; right: -80px;
+    }
+    .cover-bg-circle-2 {
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,144,122,.07), transparent 65%);
+      bottom: 80px; left: -60px;
+    }
+
+    .cover-top {
+      position: absolute;
+      top: 48px; left: 52px; right: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cover-logo {
+      font-family: var(--serif);
+      font-size: 28px; letter-spacing: .22em;
+      color: var(--cream); font-weight: 400;
+    }
+    .cover-badge {
+      font-size: 10px; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--gold);
+      border: 1px solid rgba(200,169,110,.35);
+      padding: 5px 12px; border-radius: 50px;
+    }
+
+    /* oval in center */
+    .cover-oval-wrap {
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%,-58%);
+      width: 200px; height: 150px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cover-oval-svg { position:absolute; inset:0; width:100%; height:100%; }
+    .coval { stroke:var(--gold); stroke-width:1; fill:none; opacity:.6; }
+    .cover-emoji { font-size: 70px; filter: drop-shadow(0 0 30px rgba(200,169,110,.3)); }
+
+    .cover-body { padding: 0 52px; }
+    .cover-sub {
+      font-size: 11px; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 14px; font-weight: 600;
+    }
+    .cover-h1 {
+      font-family: var(--serif);
+      font-size: 48px; font-weight: 400;
+      color: var(--cream); line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .cover-h1 em { font-style: italic; color: var(--gold); }
+    .cover-rule {
+      width: 56px; height: 1px;
+      background: var(--gold);
+      margin: 20px 0; opacity: .5;
+    }
+    .cover-desc {
+      font-family: var(--serif); font-style: italic;
+      font-size: 15px; color: var(--ink-3);
+      line-height: 1.8; max-width: 340px;
+    }
+
+    .cover-footer {
+      position: absolute;
+      bottom: 36px; left: 52px; right: 52px;
+      display: flex; justify-content: space-between;
+      align-items: flex-end;
+    }
+    .cover-footer-info { font-size: 11px; color: var(--ink-3); line-height: 1.7; }
+    .cover-footer-num {
+      font-family: var(--serif); font-style: italic;
+      font-size: 72px; color: rgba(200,169,110,.15);
+      line-height: 1;
+    }
+
+    /* ── INNER PAGES ── */
+    .inner { padding: 52px; }
+
+    /* page number + title strip */
+    .pg-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .pg-logo {
+      font-family: var(--serif);
+      font-size: 14px; letter-spacing: .18em;
+      color: var(--ink-3);
+    }
+    .pg-num {
+      font-family: var(--serif); font-style: italic;
+      font-size: 13px; color: var(--gold);
+    }
+
+    .chapter-label {
+      font-size: 9px; letter-spacing: .22em;
+      text-transform: uppercase; color: var(--gold);
+      font-weight: 700; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .chapter-label::before {
+      content: ''; display: block;
+      width: 16px; height: 1px; background: var(--gold);
+    }
+
+    .chapter-h {
+      font-family: var(--serif);
+      font-size: 34px; font-weight: 400;
+      color: var(--ink); line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .chapter-h em { font-style: italic; color: var(--gold); }
+    .chapter-sub {
+      font-size: 13px; color: var(--ink-3);
+      line-height: 1.7; margin-bottom: 36px;
+      max-width: 420px;
+    }
+
+    /* two-column layout */
+    .cols { display: flex; gap: 28px; }
+    .col-6 { flex: 6; }
+    .col-4 { flex: 4; }
+
+    /* card box */
+    .box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
+      position: relative; overflow: hidden;
+    }
+    .box-dark {
+      background: var(--noir);
+      border-color: rgba(200,169,110,.2);
+    }
+    .box-h {
+      font-family: var(--serif);
+      font-size: 17px; font-weight: 400;
+      color: var(--ink); margin-bottom: 8px;
+    }
+    .box-dark .box-h { color: var(--cream); }
+    .box-p {
+      font-size: 12px; color: var(--ink-2);
+      line-height: 1.8;
+    }
+    .box-dark .box-p { color: rgba(200,169,110,.7); font-family:var(--serif); font-style:italic; }
+
+    .box-tag {
+      display: inline-block;
+      font-size: 9px; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--gold);
+      font-weight: 700; margin-bottom: 10px;
+    }
+
+    /* Motion sequence */
+    .motion-seq {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .ms-item {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0; border-bottom: 1px solid var(--line);
+    }
+    .ms-item:last-child { border-bottom: none; }
+    .ms-time {
+      font-family: var(--serif); font-style: italic;
+      font-size: 18px; color: var(--gold);
+      min-width: 52px; line-height: 1;
+      margin-top: 2px;
+    }
+    .ms-body {}
+    .ms-title {
+      font-size: 13px; font-weight: 700;
+      color: var(--ink); margin-bottom: 3px;
+    }
+    .ms-desc {
+      font-size: 11px; color: var(--ink-3);
+      line-height: 1.7;
+    }
+
+    /* splash visual mockup */
+    .splash-mock {
+      background: var(--noir);
+      border-radius: 20px;
+      height: 220px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      border: 1px solid rgba(200,169,110,.15);
+    }
+    .sm-glow {
+      position: absolute; width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,169,110,.1), transparent 65%);
+      top: -30px; left: 50%; transform: translateX(-50%);
+    }
+    .sm-oval {
+      width: 90px; height: 66px; position: relative;
+      margin-bottom: 12px; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sm-oval svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .sm-icon { font-size: 28px; position: relative; z-index: 1; }
+    .sm-logo-txt {
+      font-family: var(--serif);
+      font-size: 22px; letter-spacing: .2em;
+      color: var(--cream); z-index: 1;
+    }
+    .sm-rule {
+      width: 36px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 9px 0; opacity: .6; z-index: 1;
+    }
+    .sm-copy {
+      font-family: var(--serif); font-style: italic;
+      font-size: 9px; color: rgba(200,169,110,.55);
+      text-align: center; line-height: 1.8; z-index: 1;
+    }
+
+    /* home mockup */
+    .home-mock {
+      background: var(--noir);
+      border-radius: 20px;
+      height: 320px;
+      border: 1px solid rgba(200,169,110,.15);
+      overflow: hidden;
+      position: relative;
+    }
+    .hm-nav {
+      padding: 12px 14px 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(200,169,110,.1);
+    }
+    .hm-logo {
+      font-family: var(--serif); font-size: 11px;
+      letter-spacing: .18em; color: var(--cream);
+    }
+    .hm-dots { display: flex; gap: 5px; }
+    .hm-dot { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(200,169,110,.2); }
+    .hm-hero { padding: 12px 14px 8px; }
+    .hm-eyebrow {
+      font-size: 7px; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 5px;
+    }
+    .hm-h1 {
+      font-family: var(--serif); font-size: 16px;
+      color: var(--cream); line-height: 1.3; margin-bottom: 3px;
+    }
+    .hm-h1 em { font-style: italic; color: var(--gold); }
+    .hm-sub { font-size: 8px; color: rgba(255,255,255,.3); line-height: 1.6; }
+    .hm-ai-card {
+      margin: 6px 14px;
+      background: #1C1814;
+      border: 1px solid rgba(200,169,110,.18);
+      border-radius: 12px; padding: 11px 12px;
+    }
+    .hm-ai-badge {
+      display: flex; align-items: center; gap: 4px;
+      margin-bottom: 7px;
+    }
+    .hm-ai-dot {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--gold);
+    }
+    .hm-ai-txt {
+      font-size: 7px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .hm-ai-prompt {
+      font-family: var(--serif); font-style: italic;
+      font-size: 9px; color: rgba(255,255,255,.5);
+      line-height: 1.6; margin-bottom: 9px;
+    }
+    .hm-ai-row { display: flex; justify-content: flex-end; }
+    .hm-ai-btn {
+      font-size: 7px; font-weight: 700;
+      background: var(--gold); color: var(--noir);
+      padding: 4px 10px; border-radius: 50px;
+    }
+    .hm-bnav {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(10,8,6,.95);
+      border-top: 1px solid rgba(200,169,110,.12);
+      display: flex; padding: 7px 0 5px;
+    }
+    .hm-bni {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 2px;
+      font-size: 6px; color: rgba(255,255,255,.25);
+    }
+    .hm-bni.on { color: var(--gold); }
+    .hm-bni-ic { font-size: 10px; }
+
+    /* color palette */
+    .palette { display: flex; gap: 10px; flex-wrap: wrap; }
+    .swatch {
+      width: 52px;
+    }
+    .swatch-color {
+      height: 52px; border-radius: 10px;
+      margin-bottom: 6px;
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .swatch-name { font-size: 10px; font-weight: 700; color: var(--ink); }
+    .swatch-hex  { font-size: 9px; color: var(--ink-3); }
+
+    /* type sample */
+    .type-sample { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+    .type-sample:last-child { border-bottom: none; margin-bottom: 0; }
+    .type-label { font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; margin-bottom: 6px; }
+    .type-demo-serif { font-family: var(--serif); }
+    .type-demo-sans  { font-family: var(--sans); }
+
+    /* copy candidates */
+    .copy-card {
+      background: var(--noir);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      border-left: 3px solid var(--gold);
+    }
+    .copy-text {
+      font-family: var(--serif); font-style: italic;
+      font-size: 15px; color: var(--cream);
+      line-height: 1.7; margin-bottom: 6px;
+    }
+    .copy-note { font-size: 10px; color: var(--ink-3); }
+
+    /* interaction table */
+    .itbl { width: 100%; border-collapse: collapse; }
+    .itbl th {
+      font-size: 10px; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--ink-3);
+      font-weight: 700; text-align: left;
+      padding: 8px 0; border-bottom: 2px solid var(--line);
+    }
+    .itbl td {
+      font-size: 12px; color: var(--ink-2);
+      padding: 12px 0; border-bottom: 1px solid var(--line);
+      vertical-align: top; line-height: 1.6;
+    }
+    .itbl td:first-child { color: var(--ink); font-weight: 600; width: 110px; }
+    .itbl td:nth-child(2) { width: 100px; }
+    .badge-pill {
+      display: inline-block; font-size: 9px; font-weight: 700;
+      padding: 2px 8px; border-radius: 50px;
+      letter-spacing: .06em;
+    }
+    .bp-gold { background: rgba(200,169,110,.15); color: var(--gold); }
+    .bp-rose { background: rgba(196,144,122,.15); color: var(--rose); }
+    .bp-green { background: rgba(100,160,120,.15); color: #64A078; }
+
+    /* risk table */
+    .rtbl { width: 100%; border-collapse: collapse; }
+    .rtbl th {
+      font-size: 10px; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--ink-3);
+      font-weight: 700; text-align: left;
+      padding: 8px 0; border-bottom: 2px solid var(--line);
+    }
+    .rtbl td {
+      font-size: 11.5px; color: var(--ink-2);
+      padding: 11px 0; border-bottom: 1px solid var(--line);
+      vertical-align: top; line-height: 1.6;
+    }
+    .rtbl td:first-child { font-weight: 600; color: var(--ink); width: 100px; }
+
+    /* final page */
+    .final {
+      background: var(--noir);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; min-height: 297mm;
+      padding: 60px;
+    }
+    .final-emoji { font-size: 64px; margin-bottom: 28px; opacity: .7; }
+    .final-logo {
+      font-family: var(--serif); font-size: 36px;
+      letter-spacing: .24em; color: var(--cream); margin-bottom: 16px;
+    }
+    .final-rule { width: 48px; height: 1px; background: var(--gold); opacity:.5; margin: 0 auto 20px; }
+    .final-quote {
+      font-family: var(--serif); font-style: italic;
+      font-size: 16px; color: var(--ink-3);
+      line-height: 1.9; max-width: 340px; margin: 0 auto 36px;
+    }
+    .final-team {
+      font-size: 12px; color: var(--ink-3); line-height: 1.9;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; }
+      .page { margin: 0; box-shadow: none; }
+    }
+
+    /* ── SCREEN ── */
+    @media screen {
+      body { padding: 20px 0; background: #E8E2DA; }
+      .page {
+        box-shadow: 0 8px 40px rgba(0,0,0,.18);
+        border-radius: 4px;
+      }
+      #print-btn {
+        position: fixed; top: 20px; right: 20px; z-index: 999;
+        background: var(--gold); color: var(--noir);
+        font-size: 13px; font-weight: 700;
+        padding: 12px 22px; border-radius: 50px; border: none;
+        cursor: pointer; box-shadow: 0 4px 16px rgba(200,169,110,.4);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<button id="print-btn" onclick="window.print()">PDF로 저장 ↓</button>
+
+<!-- ══════════════════════
+     P1 · COVER
+══════════════════════ -->
+<div class="page cover">
+  <div class="cover-bg-circle"></div>
+  <div class="cover-bg-circle-2"></div>
+
+  <div class="cover-top">
+    <span class="cover-logo">TONOTE</span>
+    <span class="cover-badge">UI/UX 기획안</span>
+  </div>
+
+  <div class="cover-oval-wrap">
+    <svg class="cover-oval-svg" viewBox="0 0 200 150">
+      <ellipse class="coval" cx="100" cy="75" rx="92" ry="64"/>
+      <ellipse class="coval" cx="100" cy="75" rx="78" ry="52" opacity=".35"/>
+    </svg>
+    <span class="cover-emoji">🌿</span>
+  </div>
+
+  <div class="cover-body">
+    <p class="cover-sub">✦ Splash Screen &amp; Home Screen</p>
+    <h1 class="cover-h1">감정이<br><em>향이 되는</em><br>경험</h1>
+    <div class="cover-rule"></div>
+    <p class="cover-desc">향수 언어를 몰라도, 나만의 향수를 찾을 수 있다.<br>AI 퍼스널 센트 큐레이터 앱, TONOTE의<br>핵심 화면 UI/UX 기획안.</p>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-info">
+      <div style="color:rgba(200,169,110,.6);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">UCD 수업 프로젝트 · 8조</div>
+      <div style="color:#5A5048;font-size:12px;">노윤송 · 배연주</div>
+      <div style="color:#5A5048;font-size:11px;margin-top:2px;">2026. 04. 24</div>
+    </div>
+    <span class="cover-footer-num">01</span>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P2 · PROJECT BRIEF
+══════════════════════ -->
+<div class="page inner">
+  <div class="pg-header">
+    <span class="pg-logo">TONOTE</span>
+    <span class="pg-num">02 — 프로젝트 배경</span>
+  </div>
+
+  <p class="chapter-label">Project Background</p>
+  <h2 class="chapter-h">왜 TONOTE인가</h2>
+  <p class="chapter-sub">향수 입문자들은 전문 용어, 매장 압박, 온라인 리뷰의 한계 사이에서 선택 마비를 경험한다. TONOTE는 그 진입 장벽을 감성 언어와 AI로 해소한다.</p>
+
+  <div class="cols">
+    <div class="col-6">
+      <div class="box">
+        <span class="box-tag">💡 핵심 가치 제안</span>
+        <h3 class="box-h">"향수 언어를 몰라도,<br>나만의 향수를 찾을 수 있다"</h3>
+        <p class="box-p">감정을 말하면 AI가 시(詩)로 향수를 건네는 경험. 전문 용어 없이, 직원 눈치 없이, 내 페이스대로.</p>
+      </div>
+
+      <div class="box">
+        <span class="box-tag">🎯 핵심 타겟</span>
+        <h3 class="box-h">향수에 관심은 있지만<br>한 번도 사본 적 없는 20대</h3>
+        <p class="box-p" style="margin-bottom:12px;">
+          <strong style="color:var(--ink);display:block;margin-bottom:3px;">김지은 (22) — 취향 모름형</strong>
+          "나한테 뭐가 어울리는지 누가 딱 골라줬으면"
+        </p>
+        <p class="box-p">
+          <strong style="color:var(--ink);display:block;margin-bottom:3px;">박도현 (24) — 매장 압박 회피형</strong>
+          "내 페이스대로 비교할 수 있는 공간이 있으면"
+        </p>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="box" style="background:#F9F5EF;margin-bottom:12px;">
+        <span class="box-tag" style="color:var(--ink-3);">페인포인트</span>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:16px;flex-shrink:0;">🔴</span>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:2px;">취향 언어화 불가</p>
+              <p style="font-size:10px;color:var(--ink-3);line-height:1.6;">전문 용어 몰라서 선택 마비</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:16px;flex-shrink:0;">🔴</span>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:2px;">온라인 리뷰 불신</p>
+              <p style="font-size:10px;color:var(--ink-3);line-height:1.6;">설명글과 실제 향이 달라</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:16px;flex-shrink:0;">🔴</span>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:2px;">매장 직원 압박</p>
+              <p style="font-size:10px;color:var(--ink-3);line-height:1.6;">제대로 탐색 못 하고 이탈</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box" style="background:#F9F5EF;">
+        <span class="box-tag" style="color:var(--ink-3);">3단계 솔루션 퍼널</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--noir);flex-shrink:0;">1</div>
+            <p style="font-size:11px;color:var(--ink);font-weight:700;">취향 진단</p>
+          </div>
+          <div style="width:1px;height:10px;background:var(--line);margin-left:12px;"></div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--noir);flex-shrink:0;">2</div>
+            <p style="font-size:11px;color:var(--ink);font-weight:700;">감성 언어 탐색</p>
+          </div>
+          <div style="width:1px;height:10px;background:var(--line);margin-left:12px;"></div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--noir);flex-shrink:0;">3</div>
+            <p style="font-size:11px;color:var(--ink);font-weight:700;">부담 없는 시향 결정</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P3 · SPLASH SCREEN
+══════════════════════ -->
+<div class="page inner">
+  <div class="pg-header">
+    <span class="pg-logo">TONOTE</span>
+    <span class="pg-num">03 — Splash Screen</span>
+  </div>
+
+  <p class="chapter-label">Screen 01 · Loading</p>
+  <h2 class="chapter-h">첫 3초, <em>브랜드의 시</em>를<br>보여준다</h2>
+  <p class="chapter-sub">앱 진입의 첫 순간을 로딩이 아닌 '감성 경험'으로 설계한다. 사용자는 기다리는 게 아니라, 향수의 세계로 천천히 초대받는다.</p>
+
+  <div class="cols">
+    <div class="col-4">
+      <!-- Splash Visual Mockup -->
+      <div class="splash-mock">
+        <div class="sm-glow"></div>
+        <div class="sm-oval">
+          <svg viewBox="0 0 90 66"><ellipse cx="45" cy="33" rx="40" ry="28" stroke="rgba(200,169,110,.7)" stroke-width="1" fill="none"/></svg>
+          <span class="sm-icon">🌿</span>
+        </div>
+        <p class="sm-logo-txt">TONOTE</p>
+        <div class="sm-rule"></div>
+        <div class="sm-copy">
+          <p>당신의 기억 속에 잠든 향을,</p>
+          <p>오늘 다시 꺼내드립니다.</p>
+        </div>
+      </div>
+      <p style="font-size:10px;color:var(--ink-3);text-align:center;margin-top:8px;">Visual Mockup</p>
+    </div>
+
+    <div class="col-6">
+      <p class="chapter-label" style="margin-bottom:12px;">Motion Sequence</p>
+      <div class="motion-seq">
+        <div class="ms-item">
+          <span class="ms-time">0.0s</span>
+          <div class="ms-body">
+            <p class="ms-title">배경 페이드인 + 황금 입자 상승</p>
+            <p class="ms-desc">깊은 #0C0A08 배경 위에 황금빛 미스트 입자들이 아래에서 위로 천천히 부유. 향수 분자의 확산을 시각화.</p>
+          </div>
+        </div>
+        <div class="ms-item">
+          <span class="ms-time">0.2s</span>
+          <div class="ms-body">
+            <p class="ms-title">타원 윤곽선 드로잉</p>
+            <p class="ms-desc">SVG stroke-dashoffset 애니메이션으로 황금 타원이 1.6초에 걸쳐 스스로 그려짐. 딥티크 오발 레이블에서 영감.</p>
+          </div>
+        </div>
+        <div class="ms-item">
+          <span class="ms-time">1.4s</span>
+          <div class="ms-body">
+            <p class="ms-title">🌿 아이콘 + 황금 글로우 등장</p>
+            <p class="ms-desc">타원 중심에서 식물 아이콘이 부드럽게 페이드인. drop-shadow로 황금빛 발광 효과.</p>
+          </div>
+        </div>
+        <div class="ms-item">
+          <span class="ms-time">1.7s</span>
+          <div class="ms-body">
+            <p class="ms-title">TONOTE 로고 자간 수렴</p>
+            <p class="ms-desc">letter-spacing이 넓은 값(0.5em)에서 좁아지며(0.28em) 로고가 "모이는" 느낌으로 등장.</p>
+          </div>
+        </div>
+        <div class="ms-item">
+          <span class="ms-time">2.3s</span>
+          <div class="ms-body">
+            <p class="ms-title">황금 수평선 확장</p>
+            <p class="ms-desc">가늘고 투명한 선이 중심에서 양쪽으로 확장되며 로고 아래 섹션 분리.</p>
+          </div>
+        </div>
+        <div class="ms-item">
+          <span class="ms-time">2.6s</span>
+          <div class="ms-body">
+            <p class="ms-title">감성 카피 페이드인</p>
+            <p class="ms-desc">이탤릭 세리프체로 2줄 카피가 부드럽게 등장. 3초가 지난 후 전체 화면 스케일 업 & 페이드아웃.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P4 · COPYWRITING
+══════════════════════ -->
+<div class="page inner">
+  <div class="pg-header">
+    <span class="pg-logo">TONOTE</span>
+    <span class="pg-num">04 — Splash Copywriting</span>
+  </div>
+
+  <p class="chapter-label">Emotional Copywriting</p>
+  <h2 class="chapter-h">한 편의 시처럼<br><em>읽히는</em> 카피</h2>
+  <p class="chapter-sub">전문 용어 없이, 브랜드의 철학을 단 두 줄로 전달한다. 유저가 "기다리는" 감각 대신 "초대받는" 감각을 갖도록 설계한다.</p>
+
+  <p style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px;">✦ 최종 채택 카피</p>
+
+  <div class="copy-card" style="border-left-color:var(--gold);margin-bottom:24px;">
+    <p class="copy-text" style="font-size:18px;">"당신의 기억 속에 잠든 향을,<br>오늘 다시 꺼내드립니다."</p>
+    <p class="copy-note">선택 이유: '기억'이라는 보편적 감각 언어로 향수 경험을 풀어냄. '잠든'이라는 시적 동사가 감성 브랜드의 톤을 결정짓는다.</p>
+  </div>
+
+  <p style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px;">▽ 후보 카피 (비교)</p>
+
+  <div style="display:flex;gap:14px;">
+    <div style="flex:1;border:1px solid var(--line);border-radius:12px;padding:16px;">
+      <p style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink);line-height:1.7;margin-bottom:8px;">"말하지 않아도 알아요,<br>오늘 당신에게 필요한 향."</p>
+      <p style="font-size:10px;color:var(--ink-3);line-height:1.6;">AI의 공감 능력을 강조. 다소 직접적으로 AI를 드러낸다는 단점.</p>
+    </div>
+    <div style="flex:1;border:1px solid var(--line);border-radius:12px;padding:16px;">
+      <p style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink);line-height:1.7;margin-bottom:8px;">"감정은 향이 되고,<br>향은 당신이 됩니다."</p>
+      <p style="font-size:10px;color:var(--ink-3);line-height:1.6;">철학적·추상적. 입문자에겐 다소 거리감이 있을 수 있음.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--line);">
+    <p style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px;">AI 채팅 입력창 플레이스홀더 (순환)</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:#F9F5EF;border-radius:10px;">
+        <span style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--gold);flex-shrink:0;">"</span>
+        <p style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-2);line-height:1.5;">오늘은 왠지 조용한 곳에서 혼자 있고 싶어..."</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:#F9F5EF;border-radius:10px;">
+        <span style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--gold);flex-shrink:0;">"</span>
+        <p style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-2);line-height:1.5;">비 오는 날 서점 창가, 그 느낌이 그리워</p>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:#F9F5EF;border-radius:10px;">
+        <span style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--gold);flex-shrink:0;">"</span>
+        <p style="font-family:var(--serif);font-style:italic;font-size:13px;color:var(--ink-2);line-height:1.5;">오늘은 나를 조금 더 특별하게 대하고 싶어</p>
+      </div>
+    </div>
+    <p style="font-size:10px;color:var(--ink-3);margin-top:10px;">3.8초 간격으로 자동 순환 · fade 전환 · 이탤릭 세리프체 유지</p>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P5 · HOME SCREEN
+══════════════════════ -->
+<div class="page inner">
+  <div class="pg-header">
+    <span class="pg-logo">TONOTE</span>
+    <span class="pg-num">05 — Home Screen</span>
+  </div>
+
+  <p class="chapter-label">Screen 02 · Home</p>
+  <h2 class="chapter-h">직원 없는 향수 매장,<br><em>앱이 그 역할을 한다</em></h2>
+  <p class="chapter-sub">홈 화면은 탐색 시작점인 동시에 감성 공간이다. 사용자가 앱을 열었을 때 "여기서는 눈치 볼 필요 없다"고 느껴야 한다.</p>
+
+  <div class="cols">
+    <div class="col-4">
+      <!-- Home Mockup -->
+      <div class="home-mock">
+        <div class="hm-nav">
+          <span class="hm-logo">TONOTE</span>
+          <div class="hm-dots">
+            <div class="hm-dot"></div>
+            <div class="hm-dot"></div>
+          </div>
+        </div>
+        <div class="hm-hero">
+          <p class="hm-eyebrow">✦ AI 퍼스널 센트 큐레이터</p>
+          <p class="hm-h1">오늘의 감정이<br><em>향이 됩니다.</em></p>
+          <p class="hm-sub">감정을 말하면, AI가 그 순간에 어울리는 향수를 시로 건네드립니다.</p>
+        </div>
+        <div class="hm-ai-card">
+          <div class="hm-ai-badge">
+            <div class="hm-ai-dot"></div>
+            <span class="hm-ai-txt">Scent AI · 대화 중</span>
+          </div>
+          <p class="hm-ai-prompt">"오늘은 왠지 조용한 곳에서<br>혼자 있고 싶어..."</p>
+          <div class="hm-ai-row">
+            <span class="hm-ai-btn">향 찾기 →</span>
+          </div>
+        </div>
+        <div style="padding:8px 14px;display:flex;gap:6px;overflow:hidden;">
+          <div style="padding:4px 8px;border-radius:50px;border:1px solid rgba(200,169,110,.5);background:var(--gold);">
+            <span style="font-size:7px;color:var(--noir);font-weight:700;">전체</span>
+          </div>
+          <div style="padding:4px 8px;border-radius:50px;border:1px solid rgba(255,255,255,.1);">
+            <span style="font-size:7px;color:rgba(255,255,255,.4);">🌧️ 비 오는 날</span>
+          </div>
+          <div style="padding:4px 8px;border-radius:50px;border:1px solid rgba(255,255,255,.1);">
+            <span style="font-size:7px;color:rgba(255,255,255,.4);">🌿 고요한 숲</span>
+          </div>
+        </div>
+        <div class="hm-bnav">
+          <div class="hm-bni on"><span class="hm-bni-ic">✦</span><span>홈</span></div>
+          <div class="hm-bni"><span class="hm-bni-ic">🔍</span><span>탐색</span></div>
+          <div class="hm-bni"><span class="hm-bni-ic">⚖️</span><span>비교</span></div>
+          <div class="hm-bni"><span class="hm-bni-ic">📍</span><span>시향</span></div>
+          <div class="hm-bni"><span class="hm-bni-ic">👤</span><span>마이</span></div>
+        </div>
+      </div>
+      <p style="font-size:10px;color:var(--ink-3);text-align:center;margin-top:8px;">Visual Mockup</p>
+    </div>
+
+    <div class="col-6">
+      <p class="chapter-label" style="margin-bottom:14px;">레이아웃 구조</p>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,169,110,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔝</div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">상단 — 스티키 네비게이션</p>
+            <p style="font-size:11px;color:var(--ink-3);line-height:1.6;">TONOTE 로고 + 알림 + 프로필. 스크롤 시 블러 처리. 최소한의 요소만으로 프리미엄 공간감 확보.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,169,110,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✦</div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">히어로 — 타이포그래피 무드</p>
+            <p style="font-size:11px;color:var(--ink-3);line-height:1.6;">세리프 + 이탤릭 혼용으로 프리미엄 감성. "오늘의 감정이 향이 됩니다" — 사용자를 AI 큐레이터로 즉시 유도.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(200,169,110,.05);border:1px solid rgba(200,169,110,.2);border-radius:10px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,169,110,.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🤖</div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">핵심 — AI 입력 카드 (Key CTA)</p>
+            <p style="font-size:11px;color:var(--ink-3);line-height:1.6;">황금 글로우 + 맥동하는 AI 도트. 순환하는 감성 문장이 플레이스홀더로 표시. 탭하면 채팅 오버레이로 전환.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,169,110,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🎭</div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">무드 필터 칩 + 큐레이션 카드</p>
+            <p style="font-size:11px;color:var(--ink-3);line-height:1.6;">감성 상황 태그로 필터. 향수 카드에는 전문 용어 대신 시적 한 줄 감성 코멘트 제공.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(200,169,110,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">🔻</div>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">하단 — 고정 바텀 내비게이션</p>
+            <p style="font-size:11px;color:var(--ink-3);line-height:1.6;">홈 / 탐색 / 비교 / 시향 공간 / 마이. 활성 탭은 황금색 + 인디케이터 도트로 표시.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P6 · DESIGN SYSTEM
+══════════════════════ -->
+<div class="page inner">
+  <div class="pg-header">
+    <span class="pg-logo">TONOTE</span>
+    <span class="pg-num">06 — Design System</span>
+  </div>
+
+  <p class="chapter-label">Visual Identity</p>
+  <h2 class="chapter-h">어둠 속의 황금,<br><em>감성을 담은 색</em></h2>
+  <p class="chapter-sub">프리미엄 향수 브랜드의 깊이를 표현하면서도 입문자에게 따뜻하게 다가가는 색 체계. 어두운 배경이 향수 카드를 더욱 빛나게 한다.</p>
+
+  <div class="cols" style="margin-bottom:32px;">
+    <div class="col-6">
+      <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px;">Color Palette</p>
+      <div class="palette">
+        <div class="swatch">
+          <div class="swatch-color" style="background:#0C0A08;"></div>
+          <p class="swatch-name">Noir</p>
+          <p class="swatch-hex">#0C0A08</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#1C1814;"></div>
+          <p class="swatch-name">Noir 3</p>
+          <p class="swatch-hex">#1C1814</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C8A96E;border:1px solid #DDD;"></div>
+          <p class="swatch-name">Gold</p>
+          <p class="swatch-hex">#C8A96E</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#E8D5A8;border:1px solid #DDD;"></div>
+          <p class="swatch-name">Gold Lt</p>
+          <p class="swatch-hex">#E8D5A8</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#C4907A;border:1px solid #DDD;"></div>
+          <p class="swatch-name">Rose</p>
+          <p class="swatch-hex">#C4907A</p>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background:#F5F0E8;border:1px solid #DDD;"></div>
+          <p class="swatch-name">Cream</p>
+          <p class="swatch-hex">#F5F0E8</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-bottom:14px;">Typography</p>
+      <div class="type-sample">
+        <p class="type-label">Heading — Serif (Primary)</p>
+        <p class="type-demo-serif" style="font-size:22px;font-weight:400;color:var(--ink);line-height:1.2;">오늘의 감정이<br><em style="font-style:italic;color:var(--gold);">향이 됩니다</em></p>
+        <p style="font-size:10px;color:var(--ink-3);margin-top:4px;">Georgia · 400 · 이탤릭 혼용</p>
+      </div>
+      <div class="type-sample">
+        <p class="type-label">Body — Sans (Korean)</p>
+        <p class="type-demo-sans" style="font-size:13px;color:var(--ink-2);line-height:1.7;">감정을 말하면, AI가 그 순간에<br>어울리는 향수를 건네드립니다.</p>
+        <p style="font-size:10px;color:var(--ink-3);margin-top:4px;">Apple SD Gothic Neo · 400</p>
+      </div>
+      <div class="type-sample">
+        <p class="type-label">Label — Uppercase Tracking</p>
+        <p class="type-demo-sans" style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;">AI Scent Curator</p>
+        <p style="font-size:10px;color:var(--ink-3);margin-top:4px;">letter-spacing: 0.2em · 700</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P7 · INTERACTIONS
+══════════════════════ -->
+<div class="page inner">
+  <div class="pg-header">
+    <span class="pg-logo">TONOTE</span>
+    <span class="pg-num">07 — Interactions</span>
+  </div>
+
+  <p class="chapter-label">Micro-interactions &amp; Animation</p>
+  <h2 class="chapter-h">보이지 않는 곳에서<br><em>감성이 살아 숨쉰다</em></h2>
+  <p class="chapter-sub">인터랙션은 "기능을 완료했다"는 신호가 아닌, 브랜드의 감성 언어다. 모든 전환과 반응은 조용하고 우아하게 처리된다.</p>
+
+  <table class="itbl" style="margin-bottom:32px;">
+    <thead>
+      <tr>
+        <th>트리거</th>
+        <th>효과 유형</th>
+        <th>상세 설명</th>
+        <th style="text-align:right;">우선순위</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>스플래시 → 홈 전환</td>
+        <td><span class="badge-pill bp-gold">Scale + Fade</span></td>
+        <td>스플래시가 1.04× 스케일 업되며 0.9s 페이드아웃. 홈 화면은 아래서 translateY(24px) → 원위치로 등장.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-gold">P0</span></td>
+      </tr>
+      <tr>
+        <td>AI 카드 탭</td>
+        <td><span class="badge-pill bp-rose">Slide Up</span></td>
+        <td>AI 채팅 오버레이가 translateY(100%) → 0으로 0.5s cubic-bezier(.4,0,.2,1) 슬라이드 업. 배경 홈 화면은 그대로 유지.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-gold">P0</span></td>
+      </tr>
+      <tr>
+        <td>AI 입력창 플레이스홀더</td>
+        <td><span class="badge-pill bp-green">Fade Cycle</span></td>
+        <td>3.8초마다 opacity 0 → 0.4s 대기 → 텍스트 교체 → opacity 1. 이탤릭 세리프 5문장 순환.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-gold">P0</span></td>
+      </tr>
+      <tr>
+        <td>AI 응답 생성 중</td>
+        <td><span class="badge-pill bp-green">Dot Bounce</span></td>
+        <td>세 개의 원이 순차적으로 Y축 이동 + 황금색으로 변색. 0.9s infinite. 실제 생각하는 느낌 전달.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-gold">P0</span></td>
+      </tr>
+      <tr>
+        <td>AI 카드 hover/active</td>
+        <td><span class="badge-pill bp-rose">Gradient Border</span></td>
+        <td>카드 테두리 위에 황금-장미 그라디언트 레이어가 opacity 0 → 1로 전환. 클릭 시 scale(.99).</td>
+        <td style="text-align:right;"><span class="badge-pill bp-rose">P1</span></td>
+      </tr>
+      <tr>
+        <td>황금 입자 배경</td>
+        <td><span class="badge-pill bp-green">Canvas Loop</span></td>
+        <td>90개 황금 입자가 아래→위 부유. 스플래시와 메인 화면 배경 앰비언트 오브(blur 90px) 모두 무한 드리프트.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-rose">P1</span></td>
+      </tr>
+      <tr>
+        <td>하트 / 좋아요</td>
+        <td><span class="badge-pill bp-green">Scale Pop</span></td>
+        <td>탭 시 1.3× 스케일 업 후 원위치. 🤍 → ❤️ 즉시 전환. 별도 로딩 없이 낙관적 업데이트.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-green">P2</span></td>
+      </tr>
+      <tr>
+        <td>무드 칩 선택</td>
+        <td><span class="badge-pill bp-green">Color Shift</span></td>
+        <td>선택 시 background → gold, color → noir로 0.2s 전환. 비선택 칩은 동시에 해제.</td>
+        <td style="text-align:right;"><span class="badge-pill bp-green">P2</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="padding:20px;background:#F9F5EF;border-radius:14px;border-left:3px solid var(--gold);">
+    <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;">✦ 인터랙션 설계 원칙</p>
+    <div style="display:flex;gap:20px;">
+      <div style="flex:1;">
+        <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">압박 없는 탐색</p>
+        <p style="font-size:11px;color:var(--ink-3);line-height:1.7;">앱이 먼저 행동을 유도하지 않는다. 팝업, 강제 CTA 없음. 사용자가 원하는 속도로 탐색.</p>
+      </div>
+      <div style="flex:1;">
+        <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">조용하고 우아한 반응</p>
+        <p style="font-size:11px;color:var(--ink-3);line-height:1.7;">모든 트랜지션은 0.3~0.9s 이내. cubic-bezier(.4,0,.2,1)로 자연스러운 물리감.</p>
+      </div>
+      <div style="flex:1;">
+        <p style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">감성 우선 피드백</p>
+        <p style="font-size:11px;color:var(--ink-3);line-height:1.7;">기능 완료 신호보다 감성 강화. 하트 애니메이션, 황금 글로우 등이 그 예.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     P8 · FINAL
+══════════════════════ -->
+<div class="page final">
+  <span class="final-emoji">🌿</span>
+  <p class="final-logo">TONOTE</p>
+  <div class="final-rule"></div>
+  <p class="final-quote">
+    "향수 언어를 몰라도,<br>
+    나만의 향수를 찾을 수 있다."<br><br>
+    감정이 향이 되는 경험,<br>
+    TONOTE가 시작합니다.
+  </p>
+  <p class="final-team">
+    UCD 수업 프로젝트 · 8조<br>
+    노윤송 · 배연주<br>
+    <span style="color:rgba(200,169,110,.4);font-size:11px;">2026. 04. 24</span>
+  </p>
+</div>
+
+</body>
+</html>
