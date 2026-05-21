@@ -6,16 +6,29 @@
 <title>TONOTE</title>
 <style>
 :root{
-  --bg:#0C0A08;--s1:#141210;--s2:#1C1814;--s3:#242018;
-  --gold:#C8A96E;--gold2:#E8D5A8;--rose:#C4907A;
-  --cr:#F5F0E8;--t1:#F0EBE2;--t2:#A89E94;--t3:#6A6058;
-  --bd:rgba(200,169,110,.13);--bdh:rgba(200,169,110,.32);
+  --bg:#FBF8F4;
+  --s1:#FFFFFF;
+  --s2:#F7F2EC;
+  --s3:#EFE8DF;
+  --primary:#B07466;
+  --primary-dk:#8C5A50;
+  --primary-soft:#F5E8E4;
+  --sage:#7A8E82;
+  --sage-soft:#E6EDE8;
+  --warm:#C4907A;
+  --t1:#1E1814;
+  --t2:#6B5E54;
+  --t3:#A89C94;
+  --bd:rgba(180,140,110,.18);
+  --bdh:rgba(176,116,102,.35);
   --serif:Georgia,'Times New Roman',serif;
   --sans:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
   --nav:60px;
+  --shadow:0 2px 14px rgba(180,120,90,.09);
+  --shadow-m:0 6px 24px rgba(180,120,90,.13);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#060504;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+html,body{width:100%;height:100%;overflow:hidden;background:#EDE5DB;font-family:var(--sans);-webkit-font-smoothing:antialiased}
 button{border:none;background:none;cursor:pointer;font-family:inherit}
 input,textarea{font-family:inherit;outline:none}
 
@@ -29,25 +42,27 @@ input,textarea{font-family:inherit;outline:none}
   transition:opacity .8s ease,transform .8s ease;
 }
 #splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
-#mist{position:absolute;inset:0;pointer-events:none}
-.sp-glow{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,.07),transparent 65%);top:50%;left:50%;transform:translate(-50%,-60%);animation:breathe 4s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:translate(-50%,-60%) scale(1)}50%{transform:translate(-50%,-60%) scale(1.14)}}
+
+.sp-glow{position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(176,116,102,.1),transparent 65%);top:50%;left:50%;transform:translate(-50%,-60%);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-60%) scale(1)}50%{transform:translate(-50%,-60%) scale(1.12)}}
+
 .sp-oval{position:relative;width:140px;height:104px;display:flex;align-items:center;justify-content:center;margin-bottom:28px}
 .sp-oval svg{position:absolute;inset:0;width:100%;height:100%}
-.sp-oval-path{stroke:var(--gold);stroke-width:1.2;fill:none;stroke-dasharray:380;stroke-dashoffset:380;animation:drawOval 1.5s .3s cubic-bezier(.4,0,.2,1) forwards}
+.sp-oval-path{stroke:var(--primary);stroke-width:1.2;fill:none;stroke-dasharray:380;stroke-dashoffset:380;animation:drawOval 1.5s .3s cubic-bezier(.4,0,.2,1) forwards}
 @keyframes drawOval{to{stroke-dashoffset:0}}
-.sp-icon{font-size:44px;opacity:0;animation:fadeUp .7s 1.5s ease forwards;filter:drop-shadow(0 0 18px rgba(200,169,110,.4));position:relative;z-index:1}
-.sp-logo{font-family:var(--serif);font-size:36px;font-weight:400;letter-spacing:.28em;color:var(--cr);opacity:0;animation:logoIn .9s 1.8s ease forwards}
+
+.sp-icon{font-size:44px;opacity:0;animation:fadeUp .7s 1.5s ease forwards;filter:drop-shadow(0 4px 14px rgba(176,116,102,.25));position:relative;z-index:1}
+.sp-logo{font-family:var(--serif);font-size:36px;font-weight:400;letter-spacing:.28em;color:#FFFFFF;opacity:0;animation:logoIn .9s 1.8s ease forwards}
 @keyframes logoIn{from{opacity:0;letter-spacing:.48em}to{opacity:1;letter-spacing:.28em}}
-.sp-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px 0;opacity:0;animation:lineGrow .7s 2.4s ease forwards}
-@keyframes lineGrow{to{width:54px;opacity:.6}}
+.sp-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--primary),transparent);margin:16px 0;opacity:0;animation:lineGrow .7s 2.4s ease forwards}
+@keyframes lineGrow{to{width:54px;opacity:.5}}
 .sp-copy{text-align:center;opacity:0;animation:fadeUp .8s 2.7s ease forwards}
 .sp-copy p{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--t3);line-height:1.9;letter-spacing:.05em}
 .sp-copy p:first-child{color:var(--t2)}
 .sp-dots{display:flex;gap:6px;margin-top:40px;opacity:0;animation:fadeUp .5s 3.1s ease forwards}
-.sdot{width:5px;height:5px;border-radius:50%;background:var(--t3);animation:dw 1.3s 3.1s ease-in-out infinite}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--bd);animation:dw 1.3s 3.1s ease-in-out infinite}
 .sdot:nth-child(2){animation-delay:3.25s}.sdot:nth-child(3){animation-delay:3.4s}
-@keyframes dw{0%,80%,100%{transform:scaleY(1);background:var(--t3)}40%{transform:scaleY(1.8);background:var(--gold)}}
+@keyframes dw{0%,80%,100%{transform:scaleY(1);background:var(--bd)}40%{transform:scaleY(1.8);background:var(--primary)}}
 
 /* ── MAIN APP SHELL ──────────────────────── */
 #app-shell{position:absolute;inset:0;opacity:0;transform:translateY(20px);transition:opacity .9s ease,transform .9s ease;display:flex;flex-direction:column}
@@ -57,204 +72,194 @@ input,textarea{font-family:inherit;outline:none}
 .screen::-webkit-scrollbar{display:none}
 .screen.active{display:flex}
 
-/* ambient orbs */
-.amb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);will-change:transform}
-.amb1{width:320px;height:320px;background:var(--gold);opacity:.05;top:-120px;right:-80px;animation:a1 9s ease-in-out infinite}
-.amb2{width:220px;height:220px;background:var(--rose);opacity:.055;bottom:80px;left:-70px;animation:a2 11s ease-in-out infinite}
-@keyframes a1{0%,100%{transform:translate(0,0)}50%{transform:translate(-28px,44px)}}
-@keyframes a2{0%,100%{transform:translate(0,0)}50%{transform:translate(24px,-32px)}}
-
 /* ── BOTTOM NAV ───────────────────────────── */
-.bnav{height:var(--nav);background:rgba(10,8,6,.96);backdrop-filter:blur(20px);border-top:1px solid var(--bd);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
+.bnav{height:var(--nav);background:rgba(251,248,244,.97);backdrop-filter:blur(20px);border-top:1px solid var(--bd);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--t3);font-size:10px;font-weight:500;cursor:pointer;transition:color .2s;padding-top:6px}
-.bni.on{color:var(--gold)}
+.bni.on{color:var(--primary)}
 .bni-ic{font-size:20px;line-height:1}
-.bni-bar{width:20px;height:2px;border-radius:2px;background:var(--gold);margin-top:1px;opacity:0;transition:opacity .2s}
+.bni-bar{width:20px;height:2px;border-radius:2px;background:var(--primary);margin-top:1px;opacity:0;transition:opacity .2s}
 .bni.on .bni-bar{opacity:1}
 
 /* ── SHARED COMPONENTS ───────────────────── */
-.top-bar{position:sticky;top:0;z-index:20;padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--bg) 65%,transparent);flex-shrink:0}
-.bar-logo{font-family:var(--serif);font-size:20px;letter-spacing:.2em;color:var(--cr)}
+.top-bar{position:sticky;top:0;z-index:20;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--bg) 65%,transparent);flex-shrink:0}
+.bar-logo{font-family:var(--serif);font-size:20px;letter-spacing:.2em;color:var(--t1)}
 .bar-right{display:flex;gap:9px}
-.ibt{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:rgba(255,255,255,.04);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;color:var(--t2);transition:border-color .2s,color .2s}
-.ibt:hover{border-color:var(--gold);color:var(--gold)}
+.ibt{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--s1);display:flex;align-items:center;justify-content:center;color:var(--t2);transition:all .2s;box-shadow:var(--shadow)}
+.ibt:hover{border-color:var(--primary);color:var(--primary)}
 
-.sec{padding:0 18px 28px}
+.sec{padding:0 20px 28px}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
-.sec-ttl{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--cr);letter-spacing:.04em}
+.sec-ttl{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--t1);letter-spacing:.03em}
 .sec-sub{font-size:11px;color:var(--t3);margin-top:2px}
-.sec-more{font-size:11px;color:var(--gold);cursor:pointer;opacity:.85}
-.eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;display:flex;align-items:center;gap:7px;margin-bottom:10px}
-.eyebrow::before{content:'';display:block;width:14px;height:1px;background:var(--gold)}
+.sec-more{font-size:11px;color:var(--primary);cursor:pointer;font-weight:600}
+.eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--primary);font-weight:700;display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.eyebrow::before{content:'';display:block;width:14px;height:1px;background:var(--primary)}
 
 /* cards */
-.pcard{background:var(--s2);border-radius:18px;border:1px solid var(--bd);overflow:hidden;cursor:pointer;transition:border-color .25s,transform .18s}
+.pcard{background:var(--s1);border-radius:18px;border:1px solid var(--bd);overflow:hidden;cursor:pointer;transition:box-shadow .25s,transform .18s;box-shadow:var(--shadow)}
 .pcard:active{transform:scale(.99)}
-.pcard:hover{border-color:var(--bdh)}
+.pcard:hover{box-shadow:var(--shadow-m)}
 
 /* horizontal scroll */
-.hrow{display:flex;gap:11px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px 6px}
+.hrow{display:flex;gap:11px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 6px}
 .hrow::-webkit-scrollbar{display:none}
 
 /* tag pill */
-.tpill{font-size:10px;color:var(--t3);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);padding:3px 9px;border-radius:50px;white-space:nowrap}
-.tpill.gold{color:var(--gold);background:rgba(200,169,110,.1);border-color:rgba(200,169,110,.2)}
+.tpill{font-size:10px;color:var(--t2);background:var(--s2);border:1px solid var(--bd);padding:3px 9px;border-radius:50px;white-space:nowrap}
+.tpill.rose{color:var(--primary);background:var(--primary-soft);border-color:rgba(176,116,102,.2)}
 
-/* gold button */
-.gbtn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--gold),#A88040);color:var(--bg);font-size:12px;font-weight:700;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(200,169,110,.28);transition:transform .15s;letter-spacing:.03em}
-.gbtn:active{transform:scale(.97)}
-.obtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--gold);color:var(--gold);font-size:12px;font-weight:700;padding:9px 17px;border-radius:50px;background:transparent;cursor:pointer;transition:all .2s}
-.obtn:hover{background:rgba(200,169,110,.1)}
+/* primary button */
+.gbtn{display:inline-flex;align-items:center;gap:6px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;padding:10px 18px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(176,116,102,.3);transition:transform .15s,box-shadow .15s;letter-spacing:.03em}
+.gbtn:active{transform:scale(.97);box-shadow:0 2px 8px rgba(176,116,102,.2)}
+.obtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--primary);color:var(--primary);font-size:12px;font-weight:700;padding:9px 17px;border-radius:50px;background:transparent;cursor:pointer;transition:all .2s}
+.obtn:hover{background:var(--primary-soft)}
 
-/* ── HOME SCREEN ─────────────────────────── */
-.hero{padding:4px 18px 26px}
-.hero h1{font-family:var(--serif);font-size:32px;font-weight:400;line-height:1.3;color:var(--cr);margin-bottom:8px}
-.hero h1 em{font-style:italic;color:var(--gold)}
+/* ── HOME ─────────────────────────────────── */
+.hero{padding:4px 20px 26px}
+.hero h1{font-family:var(--serif);font-size:32px;font-weight:400;line-height:1.32;color:var(--t1);margin-bottom:8px}
+.hero h1 em{font-style:italic;color:var(--primary)}
 .hero p{font-size:13px;color:var(--t3);line-height:1.8}
 
-.ai-card{position:relative;overflow:hidden;border-radius:22px;border:1px solid var(--bd);background:var(--s2);padding:20px 18px 16px;cursor:pointer;transition:border-color .3s;margin:0 18px 28px}
-.ai-card:hover{border-color:var(--bdh)}
-.ai-orb{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,.1),transparent 70%);top:-60px;right:-44px;animation:orbf 5s ease-in-out infinite;pointer-events:none}
+.ai-card{position:relative;overflow:hidden;border-radius:22px;border:1.5px solid rgba(176,116,102,.25);background:linear-gradient(135deg,#FFF8F5 0%,#FFF5F0 100%);padding:20px 18px 16px;cursor:pointer;transition:box-shadow .3s,border-color .3s;margin:0 20px 28px;box-shadow:0 4px 20px rgba(176,116,102,.1)}
+.ai-card:hover{box-shadow:0 8px 30px rgba(176,116,102,.18);border-color:rgba(176,116,102,.4)}
+.ai-orb{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(176,116,102,.08),transparent 70%);top:-60px;right:-44px;animation:orbf 5s ease-in-out infinite;pointer-events:none}
 @keyframes orbf{0%,100%{transform:translate(0,0)}50%{transform:translate(-10px,12px)}}
 .ai-badge{display:flex;align-items:center;gap:6px;margin-bottom:12px}
-.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 2.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(200,169,110,.4)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(200,169,110,0)}}
-.ai-badge-txt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(176,116,102,.35)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(176,116,102,0)}}
+.ai-badge-txt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);font-weight:700}
 .ai-ph{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--t2);line-height:1.65;min-height:48px;margin-bottom:18px;transition:opacity .35s}
 .ai-row{display:flex;align-items:center;justify-content:space-between}
 .ai-hint{font-size:11px;color:var(--t3)}
 
-.mood-chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px 2px}
+.mood-chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 2px}
 .mood-chips::-webkit-scrollbar{display:none}
-.mchip{flex:0 0 auto;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:500;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap}
-.mchip.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:700}
+.mchip{flex:0 0 auto;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:500;border:1.5px solid var(--bd);background:var(--s1);color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:var(--shadow)}
+.mchip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700;box-shadow:0 3px 12px rgba(176,116,102,.3)}
 
 /* vertical perf card */
-.vcard{display:flex;gap:0;overflow:hidden;border-radius:18px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;transition:border-color .25s,transform .15s;position:relative;margin-bottom:11px}
+.vcard{display:flex;gap:0;overflow:hidden;border-radius:18px;border:1px solid var(--bd);background:var(--s1);cursor:pointer;transition:box-shadow .25s,transform .15s;position:relative;margin-bottom:11px;box-shadow:var(--shadow)}
 .vcard:active{transform:scale(.99)}
-.vcard:hover{border-color:var(--bdh)}
+.vcard:hover{box-shadow:var(--shadow-m)}
 .vcard-vis{width:92px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
-.vcard-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 50%,var(--s2))}
+.vcard-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 55%,var(--s1))}
 .vcard-body{padding:15px 13px 15px 4px;flex:1;min-width:0}
-.vcard-brand{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:3px}
-.vcard-name{font-family:var(--serif);font-size:15px;color:var(--cr);margin-bottom:7px}
+.vcard-brand{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:3px}
+.vcard-name{font-family:var(--serif);font-size:15px;color:var(--t1);margin-bottom:7px}
 .vcard-poem{font-family:var(--serif);font-style:italic;font-size:11px;color:var(--t3);line-height:1.6;margin-bottom:9px}
 .vcard-tags{display:flex;gap:5px;flex-wrap:wrap}
 .vcard-heart{position:absolute;top:11px;right:11px;font-size:16px;cursor:pointer;transition:transform .15s}
 .vcard-heart:active{transform:scale(1.35)}
-.vcard-compare-tag{position:absolute;bottom:11px;right:11px}
 
 /* small horizontal card */
-.hcard{flex:0 0 148px;border-radius:18px;border:1px solid var(--bd);background:var(--s2);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s}
+.hcard{flex:0 0 148px;border-radius:18px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
 .hcard:active{transform:scale(.98)}
-.hcard:hover{border-color:var(--bdh)}
+.hcard:hover{box-shadow:var(--shadow-m)}
 .hcard-top{height:118px;display:flex;align-items:center;justify-content:center;font-size:50px;position:relative}
 .hcard-heart{position:absolute;top:8px;right:8px;font-size:15px;cursor:pointer}
 .hcard-body{padding:11px}
-.hcard-brand{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:2px}
-.hcard-name{font-family:var(--serif);font-size:12.5px;color:var(--cr);margin-bottom:4px}
+.hcard-brand{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
+.hcard-name{font-family:var(--serif);font-size:12.5px;color:var(--t1);margin-bottom:4px}
 .hcard-poem{font-family:var(--serif);font-style:italic;font-size:10px;color:var(--t3);line-height:1.5}
 
-/* ── EXPLORE SCREEN ──────────────────────── */
-.search-wrap{padding:12px 18px 0}
-.search-bar{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--bd);border-radius:14px;padding:11px 14px;transition:border-color .2s}
-.search-bar:focus-within{border-color:var(--bdh)}
-.search-bar input{flex:1;background:none;border:none;color:var(--cr);font-size:14px}
+/* ── EXPLORE ──────────────────────────────── */
+.search-wrap{padding:12px 20px 0}
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--s1);border:1.5px solid var(--bd);border-radius:14px;padding:11px 14px;transition:border-color .2s;box-shadow:var(--shadow)}
+.search-bar:focus-within{border-color:var(--primary)}
+.search-bar input{flex:1;background:none;border:none;color:var(--t1);font-size:14px}
 .search-bar input::placeholder{color:var(--t3)}
 .search-ico{color:var(--t3);flex-shrink:0}
 
-.cat-chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:14px 18px 4px}
+.cat-chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:14px 20px 4px}
 .cat-chips::-webkit-scrollbar{display:none}
-.cchip{flex:0 0 auto;padding:7px 15px;border-radius:50px;font-size:12px;border:1px solid var(--bd);background:rgba(255,255,255,.03);color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap;font-weight:500}
-.cchip.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:700}
+.cchip{flex:0 0 auto;padding:7px 15px;border-radius:50px;font-size:12px;border:1.5px solid var(--bd);background:var(--s1);color:var(--t2);cursor:pointer;transition:all .2s;white-space:nowrap;font-weight:500;box-shadow:var(--shadow)}
+.cchip.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
 
-.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:14px 18px 0}
-.gcard{border-radius:18px;border:1px solid var(--bd);background:var(--s2);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:14px 20px 0}
+.gcard{border-radius:18px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
 .gcard:active{transform:scale(.98)}
-.gcard:hover{border-color:var(--bdh)}
+.gcard:hover{box-shadow:var(--shadow-m)}
 .gcard-top{height:130px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
 .gcard-heart{position:absolute;top:9px;right:9px;font-size:15px;cursor:pointer}
-.gcard-sample{position:absolute;top:9px;left:9px;font-size:9px;font-weight:700;color:#fff;background:var(--gold);padding:2px 7px;border-radius:50px;letter-spacing:.05em}
+.gcard-sample{position:absolute;top:9px;left:9px;font-size:9px;font-weight:700;color:#fff;background:var(--primary);padding:2px 7px;border-radius:50px;letter-spacing:.05em}
 .gcard-body{padding:12px}
-.gcard-brand{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:2px}
-.gcard-name{font-family:var(--serif);font-size:13px;color:var(--cr);margin-bottom:6px}
+.gcard-brand{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
+.gcard-name{font-family:var(--serif);font-size:13px;color:var(--t1);margin-bottom:6px}
 .gcard-tags{display:flex;gap:4px;flex-wrap:wrap}
 .gcard-price{font-size:11px;color:var(--t3);margin-top:7px}
-.gcard-price strong{color:var(--cr);font-weight:700}
+.gcard-price strong{color:var(--t1);font-weight:700}
 
-.no-result{padding:60px 18px;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.8}
+.no-result{padding:60px 20px;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:15px;line-height:1.8}
 
-/* ── AI SCREEN ───────────────────────────── */
-.ai-screen-head{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--bg)}
-.ai-screen-title{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--cr)}
-.ai-screen-sub{font-size:11px;color:var(--t3);margin-top:2px}
-.chat-area{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
+/* ── AI SCREEN ────────────────────────────── */
+.ai-screen-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--bg)}
+.chat-area{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
 .chat-area::-webkit-scrollbar{display:none}
 .msg{max-width:88%;padding:13px 15px;border-radius:16px;font-size:13.5px;line-height:1.65;animation:fadeUp .3s ease both}
-.msg-bot{background:var(--s3);border:1px solid var(--bd);border-radius:4px 16px 16px 16px;color:var(--t2);font-family:var(--serif);font-style:italic;align-self:flex-start}
-.msg-user{background:linear-gradient(135deg,var(--gold),#A88040);color:var(--bg);border-radius:16px 4px 16px 16px;align-self:flex-end;font-weight:600}
-.msg-card{align-self:flex-start;max-width:92%;background:var(--s2);border:1px solid var(--bd);border-radius:4px 16px 16px 16px;padding:14px;cursor:pointer;transition:border-color .2s}
-.msg-card:hover{border-color:var(--bdh)}
-.msg-card-brand{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:3px}
-.msg-card-name{font-family:var(--serif);font-size:15px;color:var(--cr);margin-bottom:6px}
+.msg-bot{background:var(--s1);border:1px solid var(--bd);border-radius:4px 16px 16px 16px;color:var(--t2);font-family:var(--serif);font-style:italic;align-self:flex-start;box-shadow:var(--shadow)}
+.msg-user{background:var(--primary);color:#fff;border-radius:16px 4px 16px 16px;align-self:flex-end;font-weight:600}
+.msg-card{align-self:flex-start;max-width:92%;background:var(--s1);border:1px solid var(--bd);border-radius:4px 16px 16px 16px;padding:14px;cursor:pointer;transition:box-shadow .2s;box-shadow:var(--shadow)}
+.msg-card:hover{box-shadow:var(--shadow-m)}
+.msg-card-brand{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:3px}
+.msg-card-name{font-family:var(--serif);font-size:15px;color:var(--t1);margin-bottom:6px}
 .msg-card-poem{font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--t3);line-height:1.6}
-.typing{display:flex;gap:5px;padding:13px 15px;align-self:flex-start;background:var(--s3);border-radius:4px 16px 16px 16px;border:1px solid var(--bd)}
+.typing{display:flex;gap:5px;padding:13px 15px;align-self:flex-start;background:var(--s1);border-radius:4px 16px 16px 16px;border:1px solid var(--bd);box-shadow:var(--shadow)}
 .typing span{width:7px;height:7px;border-radius:50%;background:var(--t3);animation:bounce .9s ease-in-out infinite}
 .typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0);background:var(--t3)}40%{transform:translateY(-6px);background:var(--gold)}}
-.chat-input-row{padding:13px 18px calc(13px + env(safe-area-inset-bottom,0));border-top:1px solid var(--bd);display:flex;gap:9px;align-items:flex-end;background:var(--bg);flex-shrink:0}
-.chat-ta{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:14px;padding:10px 13px;color:var(--cr);font-family:var(--serif);font-style:italic;font-size:13.5px;resize:none;line-height:1.5;min-height:44px;max-height:110px;transition:border-color .2s}
-.chat-ta:focus{border-color:rgba(200,169,110,.3)}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);background:var(--t3)}40%{transform:translateY(-6px);background:var(--primary)}}
+.chat-input-row{padding:13px 20px calc(13px + env(safe-area-inset-bottom,0));border-top:1px solid var(--bd);display:flex;gap:9px;align-items:flex-end;background:var(--bg);flex-shrink:0}
+.chat-ta{flex:1;background:var(--s1);border:1.5px solid var(--bd);border-radius:14px;padding:10px 13px;color:var(--t1);font-family:var(--serif);font-style:italic;font-size:13.5px;resize:none;line-height:1.5;min-height:44px;max-height:110px;transition:border-color .2s;box-shadow:var(--shadow)}
+.chat-ta:focus{border-color:var(--primary)}
 .chat-ta::placeholder{color:var(--t3)}
-.chat-send{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#A88040);border:none;color:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex-shrink:0;transition:transform .15s}
+.chat-send{width:44px;height:44px;border-radius:50%;background:var(--primary);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;flex-shrink:0;transition:transform .15s;box-shadow:0 3px 12px rgba(176,116,102,.3)}
 .chat-send:active{transform:scale(.93)}
-.ai-suggestions{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:0 18px 12px;flex-shrink:0}
+.ai-suggestions{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:0 20px 12px;flex-shrink:0}
 .ai-suggestions::-webkit-scrollbar{display:none}
-.ai-sug{flex:0 0 auto;padding:7px 13px;border-radius:50px;font-size:11.5px;font-family:var(--serif);font-style:italic;border:1px solid var(--bd);color:var(--t2);cursor:pointer;background:var(--s2);white-space:nowrap;transition:border-color .2s}
-.ai-sug:hover{border-color:var(--gold);color:var(--gold)}
+.ai-sug{flex:0 0 auto;padding:7px 13px;border-radius:50px;font-size:11.5px;font-family:var(--serif);font-style:italic;border:1.5px solid var(--bd);color:var(--t2);cursor:pointer;background:var(--s1);white-space:nowrap;transition:all .2s;box-shadow:var(--shadow)}
+.ai-sug:hover{border-color:var(--primary);color:var(--primary)}
 
-/* ── SPACES SCREEN ───────────────────────── */
-.spaces-hero{padding:4px 18px 20px}
-.spaces-hero h2{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--cr);margin-bottom:6px}
-.spaces-hero h2 em{font-style:italic;color:var(--gold)}
+/* ── SPACES ───────────────────────────────── */
+.spaces-hero{padding:4px 20px 20px}
+.spaces-hero h2{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--t1);margin-bottom:6px}
+.spaces-hero h2 em{font-style:italic;color:var(--primary)}
 .spaces-hero p{font-size:12px;color:var(--t3);line-height:1.7}
-.space-card{display:flex;gap:14px;background:var(--s2);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:11px;cursor:pointer;transition:border-color .2s}
-.space-card:hover{border-color:var(--bdh)}
+.space-card{display:flex;gap:14px;background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:11px;cursor:pointer;transition:box-shadow .2s;box-shadow:var(--shadow)}
+.space-card:hover{box-shadow:var(--shadow-m)}
 .space-emoji-box{width:56px;height:56px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px}
 .space-info{flex:1;min-width:0}
-.space-name{font-size:14px;font-weight:700;color:var(--cr);margin-bottom:3px}
+.space-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px}
 .space-addr{font-size:11px;color:var(--t3);margin-bottom:8px}
 .pressure-row{display:flex;align-items:center;gap:6px}
 .pressure-lbl{font-size:10px;color:var(--t3)}
 .pdots{display:flex;gap:3px}
-.pdot{width:7px;height:7px;border-radius:50%;background:var(--s3);border:1px solid var(--bd)}
-.pdot.on{background:var(--gold);border-color:var(--gold)}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--s2);border:1px solid var(--bd)}
+.pdot.on{background:var(--primary);border-color:var(--primary)}
 .pressure-val{font-size:10px;font-weight:700}
-.pv-low{color:var(--gold)}.pv-med{color:var(--rose)}.pv-high{color:#C47A7A}
+.pv-low{color:var(--sage)}.pv-med{color:var(--warm)}.pv-high{color:#C47A7A}
 .space-badge{flex-shrink:0;align-self:flex-start;font-size:10px;font-weight:700;padding:4px 10px;border-radius:50px;margin-top:2px}
-.sb-open{background:rgba(100,190,120,.12);color:#64BE78;border:1px solid rgba(100,190,120,.25)}
-.sb-pop{background:rgba(200,169,110,.12);color:var(--gold);border:1px solid rgba(200,169,110,.25)}
+.sb-open{background:rgba(100,190,120,.1);color:#4EA86E;border:1px solid rgba(100,190,120,.25)}
+.sb-pop{background:var(--primary-soft);color:var(--primary);border:1px solid rgba(176,116,102,.25)}
 
-/* ── MY SCREEN ───────────────────────────── */
-.my-profile{padding:20px 18px 24px;display:flex;align-items:center;gap:16px}
-.my-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--s3),var(--s2));border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
-.my-name{font-size:18px;font-weight:700;color:var(--cr);margin-bottom:3px}
+/* ── MY PAGE ──────────────────────────────── */
+.my-profile{padding:20px 20px 24px;display:flex;align-items:center;gap:16px}
+.my-avatar{width:64px;height:64px;border-radius:50%;background:var(--primary-soft);border:2px solid rgba(176,116,102,.2);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.my-name{font-size:18px;font-weight:700;color:var(--t1);margin-bottom:3px}
 .my-sub{font-size:12px;color:var(--t3);line-height:1.6}
-.my-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:16px;margin:0 18px 24px;overflow:hidden}
-.my-stat{background:var(--s2);padding:16px;text-align:center}
-.my-stat-num{font-family:var(--serif);font-size:22px;color:var(--gold)}
+.my-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:16px;margin:0 20px 24px;overflow:hidden;box-shadow:var(--shadow)}
+.my-stat{background:var(--s1);padding:16px;text-align:center}
+.my-stat-num{font-family:var(--serif);font-size:22px;color:var(--primary)}
 .my-stat-lbl{font-size:10px;color:var(--t3);margin-top:3px}
-.persona-card{margin:0 18px 24px;background:var(--s2);border:1px solid var(--bdh);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px}
-.persona-icon{width:52px;height:52px;border-radius:14px;background:rgba(200,169,110,.1);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
-.persona-ttl{font-size:16px;font-weight:800;color:var(--cr);margin-bottom:3px}
+.persona-card{margin:0 20px 24px;background:linear-gradient(135deg,#FFF8F5,#FFF0EB);border:1.5px solid rgba(176,116,102,.2);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+.persona-icon{width:52px;height:52px;border-radius:14px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.persona-ttl{font-size:16px;font-weight:800;color:var(--t1);margin-bottom:3px}
 .persona-desc{font-size:11px;color:var(--t3);line-height:1.5}
-.persona-action{font-size:11px;font-weight:700;color:var(--gold);border:1px solid var(--gold);border-radius:50px;padding:6px 12px;white-space:nowrap;flex-shrink:0}
-.my-menu{margin:0 18px}
+.persona-action{font-size:11px;font-weight:700;color:var(--primary);border:1.5px solid var(--primary);border-radius:50px;padding:6px 12px;white-space:nowrap;flex-shrink:0}
+.my-menu{margin:0 20px}
 .my-menu-item{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--bd);cursor:pointer}
 .my-menu-item:last-child{border-bottom:none}
 .my-menu-left{display:flex;align-items:center;gap:12px}
 .my-menu-icon{font-size:18px}
-.my-menu-lbl{font-size:14px;color:var(--cr)}
+.my-menu-lbl{font-size:14px;color:var(--t1)}
 .my-menu-sub{font-size:11px;color:var(--t3);margin-top:1px}
 .my-menu-arrow{color:var(--t3);font-size:14px}
 
@@ -269,22 +274,20 @@ input,textarea{font-family:inherit;outline:none}
 }
 #overlay-detail.open{transform:none}
 .det-header-vis{height:220px;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;flex-shrink:0}
-.det-back{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--cr);font-size:18px;cursor:pointer}
-.det-like-btn{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .15s}
+.det-back{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--t1);font-size:18px;cursor:pointer;box-shadow:var(--shadow)}
+.det-like-btn{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .15s;box-shadow:var(--shadow)}
 .det-like-btn:active{transform:scale(1.3)}
-.det-body{flex:1;overflow-y:auto;padding:22px 18px 30px;scrollbar-width:none}
+.det-body{flex:1;overflow-y:auto;padding:22px 20px 30px;scrollbar-width:none}
 .det-body::-webkit-scrollbar{display:none}
-.det-brand{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:4px}
-.det-name{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--cr);margin-bottom:10px}
-.det-poem{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:16px;padding:14px 16px;background:var(--s2);border-radius:14px;border-left:3px solid var(--gold)}
+.det-brand{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:4px}
+.det-name{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--t1);margin-bottom:10px}
+.det-poem{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:16px;padding:14px 16px;background:var(--primary-soft);border-radius:14px;border-left:3px solid var(--primary)}
 .det-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
 .det-divider{height:1px;background:var(--bd);margin-bottom:20px}
-.det-row{display:flex;justify-content:space-between;margin-bottom:20px}
-.det-stat{text-align:center;flex:1}
-.det-stat-val{font-family:var(--serif);font-size:20px;color:var(--cr);margin-bottom:3px}
+.det-stat-val{font-family:var(--serif);font-size:20px;color:var(--t1);margin-bottom:3px}
 .det-stat-lbl{font-size:10px;color:var(--t3)}
 .bar-track{height:4px;background:var(--s3);border-radius:2px;flex:1;overflow:hidden}
-.bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--rose));transition:width .6s ease}
+.bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--primary),var(--warm));transition:width .6s ease}
 .notes-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 0;cursor:pointer;color:var(--t2);font-size:13px}
 .notes-toggle-ico{font-size:16px;transition:transform .3s}
 .notes-toggle-ico.open{transform:rotate(180deg)}
@@ -292,12 +295,12 @@ input,textarea{font-family:inherit;outline:none}
 .notes-content.open{max-height:300px}
 .note-row{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid var(--bd)}
 .note-row:last-child{border-bottom:none}
-.note-type{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700;width:36px;flex-shrink:0}
+.note-type{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);font-weight:700;width:36px;flex-shrink:0}
 .note-items{display:flex;gap:5px;flex-wrap:wrap}
 .det-ctas{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
 .det-ctas .gbtn{flex:1;justify-content:center}
 .det-ctas .obtn{flex:1;justify-content:center}
-.similar-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px 4px}
+.similar-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 4px}
 .similar-row::-webkit-scrollbar{display:none}
 
 /* ── COMPARE OVERLAY ─────────────────────── */
@@ -309,71 +312,67 @@ input,textarea{font-family:inherit;outline:none}
   transition:transform .45s cubic-bezier(.4,0,.2,1);
 }
 #overlay-compare.open{transform:none}
-.cmp-head{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
-.cmp-title{font-family:var(--serif);font-size:19px;color:var(--cr)}
+.cmp-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
+.cmp-title{font-family:var(--serif);font-size:19px;color:var(--t1)}
 .cmp-close{font-size:20px;color:var(--t3);cursor:pointer}
-.cmp-slots{display:flex;gap:10px;padding:16px 18px;flex-shrink:0}
-.cmp-slot{flex:1;background:var(--s2);border:1.5px dashed var(--bd);border-radius:16px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .2s;position:relative;padding:14px}
-.cmp-slot.filled{border-style:solid;border-color:var(--gold)}
+.cmp-slots{display:flex;gap:10px;padding:16px 20px;flex-shrink:0}
+.cmp-slot{flex:1;background:var(--s1);border:1.5px dashed var(--bd);border-radius:16px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .2s;position:relative;padding:14px;box-shadow:var(--shadow)}
+.cmp-slot.filled{border-style:solid;border-color:var(--primary)}
 .cmp-slot-emoji{font-size:40px}
-.cmp-slot-brand{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.cmp-slot-name{font-family:var(--serif);font-size:13px;color:var(--cr);text-align:center}
+.cmp-slot-brand{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);font-weight:700}
+.cmp-slot-name{font-family:var(--serif);font-size:13px;color:var(--t1);text-align:center}
 .cmp-slot-empty{font-size:28px;color:var(--t3)}
 .cmp-slot-add{font-size:11px;color:var(--t3)}
 .cmp-slot-remove{position:absolute;top:8px;right:8px;font-size:14px;color:var(--t3);cursor:pointer}
-.cmp-body{flex:1;overflow-y:auto;padding:0 18px 20px;scrollbar-width:none}
+.cmp-body{flex:1;overflow-y:auto;padding:0 20px 20px;scrollbar-width:none}
 .cmp-body::-webkit-scrollbar{display:none}
 .cmp-row{display:flex;align-items:flex-start;border-bottom:1px solid var(--bd);padding:12px 0;gap:10px}
 .cmp-row-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);font-weight:700;width:60px;flex-shrink:0;padding-top:4px}
 .cmp-cells{flex:1;display:flex;gap:10px}
 .cmp-cell{flex:1;font-size:12px;color:var(--t2);line-height:1.6}
-.cmp-cell.highlight{color:var(--cr);font-weight:600}
-.cmp-ai-summary{background:var(--s2);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:16px;border-left:3px solid var(--gold)}
-.cmp-ai-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px}
+.cmp-ai-summary{background:var(--primary-soft);border:1px solid rgba(176,116,102,.2);border-radius:16px;padding:16px;margin-bottom:16px;border-left:3px solid var(--primary)}
+.cmp-ai-lbl{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:8px}
 .cmp-ai-txt{font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--t2);line-height:1.7}
 .cmp-empty-hint{padding:40px 0;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.8}
 
 /* ── SAMPLE SHEET ────────────────────────── */
 #overlay-sample{
   position:absolute;inset:0;z-index:102;
-  background:rgba(0,0,0,.6);
+  background:rgba(30,24,20,.4);
   display:flex;align-items:flex-end;
   opacity:0;pointer-events:none;
   transition:opacity .3s;
 }
 #overlay-sample.open{opacity:1;pointer-events:all}
-.sample-sheet{background:var(--s1);border-radius:24px 24px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom,0));width:100%;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.sample-sheet{background:var(--s1);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0));width:100%;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
 #overlay-sample.open .sample-sheet{transform:none}
 .sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 20px}
-.sheet-ttl{font-family:var(--serif);font-size:20px;color:var(--cr);margin-bottom:6px}
+.sheet-ttl{font-family:var(--serif);font-size:20px;color:var(--t1);margin-bottom:6px}
 .sheet-sub{font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:20px}
-.sample-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:14px;margin-bottom:9px;border:1.5px solid transparent;cursor:pointer;transition:border-color .2s}
-.sample-item.selected{border-color:var(--gold)}
+.sample-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:14px;margin-bottom:9px;border:1.5px solid transparent;cursor:pointer;transition:all .2s}
+.sample-item.selected{border-color:var(--primary);background:var(--primary-soft)}
 .sample-item-emoji{font-size:26px;flex-shrink:0}
 .sample-item-info{flex:1}
-.sample-item-name{font-size:13px;font-weight:700;color:var(--cr)}
+.sample-item-name{font-size:13px;font-weight:700;color:var(--t1)}
 .sample-item-brand{font-size:10px;color:var(--t3)}
-.sample-item-price{font-size:12px;color:var(--gold);font-weight:700;flex-shrink:0}
+.sample-item-price{font-size:12px;color:var(--primary);font-weight:700;flex-shrink:0}
 .sample-item-check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .2s}
-.sample-item.selected .sample-item-check{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.sample-item.selected .sample-item-check{background:var(--primary);border-color:var(--primary);color:#fff}
 .sample-notice{font-size:11px;color:var(--t3);text-align:center;margin:12px 0 16px;line-height:1.6}
-.sample-cta{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#A88040);color:var(--bg);font-size:14px;font-weight:700;letter-spacing:.03em;cursor:pointer;border:none;transition:transform .15s}
+.sample-cta{width:100%;padding:14px;border-radius:14px;background:var(--primary);color:#fff;font-size:14px;font-weight:700;letter-spacing:.03em;cursor:pointer;border:none;transition:transform .15s;box-shadow:0 4px 16px rgba(176,116,102,.3)}
 .sample-cta:active{transform:scale(.98)}
 .sample-cancel{width:100%;padding:12px;color:var(--t3);font-size:13px;cursor:pointer;margin-top:6px;border:none;background:none}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-@media(min-width:420px){.app{box-shadow:0 0 100px rgba(0,0,0,.6)}}
+@media(min-width:420px){.app{box-shadow:0 0 60px rgba(150,100,70,.15)}}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="amb amb1"></div>
-<div class="amb amb2"></div>
 
 <!-- ════ SPLASH ════ -->
 <div id="splash">
-  <canvas id="mist"></canvas>
   <div class="sp-glow"></div>
   <div class="sp-oval">
     <svg viewBox="0 0 140 104"><ellipse class="sp-oval-path" cx="70" cy="52" rx="64" ry="46"/></svg>
@@ -505,9 +504,7 @@ input,textarea{font-family:inherit;outline:none}
         <h2>직원 압박 없이<br><em>자유롭게</em></h2>
         <p>셀프 시향이 가능한 공간만 모았어요.<br>방문 전에 직원 개입도를 꼭 확인하세요.</p>
       </div>
-      <div class="sec">
-        <div id="spaces-list"></div>
-      </div>
+      <div class="sec"><div id="spaces-list"></div></div>
     </div>
 
     <!-- ── MY ── -->
@@ -542,13 +539,22 @@ input,textarea{font-family:inherit;outline:none}
           <div class="my-menu-left"><span class="my-menu-icon">📦</span><div><p class="my-menu-lbl">샘플 키트 신청</p><p class="my-menu-sub">최대 3개 · 집에서 눈치 없이</p></div></div>
           <span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-menu-item"><div class="my-menu-left"><span class="my-menu-icon">⚖️</span><div><p class="my-menu-lbl">비교 목록</p><p class="my-menu-sub" id="compare-count-lbl">비교 중인 향수 없음</p></div></div><span class="my-menu-arrow" onclick="openCompare()">›</span></div>
-        <div class="my-menu-item"><div class="my-menu-left"><span class="my-menu-icon">📍</span><div><p class="my-menu-lbl">방문한 시향 공간</p><p class="my-menu-sub">홍대 올리브영 외 1곳</p></div></div><span class="my-menu-arrow">›</span></div>
-        <div class="my-menu-item"><div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p></div></div><span class="my-menu-arrow">›</span></div>
+        <div class="my-menu-item">
+          <div class="my-menu-left"><span class="my-menu-icon">⚖️</span><div><p class="my-menu-lbl">비교 목록</p><p class="my-menu-sub" id="compare-count-lbl">비교 중인 향수 없음</p></div></div>
+          <span class="my-menu-arrow" onclick="openCompare()">›</span>
+        </div>
+        <div class="my-menu-item">
+          <div class="my-menu-left"><span class="my-menu-icon">📍</span><div><p class="my-menu-lbl">방문한 시향 공간</p><p class="my-menu-sub">홍대 올리브영 외 1곳</p></div></div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+        <div class="my-menu-item">
+          <div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p></div></div>
+          <span class="my-menu-arrow">›</span>
+        </div>
       </div>
     </div>
 
-  </div><!-- /screens -->
+  </div>
 
   <!-- ── BOTTOM NAV ── -->
   <nav class="bnav">
@@ -558,7 +564,7 @@ input,textarea{font-family:inherit;outline:none}
     <div class="bni" onclick="switchTab('spaces')"><span class="bni-ic">📍</span><span>시향 공간</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('my')"><span class="bni-ic">👤</span><span>마이</span><div class="bni-bar"></div></div>
   </nav>
-</div><!-- /app-shell -->
+</div>
 
 <!-- ════ DETAIL OVERLAY ════ -->
 <div id="overlay-detail">
@@ -572,10 +578,7 @@ input,textarea{font-family:inherit;outline:none}
 <!-- ════ COMPARE OVERLAY ════ -->
 <div id="overlay-compare">
   <div class="cmp-head">
-    <div>
-      <p class="cmp-title">향수 비교</p>
-      <p style="font-size:11px;color:var(--t3);margin-top:2px">두 향수의 차이를 감성 언어로</p>
-    </div>
+    <div><p class="cmp-title">향수 비교</p><p style="font-size:11px;color:var(--t3);margin-top:2px">두 향수의 차이를 감성 언어로</p></div>
     <span class="cmp-close" onclick="closeCompare()">✕</span>
   </div>
   <div class="cmp-slots" id="cmp-slots"></div>
@@ -587,7 +590,7 @@ input,textarea{font-family:inherit;outline:none}
   <div class="sample-sheet">
     <div class="sheet-handle"></div>
     <p class="sheet-ttl">📦 셀프 시향 키트 신청</p>
-    <p class="sheet-sub">좋아요한 향수 중 최대 3개를 소량 샘플(1~2ml)로 집에서 받아보세요. 눈치 없이, 내 페이스대로.</p>
+    <p class="sheet-sub">좋아요한 향수 중 최대 3개를 소량 샘플(1~2ml)로 집에서 받아보세요.</p>
     <div id="sample-items"></div>
     <p class="sample-notice">무료 배송 · 3~5일 이내 도착 · 결제는 수령 후</p>
     <button class="sample-cta" onclick="confirmSample()">신청 완료</button>
@@ -596,242 +599,153 @@ input,textarea{font-family:inherit;outline:none}
 </div>
 
 <script>
-/* ══════════════════════════════════
-   DATA
-══════════════════════════════════ */
-const PERFUMES = [
-  {id:1,brand:'LE LABO',name:'Santal 33',emoji:'🌿',bg:'linear-gradient(135deg,#191511,#2C231A)',
+const PERFUMES=[
+  {id:1,brand:'LE LABO',name:'Santal 33',emoji:'🌿',bg:'linear-gradient(135deg,#E8F0E6,#D4E4D0)',
    poem:'비 온 뒤 숲 속 오솔길, 젖은 나무의 조용한 숨결',
-   moods:['고요한 숲','비 오는 날','늦은 밤'],
-   tags:['고요한','우디','가을·겨울'],cat:'우디',season:['가을','겨울'],
-   longevity:5,sillage:3,price:295000,samplePrice:4500,sampleAvail:true,
-   rating:4.8,reviews:1243,
+   moods:['고요한 숲','비 오는 날','늦은 밤'],tags:['고요한','우디','가을·겨울'],cat:'우디',season:['가을','겨울'],
+   longevity:5,sillage:3,price:295000,samplePrice:4500,sampleAvail:true,rating:4.8,reviews:1243,
    top:['카다멈','바이올렛'],mid:['아이리스','아미리스'],base:['샌달우드','레더','머스크'],
-   desc:'미국 텍사스의 사막 공기와 나무 연기, 그리고 가죽이 한데 어우러진 향. 성별을 초월한 현대적 우디향의 아이콘.',
-   similar:[2,6,8]},
-  {id:2,brand:'BYREDO',name:'Mojave Ghost',emoji:'🪷',bg:'linear-gradient(135deg,#17121A,#261B2C)',
+   desc:'미국 텍사스의 사막 공기와 나무 연기, 그리고 가죽이 한데 어우러진 향. 성별을 초월한 현대적 우디향의 아이콘.',similar:[2,6,8]},
+  {id:2,brand:'BYREDO',name:'Mojave Ghost',emoji:'🪷',bg:'linear-gradient(135deg,#EDE8F5,#DDD4EE)',
    poem:'아무도 없는 새벽, 창문을 스치는 서늘한 공기',
-   moods:['늦은 밤','고요한 숲'],
-   tags:['미스터리','파우더리','사계절'],cat:'머스크',season:['봄','가을'],
-   longevity:4,sillage:3,price:265000,samplePrice:4000,sampleAvail:true,
-   rating:4.7,reviews:876,
+   moods:['늦은 밤','고요한 숲'],tags:['미스터리','파우더리','사계절'],cat:'머스크',season:['봄','가을'],
+   longevity:4,sillage:3,price:265000,samplePrice:4000,sampleAvail:true,rating:4.7,reviews:876,
    top:['마그놀리아','스노우베리'],mid:['아미리스','바이올렛'],base:['샌달우드','머스크','오크모스'],
-   desc:'사막의 유령처럼 조용하고 신비로운 향. 파우더리하면서도 우디한 여운이 오래 남는다.',
-   similar:[1,5,8]},
-  {id:3,brand:'JO MALONE',name:'Wood Sage & Sea Salt',emoji:'🌊',bg:'linear-gradient(135deg,#121618,#1A2224)',
+   desc:'사막의 유령처럼 조용하고 신비로운 향. 파우더리하면서도 우디한 여운이 오래 남는다.',similar:[1,5,8]},
+  {id:3,brand:'JO MALONE',name:'Wood Sage & Sea Salt',emoji:'🌊',bg:'linear-gradient(135deg,#E0EEF5,#C8DFE8)',
    poem:'파도, 바람, 그리고 소금기 어린 아침 해변',
-   moods:['바다 바람','봄 산책'],
-   tags:['청량한','아쿠아틱','여름'],cat:'아쿠아틱',season:['봄','여름'],
-   longevity:3,sillage:2,price:175000,samplePrice:2800,sampleAvail:true,
-   rating:4.6,reviews:2341,
+   moods:['바다 바람','봄 산책'],tags:['청량한','아쿠아틱','여름'],cat:'아쿠아틱',season:['봄','여름'],
+   longevity:3,sillage:2,price:175000,samplePrice:2800,sampleAvail:true,rating:4.6,reviews:2341,
    top:['바다 소금','세이지'],mid:['암브렛씨드'],base:['드리프트우드','머스크'],
-   desc:'영국 해안가 절벽에서 맞는 바람. 세이지와 바다 소금이 만들어내는 상쾌하고 자연스러운 향.',
-   similar:[7,9,12]},
-  {id:4,brand:'MAISON MARGIELA',name:'Replica — By The Fireplace',emoji:'🕯️',bg:'linear-gradient(135deg,#1A1210,#281A10)',
+   desc:'영국 해안가 절벽에서 맞는 바람. 세이지와 바다 소금이 만들어내는 상쾌하고 자연스러운 향.',similar:[7,9,12]},
+  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
    poem:'겨울 밤 벽난로 앞, 따뜻한 커피 한 잔',
-   moods:['늦은 밤','카페 오후'],
-   tags:['따뜻한','스모키','겨울'],cat:'우디',season:['가을','겨울'],
-   longevity:4,sillage:3,price:198000,samplePrice:3200,sampleAvail:true,
-   rating:4.9,reviews:3102,
+   moods:['늦은 밤','카페 오후'],tags:['따뜻한','스모키','겨울'],cat:'우디',season:['가을','겨울'],
+   longevity:4,sillage:3,price:198000,samplePrice:3200,sampleAvail:true,rating:4.9,reviews:3102,
    top:['클로브','오렌지'],mid:['체스트넛','구아이악 우드'],base:['바닐라','캐시미어'],
-   desc:'겨울 저녁 벽난로에서 타오르는 나무 연기와 바닐라의 달콤함. 포근함을 향으로 만든다.',
-   similar:[1,13,14]},
-  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',bg:'linear-gradient(135deg,#181512,#26200E)',
+   desc:'겨울 저녁 벽난로에서 타오르는 나무 연기와 바닐라의 달콤함. 포근함을 향으로 만든다.',similar:[1,13,14]},
+  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
    poem:'무화과 나무 그늘 아래, 시간이 멈춘 여름 오후',
-   moods:['고요한 숲','카페 오후'],
-   tags:['그린','무화과','여름'],cat:'우디',season:['여름'],
-   longevity:3,sillage:2,price:212000,samplePrice:3500,sampleAvail:true,
-   rating:4.7,reviews:987,
+   moods:['고요한 숲','카페 오후'],tags:['그린','무화과','여름'],cat:'우디',season:['여름'],
+   longevity:3,sillage:2,price:212000,samplePrice:3500,sampleAvail:true,rating:4.7,reviews:987,
    top:['무화과 잎','목화'],mid:['무화과 나무'],base:['화이트 시더'],
-   desc:'딥티크의 대표작. 무화과 나무의 우유빛 수액부터 잎과 열매까지, 나무 한 그루를 통째로 담은 향.',
-   similar:[1,8,11]},
-  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',bg:'linear-gradient(135deg,#141618,#1C2220)',
+   desc:'딥티크의 대표작. 무화과 나무의 우유빛 수액부터 잎과 열매까지, 나무 한 그루를 통째로 담은 향.',similar:[1,8,11]},
+  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
    poem:'햇살 아래 바람에 말린 흰 린넨 이불',
-   moods:['봄 산책','카페 오후'],
-   tags:['클린','머스크','봄'],cat:'머스크',season:['봄','여름'],
-   longevity:3,sillage:2,price:98000,samplePrice:1800,sampleAvail:true,
-   rating:4.4,reviews:1456,
+   moods:['봄 산책','카페 오후'],tags:['클린','머스크','봄'],cat:'머스크',season:['봄','여름'],
+   longevity:3,sillage:2,price:98000,samplePrice:1800,sampleAvail:true,rating:4.4,reviews:1456,
    top:['베르가못'],mid:['코튼 플라워','오존'],base:['머스크','화이트 우드'],
-   desc:'방금 세탁해 햇살에 말린 흰 면 소재의 냄새. 가장 깨끗하고 편안한 향수로 입문자에게 최적.',
-   similar:[3,9,10]},
-  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',bg:'linear-gradient(135deg,#1A1418,#281620)',
+   desc:'방금 세탁해 햇살에 말린 흰 면 소재의 냄새. 가장 깨끗하고 편안한 향수로 입문자에게 최적.',similar:[3,9,10]},
+  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
    poem:'봄 카페 창가, 달콤한 바람에 실려오는 꽃향기',
-   moods:['봄 산책','카페 오후'],
-   tags:['플로럴','달콤한','봄'],cat:'플로럴',season:['봄','여름'],
-   longevity:4,sillage:3,price:195000,samplePrice:3200,sampleAvail:false,
-   rating:4.8,reviews:5621,
+   moods:['봄 산책','카페 오후'],tags:['플로럴','달콤한','봄'],cat:'플로럴',season:['봄','여름'],
+   longevity:4,sillage:3,price:195000,samplePrice:3200,sampleAvail:false,rating:4.8,reviews:5621,
    top:['자몽','쿼이드 드 로즈'],mid:['자스민','하이아신스'],base:['화이트 머스크','베티버'],
-   desc:'샤넬 찬스 라인의 가장 맑고 여린 향. 화사하지만 과하지 않아 첫 향수로 가장 많이 추천됨.',
-   similar:[10,11,12]},
-  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',bg:'linear-gradient(135deg,#1A1410,#281E0E)',
+   desc:'샤넬 찬스 라인의 가장 맑고 여린 향. 화사하지만 과하지 않아 첫 향수로 가장 많이 추천됨.',similar:[10,11,12]},
+  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
    poem:'저녁 시장골목, 향신료와 연기가 뒤섞이는 공기',
-   moods:['늦은 밤','바다 바람'],
-   tags:['스파이시','우디','가을'],cat:'오리엔탈',season:['가을','겨울'],
-   longevity:5,sillage:4,price:185000,samplePrice:3000,sampleAvail:true,
-   rating:4.6,reviews:643,
+   moods:['늦은 밤','바다 바람'],tags:['스파이시','우디','가을'],cat:'오리엔탈',season:['가을','겨울'],
+   longevity:5,sillage:4,price:185000,samplePrice:3000,sampleAvail:true,rating:4.6,reviews:643,
    top:['코리앤더','카다멈'],mid:['쿠민','패출리'],base:['샌달우드','시더','앰버'],
-   desc:'모로코 마라케시의 밤. 향신료와 나무가 어우러진 짙고 이국적인 향.',
-   similar:[4,1,14]},
-  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',bg:'linear-gradient(135deg,#101418,#161E26)',
+   desc:'모로코 마라케시의 밤. 향신료와 나무가 어우러진 짙고 이국적인 향.',similar:[4,1,14]},
+  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
    poem:'새벽 연못 위 이슬, 맑고 차갑게 맺힌 물방울',
-   moods:['바다 바람','봄 산책'],
-   tags:['아쿠아틱','청량한','사계절'],cat:'아쿠아틱',season:['봄','여름','가을'],
-   longevity:3,sillage:2,price:128000,samplePrice:2200,sampleAvail:true,
-   rating:4.5,reviews:3876,
+   moods:['바다 바람','봄 산책'],tags:['아쿠아틱','청량한','사계절'],cat:'아쿠아틱',season:['봄','여름','가을'],
+   longevity:3,sillage:2,price:128000,samplePrice:2200,sampleAvail:true,rating:4.5,reviews:3876,
    top:['연꽃','로즈우드'],mid:['카네이션','사이클라멘'],base:['머스크','삼나무','앰버'],
-   desc:'물의 향을 최초로 포착한 전설적인 향수. 깨끗하고 미니멀하여 입문자부터 마니아까지 사랑받음.',
-   similar:[3,6,12]},
-  {id:10,brand:'GUERLAIN',name:'Mon Guerlain',emoji:'💜',bg:'linear-gradient(135deg,#16121A,#221A28)',
+   desc:'물의 향을 최초로 포착한 전설적인 향수. 깨끗하고 미니멀하여 입문자부터 마니아까지 사랑받음.',similar:[3,6,12]},
+  {id:10,brand:'GUERLAIN',name:'Mon Guerlain',emoji:'💜',bg:'linear-gradient(135deg,#EDE8F5,#DDDAF5)',
    poem:'라벤더 밭 한가운데, 바람이 지나간 자리',
-   moods:['봄 산책','카페 오후'],
-   tags:['라벤더','플로럴','로맨틱'],cat:'플로럴',season:['봄','여름'],
-   longevity:4,sillage:3,price:148000,samplePrice:2500,sampleAvail:true,
-   rating:4.6,reviews:2109,
+   moods:['봄 산책','카페 오후'],tags:['라벤더','플로럴','로맨틱'],cat:'플로럴',season:['봄','여름'],
+   longevity:4,sillage:3,price:148000,samplePrice:2500,sampleAvail:true,rating:4.6,reviews:2109,
    top:['라벤더','베르가못'],mid:['쿠마린'],base:['바닐라','화이트 머스크','샌달우드'],
-   desc:'프로방스 라벤더에서 영감을 받은 따뜻하고 부드러운 플로럴. 달콤하지만 청량하다.',
-   similar:[7,6,11]},
-  {id:11,brand:'HERMÈS',name:'Un Jardin sur le Nil',emoji:'🌺',bg:'linear-gradient(135deg,#1A1610,#2E2410)',
+   desc:'프로방스 라벤더에서 영감을 받은 따뜻하고 부드러운 플로럴. 달콤하지만 청량하다.',similar:[7,6,11]},
+  {id:11,brand:'HERMÈS',name:'Un Jardin sur le Nil',emoji:'🌺',bg:'linear-gradient(135deg,#F5F0D8,#EEE4B4)',
    poem:'나일강변 정원, 익어가는 과일과 꽃의 숨결',
-   moods:['봄 산책','바다 바람'],
-   tags:['그린','프루티','여름'],cat:'프루티',season:['봄','여름'],
-   longevity:3,sillage:2,price:225000,samplePrice:3800,sampleAvail:false,
-   rating:4.7,reviews:876,
+   moods:['봄 산책','바다 바람'],tags:['그린','프루티','여름'],cat:'프루티',season:['봄','여름'],
+   longevity:3,sillage:2,price:225000,samplePrice:3800,sampleAvail:false,rating:4.7,reviews:876,
    top:['망고','토마토 잎'],mid:['연꽃','그린노트'],base:['골드 인센스','소말리아 몰약'],
-   desc:'에르메스의 정원 시리즈 대표작. 이집트 나일강 유역 정원의 이국적인 초록빛 과일향.',
-   similar:[3,5,9]},
-  {id:12,brand:'YSL',name:'Black Opium',emoji:'☕',bg:'linear-gradient(135deg,#0E0C10,#1A1420)',
+   desc:'에르메스의 정원 시리즈 대표작. 이집트 나일강 유역 정원의 이국적인 초록빛 과일향.',similar:[3,5,9]},
+  {id:12,brand:'YSL',name:'Black Opium',emoji:'☕',bg:'linear-gradient(135deg,#EAE0F0,#D8CCE8)',
    poem:'밤의 카페, 커피 향과 은은한 바닐라의 잔향',
-   moods:['늦은 밤','카페 오후'],
-   tags:['커피','달콤한','밤'],cat:'오리엔탈',season:['가을','겨울'],
-   longevity:5,sillage:4,price:165000,samplePrice:2800,sampleAvail:true,
-   rating:4.8,reviews:7234,
+   moods:['늦은 밤','카페 오후'],tags:['커피','달콤한','밤'],cat:'오리엔탈',season:['가을','겨울'],
+   longevity:5,sillage:4,price:165000,samplePrice:2800,sampleAvail:true,rating:4.8,reviews:7234,
    top:['핑크 페퍼','오렌지 블라썸'],mid:['커피','자스민'],base:['파촐리','바닐라','시더'],
-   desc:'커피와 바닐라의 달콤하고 중독적인 조합. 야간 외출이나 특별한 저녁을 위한 향수.',
-   similar:[4,8,14]},
-  {id:13,brand:'NARCISO RODRIGUEZ',name:'For Her EDP',emoji:'🩷',bg:'linear-gradient(135deg,#1A1016,#28141E)',
+   desc:'커피와 바닐라의 달콤하고 중독적인 조합. 야간 외출이나 특별한 저녁을 위한 향수.',similar:[4,8,14]},
+  {id:13,brand:'NARCISO RODRIGUEZ',name:'For Her EDP',emoji:'🩷',bg:'linear-gradient(135deg,#F5E8EE,#EED4E0)',
    poem:'따뜻한 피부 위에 남은, 조용하고 감각적인 여운',
-   moods:['늦은 밤','카페 오후'],
-   tags:['머스크','플로럴','미니멀'],cat:'머스크',season:['봄','가을','겨울'],
-   longevity:5,sillage:3,price:178000,samplePrice:2900,sampleAvail:true,
-   rating:4.7,reviews:1876,
+   moods:['늦은 밤','카페 오후'],tags:['머스크','플로럴','미니멀'],cat:'머스크',season:['봄','가을','겨울'],
+   longevity:5,sillage:3,price:178000,samplePrice:2900,sampleAvail:true,rating:4.7,reviews:1876,
    top:['로즈'],mid:['머스크','앰브레트'],base:['샌달우드','베티버'],
-   desc:'머스크의 완성형. 인간의 피부 향과 가장 닮아있어 "나의 체취가 이렇다면" 하는 향수.',
-   similar:[6,2,10]},
-  {id:14,brand:'TOM FORD',name:'Tobacco Vanille',emoji:'🥃',bg:'linear-gradient(135deg,#1A1008,#261808)',
+   desc:'머스크의 완성형. 인간의 피부 향과 가장 닮아있어 "나의 체취가 이렇다면" 하는 향수.',similar:[6,2,10]},
+  {id:14,brand:'TOM FORD',name:'Tobacco Vanille',emoji:'🥃',bg:'linear-gradient(135deg,#F0E4D0,#E8D0A8)',
    poem:'가죽 소파, 위스키 한 잔, 타오르는 벽난로',
-   moods:['늦은 밤'],
-   tags:['달콤한','스파이시','겨울'],cat:'오리엔탈',season:['가을','겨울'],
-   longevity:5,sillage:5,price:345000,samplePrice:5500,sampleAvail:true,
-   rating:4.9,reviews:2134,
+   moods:['늦은 밤'],tags:['달콤한','스파이시','겨울'],cat:'오리엔탈',season:['가을','겨울'],
+   longevity:5,sillage:5,price:345000,samplePrice:5500,sampleAvail:true,rating:4.9,reviews:2134,
    top:['담배 잎','향신료'],mid:['토카빈','바닐라','코코아'],base:['드라이 프루트','우드'],
-   desc:'세상에서 가장 럭셔리한 담배와 바닐라의 조합. 강렬하고 중독적이며 겨울 밤 최강의 향수.',
-   similar:[4,8,12]},
-  {id:15,brand:'ACQUA DI PARMA',name:'Colonia',emoji:'🍋',bg:'linear-gradient(135deg,#1A1A0E,#28280E)',
+   desc:'세상에서 가장 럭셔리한 담배와 바닐라의 조합. 강렬하고 중독적이며 겨울 밤 최강의 향수.',similar:[4,8,12]},
+  {id:15,brand:'ACQUA DI PARMA',name:'Colonia',emoji:'🍋',bg:'linear-gradient(135deg,#F5F5D8,#EEEEAC)',
    poem:'이탈리아 여름 아침, 레몬과 베르가못의 산뜻함',
-   moods:['봄 산책','카페 오후'],
-   tags:['시트러스','클래식','여름'],cat:'프루티',season:['봄','여름'],
-   longevity:3,sillage:2,price:168000,samplePrice:2700,sampleAvail:false,
-   rating:4.6,reviews:1543,
+   moods:['봄 산책','카페 오후'],tags:['시트러스','클래식','여름'],cat:'프루티',season:['봄','여름'],
+   longevity:3,sillage:2,price:168000,samplePrice:2700,sampleAvail:false,rating:4.6,reviews:1543,
    top:['시칠리아 레몬','베르가못','라벤더'],mid:['로즈','자스민'],base:['베티버','샌달우드','패출리'],
-   desc:'1916년 탄생한 이탈리아 향수의 고전. 상쾌하고 우아한 시트러스로 성별 불문 오래 사랑받음.',
-   similar:[3,9,6]},
+   desc:'1916년 탄생한 이탈리아 향수의 고전. 상쾌하고 우아한 시트러스로 성별 불문 오래 사랑받음.',similar:[3,9,6]},
 ];
 
-const SPACES = [
-  {name:'올리브영 홍대점',addr:'마포구 · 도보 8분',emoji:'🌿',bg:'#E8F0E8',pressure:1,status:'open',tags:['셀프 시향 가능','24시간 오픈']},
-  {name:'향수 팝업 — 성수 언더스탠드에비뉴',addr:'성동구 · 도보 12분',emoji:'🪷',bg:'#F0EAF5',pressure:1,status:'pop',tags:['기간한정 5/25까지','사진 촬영 가능'],deadline:'D-3'},
-  {name:'세포라 강남점',addr:'강남구 · 지하철 20분',emoji:'💄',bg:'#FAEEE3',pressure:2,status:'open',tags:['100+ 브랜드','무료 시향 키트']},
-  {name:'롯데백화점 본점 향수관',addr:'중구 · 지하철 18분',emoji:'🏛️',bg:'#E8EEF5',pressure:3,status:'open',tags:['프리미엄 브랜드','직원 상담 가능']},
-  {name:'아로마티카 쇼룸',addr:'강남구 · 도보 20분',emoji:'🌱',bg:'#E8F2E8',pressure:1,status:'open',tags:['내추럴 향수 특화','예약 없이 방문 가능']},
+const SPACES=[
+  {name:'올리브영 홍대점',addr:'마포구 · 도보 8분',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open'},
+  {name:'향수 팝업 — 성수 언더스탠드에비뉴',addr:'성동구 · 도보 12분',emoji:'🪷',bg:'#F0EAF5',pressure:1,status:'pop',deadline:'D-3'},
+  {name:'세포라 강남점',addr:'강남구 · 지하철 20분',emoji:'💄',bg:'#F5EEE8',pressure:2,status:'open'},
+  {name:'롯데백화점 본점 향수관',addr:'중구 · 지하철 18분',emoji:'🏛️',bg:'#E8EEF5',pressure:3,status:'open'},
+  {name:'아로마티카 쇼룸',addr:'강남구 · 도보 20분',emoji:'🌱',bg:'#EAF5EA',pressure:1,status:'open'},
 ];
 
-/* ══════════════════════════════════
-   STATE
-══════════════════════════════════ */
-let liked = new Set();
-let compareList = [];
-let currentDetailId = null;
-let activeMood = '';
-let activeCat = '';
+let liked=new Set(),compareList=[],currentDetailId=null,activeMood='',activeCat='';
 
-/* ══════════════════════════════════
-   SPLASH
-══════════════════════════════════ */
-(function initMist(){
-  const c=document.getElementById('mist'),ctx=c.getContext('2d');
-  function rs(){c.width=c.offsetWidth;c.height=c.offsetHeight}rs();
-  const pts=Array.from({length:80},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.3+.3,a:Math.random()*.3+.04,vx:(Math.random()-.5)*.18,vy:-Math.random()*.32-.08}));
-  (function loop(){ctx.clearRect(0,0,c.width,c.height);pts.forEach((p,i)=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(200,169,110,${p.a})`;ctx.fill();p.x+=p.vx;p.y+=p.vy;p.a-=.0007;if(p.y<-4||p.a<=0)pts[i]={x:Math.random()*c.width,y:c.height+4,r:Math.random()*1.3+.3,a:Math.random()*.3+.04,vx:(Math.random()-.5)*.18,vy:-Math.random()*.32-.08};});requestAnimationFrame(loop);})();
-})();
-
+/* ── SPLASH ── */
 setTimeout(()=>{
   document.getElementById('splash').classList.add('out');
   setTimeout(()=>{
     document.getElementById('splash').style.display='none';
     const shell=document.getElementById('app-shell');
-    shell.style.display='flex';
-    shell.style.flexDirection='column';
-    shell.style.height='100%';
+    shell.style.display='flex';shell.style.flexDirection='column';shell.style.height='100%';
     requestAnimationFrame(()=>shell.classList.add('visible'));
     initAll();
   },900);
 },3800);
 
-/* ── AI placeholder rotation ── */
+/* ── AI placeholder ── */
 const phs=['"오늘은 왠지 조용한 곳에서 혼자 있고 싶어..."','"비 오는 날 서점 창가, 그 느낌이 그리워"','"새로운 시작을 앞두고 설레는 마음"','"가을 오후, 낙엽이 지는 공원 벤치에서"','"오늘은 나를 조금 더 특별하게 대하고 싶어"'];
 let phi=0;
 setInterval(()=>{const el=document.getElementById('ai-ph');if(!el)return;el.style.opacity='0';setTimeout(()=>{phi=(phi+1)%phs.length;el.textContent=phs[phi];el.style.opacity='1';},380);},3800);
 
-/* ══════════════════════════════════
-   INIT
-══════════════════════════════════ */
-function initAll(){
-  renderHome();
-  renderExplore();
-  renderSpaces();
-  initChat();
-  initMoodChips();
-  initCatChips();
-}
+function initAll(){renderHome();renderExplore();renderSpaces();initChat();initMoodChips();initCatChips();}
 
-/* ══════════════════════════════════
-   TAB ROUTER
-══════════════════════════════════ */
 function switchTab(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('screen-'+tab).classList.add('active');
-  const tabs=['home','explore','ai','spaces','my'];
-  document.querySelectorAll('.bni')[tabs.indexOf(tab)]?.classList.add('on');
+  ['home','explore','ai','spaces','my'].indexOf(tab);
+  document.querySelectorAll('.bni')[['home','explore','ai','spaces','my'].indexOf(tab)]?.classList.add('on');
   if(tab==='my')updateMyPage();
 }
 
-/* ══════════════════════════════════
-   HOME
-══════════════════════════════════ */
+/* ── HOME ── */
 function initMoodChips(){
   document.getElementById('mood-chips').addEventListener('click',e=>{
-    const chip=e.target.closest('.mchip');if(!chip)return;
-    document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('on'));
-    chip.classList.add('on');
-    activeMood=chip.dataset.mood;
-    renderHome();
+    const c=e.target.closest('.mchip');if(!c)return;
+    document.querySelectorAll('.mchip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');activeMood=c.dataset.mood;renderHome();
   });
 }
 
 function renderHome(){
   const filtered=activeMood?PERFUMES.filter(p=>p.moods.includes(activeMood)):PERFUMES.slice(0,6);
-  const list=document.getElementById('home-list');
-  list.innerHTML=filtered.slice(0,4).map(p=>vcardHTML(p)).join('');
-
-  const hrow=document.getElementById('home-hrow');
-  hrow.innerHTML=PERFUMES.slice(4,10).map(p=>hcardHTML(p)).join('');
-  bindCardEvents();
+  document.getElementById('home-list').innerHTML=filtered.slice(0,4).map(vcardHTML).join('');
+  document.getElementById('home-hrow').innerHTML=PERFUMES.slice(4,10).map(hcardHTML).join('');
 }
 
 function vcardHTML(p){
-  const lk=liked.has(p.id)?'❤️':'🤍';
-  const inCmp=compareList.find(c=>c.id===p.id);
   return `<div class="vcard" onclick="openDetail(${p.id})">
     <div class="vcard-vis" style="background:${p.bg}">${p.emoji}</div>
     <div class="vcard-body">
@@ -840,15 +754,14 @@ function vcardHTML(p){
       <p class="vcard-poem">${p.poem}</p>
       <div class="vcard-tags">${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}</div>
     </div>
-    <span class="vcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${lk}</span>
+    <span class="vcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>
   </div>`;
 }
 
 function hcardHTML(p){
-  const lk=liked.has(p.id)?'❤️':'🤍';
   return `<div class="hcard" onclick="openDetail(${p.id})">
     <div class="hcard-top" style="background:${p.bg}">${p.emoji}
-      <span class="hcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${lk}</span>
+      <span class="hcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>
     </div>
     <div class="hcard-body">
       <p class="hcard-brand">${p.brand}</p>
@@ -858,16 +771,12 @@ function hcardHTML(p){
   </div>`;
 }
 
-/* ══════════════════════════════════
-   EXPLORE
-══════════════════════════════════ */
+/* ── EXPLORE ── */
 function initCatChips(){
   document.getElementById('cat-chips').addEventListener('click',e=>{
-    const chip=e.target.closest('.cchip');if(!chip)return;
-    document.querySelectorAll('.cchip').forEach(c=>c.classList.remove('on'));
-    chip.classList.add('on');
-    activeCat=chip.dataset.cat;
-    renderExplore();
+    const c=e.target.closest('.cchip');if(!c)return;
+    document.querySelectorAll('.cchip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');activeCat=c.dataset.cat;renderExplore();
   });
 }
 
@@ -879,81 +788,59 @@ function renderExplore(){
     return catOk&&qOk;
   });
   const grid=document.getElementById('explore-grid');
-  if(!filtered.length){grid.innerHTML='<div class="no-result" style="grid-column:1/-1">해당하는 향수가 없어요<br><br>다른 감성 태그로 검색해보세요</div>';return;}
-  grid.innerHTML=filtered.map(p=>{
-    const lk=liked.has(p.id)?'❤️':'🤍';
-    return `<div class="gcard" onclick="openDetail(${p.id})">
-      <div class="gcard-top" style="background:${p.bg}">${p.emoji}
-        <span class="gcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${lk}</span>
-        ${p.sampleAvail?'<span class="gcard-sample">샘플 가능</span>':''}
-      </div>
-      <div class="gcard-body">
-        <p class="gcard-brand">${p.brand}</p>
-        <p class="gcard-name">${p.name}</p>
-        <div class="gcard-tags">${p.tags.slice(0,2).map(t=>`<span class="tpill" style="font-size:9px">${t}</span>`).join('')}</div>
-        <p class="gcard-price">샘플 <strong>₩${p.sampleAvail?p.samplePrice.toLocaleString():'—'}</strong></p>
-      </div>
-    </div>`;
-  }).join('');
-  bindCardEvents();
+  if(!filtered.length){grid.innerHTML='<div class="no-result" style="grid-column:1/-1">해당하는 향수가 없어요</div>';return;}
+  grid.innerHTML=filtered.map(p=>`<div class="gcard" onclick="openDetail(${p.id})">
+    <div class="gcard-top" style="background:${p.bg}">${p.emoji}
+      <span class="gcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>
+      ${p.sampleAvail?'<span class="gcard-sample">샘플</span>':''}
+    </div>
+    <div class="gcard-body">
+      <p class="gcard-brand">${p.brand}</p>
+      <p class="gcard-name">${p.name}</p>
+      <div class="gcard-tags">${p.tags.slice(0,2).map(t=>`<span class="tpill" style="font-size:9px">${t}</span>`).join('')}</div>
+      <p class="gcard-price">샘플 <strong>${p.sampleAvail?`₩${p.samplePrice.toLocaleString()}`:'품절'}</strong></p>
+    </div>
+  </div>`).join('');
 }
 
-function bindCardEvents(){
-  // hearts re-bound via event delegation already via onclick
-}
-
-/* ══════════════════════════════════
-   LIKE
-══════════════════════════════════ */
-function toggleLike(id, el){
-  if(liked.has(id)){liked.delete(id);el.textContent='🤍';}
-  else{liked.add(id);el.textContent='❤️';}
+/* ── LIKE ── */
+function toggleLike(id,el){
+  liked.has(id)?liked.delete(id):liked.add(id);
+  el.textContent=liked.has(id)?'❤️':'🤍';
   el.style.transform='scale(1.3)';setTimeout(()=>el.style.transform='',180);
-  updateLikeCount();
+  document.getElementById('liked-count').textContent=liked.size;
 }
 
-function updateLikeCount(){
-  const el=document.getElementById('liked-count');
-  if(el)el.textContent=liked.size;
-}
-
-/* ══════════════════════════════════
-   DETAIL
-══════════════════════════════════ */
+/* ── DETAIL ── */
 function openDetail(id){
   const p=PERFUMES.find(x=>x.id===id);if(!p)return;
   currentDetailId=id;
-  const overlay=document.getElementById('overlay-detail');
   const vis=document.getElementById('det-vis');
   vis.style.background=p.bg;
-  // keep back/like buttons, inject emoji
-  vis.querySelector('span.det-emoji')?.remove();
+  vis.querySelector('.det-emoji')?.remove();
   const em=document.createElement('span');em.className='det-emoji';em.style.cssText='font-size:80px;';em.textContent=p.emoji;
-  vis.insertBefore(em,vis.querySelector('.det-back').nextSibling);
+  vis.insertBefore(em,vis.firstChild);
   document.getElementById('det-like-btn').textContent=liked.has(id)?'❤️':'🤍';
 
-  const bars=(val,max=5)=>{
-    const pct=(val/max)*100;
-    return `<div style="display:flex;align-items:center;gap:8px;width:100%"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px;color:var(--t3);width:20px">${val}/${max}</span></div>`;
-  };
-
-  const similar=p.similar.map(sid=>{
-    const sp=PERFUMES.find(x=>x.id===sid);if(!sp)return'';
+  const bar=(v,max=5)=>`<div style="display:flex;align-items:center;gap:8px;width:100%"><div class="bar-track"><div class="bar-fill" style="width:${(v/max)*100}%"></div></div><span style="font-size:11px;color:var(--t3)">${v}/${max}</span></div>`;
+  const similar=p.similar.map(sid=>{const sp=PERFUMES.find(x=>x.id===sid);if(!sp)return'';
     return `<div class="hcard" style="flex:0 0 140px" onclick="openDetail(${sp.id})">
       <div class="hcard-top" style="background:${sp.bg};height:100px">${sp.emoji}</div>
       <div class="hcard-body"><p class="hcard-brand">${sp.brand}</p><p class="hcard-name">${sp.name}</p></div>
-    </div>`;
-  }).join('');
+    </div>`;}).join('');
 
   document.getElementById('det-body').innerHTML=`
     <p class="det-brand">${p.brand}</p>
     <p class="det-name">${p.name}</p>
     <p class="det-poem">${p.poem}</p>
-    <div class="det-tags">${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}${p.season.map(s=>`<span class="tpill gold">${s}</span>`).join('')}</div>
+    <div class="det-tags">${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}${p.season.map(s=>`<span class="tpill rose">${s}</span>`).join('')}</div>
     <div class="det-divider"></div>
-    <div style="display:flex;gap:0;margin-bottom:20px">
-      <div style="flex:1;text-align:center"><p style="font-family:var(--serif);font-size:22px;color:var(--gold)">${p.rating}</p><p style="font-size:10px;color:var(--t3)">평점</p><p style="font-size:10px;color:var(--t3)">(${p.reviews.toLocaleString()}개)</p></div>
-      <div style="flex:2;padding:0 12px"><p style="font-size:10px;color:var(--t3);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase">지속력</p>${bars(p.longevity)}<p style="font-size:10px;color:var(--t3);margin:10px 0 6px;letter-spacing:.1em;text-transform:uppercase">확산력</p>${bars(p.sillage)}</div>
+    <div style="display:flex;margin-bottom:20px">
+      <div style="flex:1;text-align:center"><p class="det-stat-val">${p.rating}</p><p class="det-stat-lbl">평점 (${p.reviews.toLocaleString()})</p></div>
+      <div style="flex:2;padding:0 12px">
+        <p style="font-size:10px;color:var(--t3);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase">지속력</p>${bar(p.longevity)}
+        <p style="font-size:10px;color:var(--t3);margin:10px 0 6px;letter-spacing:.1em;text-transform:uppercase">확산력</p>${bar(p.sillage)}
+      </div>
     </div>
     <div class="det-divider"></div>
     <p style="font-size:12px;color:var(--t2);line-height:1.75;margin-bottom:20px">${p.desc}</p>
@@ -964,170 +851,88 @@ function openDetail(id){
     </div>
     <div class="notes-content">
       <div style="padding:12px 0">
-        ${[['TOP',p.top],['MID',p.mid],['BASE',p.base]].map(([type,notes])=>`
-        <div class="note-row"><span class="note-type">${type}</span><div class="note-items">${notes.map(n=>`<span class="tpill">${n}</span>`).join('')}</div></div>`).join('')}
+        ${[['TOP',p.top],['MID',p.mid],['BASE',p.base]].map(([t,ns])=>`<div class="note-row"><span class="note-type">${t}</span><div class="note-items">${ns.map(n=>`<span class="tpill">${n}</span>`).join('')}</div></div>`).join('')}
       </div>
     </div>
     <div class="det-divider"></div>
-    <div style="margin-bottom:20px">
-      <p style="font-size:13px;color:var(--t2);margin-bottom:12px">비슷한 향수</p>
-      <div class="similar-row">${similar}</div>
-    </div>
+    <div style="margin-bottom:20px"><p style="font-size:13px;color:var(--t2);margin-bottom:12px">비슷한 향수</p><div class="similar-row">${similar}</div></div>
     <div class="det-ctas">
       ${p.sampleAvail?`<button class="gbtn" onclick="openSample(${id})">📦 샘플 신청</button>`:'<button class="gbtn" style="opacity:.5;cursor:not-allowed">📦 샘플 품절</button>'}
       <button class="obtn" onclick="addToCompare(${id})">⚖️ 비교 추가</button>
     </div>
-    <div style="height:20px"></div>
-  `;
-  overlay.classList.add('open');
+    <div style="height:20px"></div>`;
+  document.getElementById('overlay-detail').classList.add('open');
 }
 
 function closeDetail(){document.getElementById('overlay-detail').classList.remove('open')}
-
 function toggleDetailLike(){
-  if(!currentDetailId)return;
-  const id=currentDetailId;
-  const btn=document.getElementById('det-like-btn');
-  if(liked.has(id)){liked.delete(id);btn.textContent='🤍';}
-  else{liked.add(id);btn.textContent='❤️';}
-  btn.style.transform='scale(1.35)';setTimeout(()=>btn.style.transform='',200);
-  updateLikeCount();
+  const id=currentDetailId;if(!id)return;
+  liked.has(id)?liked.delete(id):liked.add(id);
+  document.getElementById('det-like-btn').textContent=liked.has(id)?'❤️':'🤍';
+  document.getElementById('liked-count').textContent=liked.size;
 }
+function toggleNotes(el){el.nextElementSibling.classList.toggle('open');el.querySelector('.notes-toggle-ico').classList.toggle('open');}
 
-function toggleNotes(el){
-  const content=el.nextElementSibling;
-  const ico=el.querySelector('.notes-toggle-ico');
-  content.classList.toggle('open');
-  ico.classList.toggle('open');
-}
-
-/* ══════════════════════════════════
-   COMPARE
-══════════════════════════════════ */
+/* ── COMPARE ── */
 function addToCompare(id){
   const p=PERFUMES.find(x=>x.id===id);if(!p)return;
   if(compareList.find(c=>c.id===id)){openCompare();return;}
-  if(compareList.length>=2){compareList.shift();}
-  compareList.push(p);
-  openCompare();
-  updateMyPage();
+  if(compareList.length>=2)compareList.shift();
+  compareList.push(p);openCompare();updateMyPage();
 }
-
 function openCompare(){renderCompare();document.getElementById('overlay-compare').classList.add('open');}
 function closeCompare(){document.getElementById('overlay-compare').classList.remove('open');}
-
 function renderCompare(){
   const slots=document.getElementById('cmp-slots');
-  const body=document.getElementById('cmp-body');
-
-  slots.innerHTML=[0,1].map(i=>{
-    const p=compareList[i];
-    if(p)return `<div class="cmp-slot filled">
-      <span class="cmp-slot-emoji">${p.emoji}</span>
-      <p class="cmp-slot-brand">${p.brand}</p>
-      <p class="cmp-slot-name">${p.name}</p>
-      <span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span>
-    </div>`;
-    return `<div class="cmp-slot" onclick="switchTab('explore');closeCompare()">
-      <span class="cmp-slot-empty">+</span>
-      <p class="cmp-slot-add">탐색에서 추가</p>
-    </div>`;
+  slots.innerHTML=[0,1].map(i=>{const p=compareList[i];
+    if(p)return `<div class="cmp-slot filled"><span class="cmp-slot-emoji">${p.emoji}</span><p class="cmp-slot-brand">${p.brand}</p><p class="cmp-slot-name">${p.name}</p><span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span></div>`;
+    return `<div class="cmp-slot" onclick="switchTab('explore');closeCompare()"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">탐색에서 추가</p></div>`;
   }).join('');
-
+  const body=document.getElementById('cmp-body');
   if(compareList.length<2){body.innerHTML='<p class="cmp-empty-hint">향수 2개를 추가하면<br>차이를 비교해드려요</p>';return;}
-
   const [a,b]=compareList;
-  const aiSummaries=[
-    `${a.name}이 더 우디하고 지속력이 강하다면, ${b.name}은 더 가볍고 일상적으로 쓰기 좋아요.`,
-    `두 향수 모두 매력적이지만, ${a.name}은 혼자만의 조용한 시간에, ${b.name}은 봄날 외출에 더 어울려요.`,
-    `${a.name}의 깊은 우디함과 ${b.name}의 신선한 청량함, 당신의 오늘 무드는 어느 쪽인가요?`,
-  ];
-
-  body.innerHTML=`
-    <div class="cmp-ai-summary">
-      <p class="cmp-ai-lbl">✦ AI 비교 한 줄 요약</p>
-      <p class="cmp-ai-txt">${aiSummaries[Math.floor(Math.random()*aiSummaries.length)]}</p>
-    </div>
-    ${[
-      ['분위기',a.poem.slice(0,22)+'...',b.poem.slice(0,22)+'...'],
-      ['계절',a.season.join(', '),b.season.join(', ')],
-      ['지속력',`${a.longevity}/5`,`${b.longevity}/5`],
-      ['확산력',`${a.sillage}/5`,`${b.sillage}/5`],
-      ['샘플',a.sampleAvail?`₩${a.samplePrice.toLocaleString()}`:'품절',b.sampleAvail?`₩${b.samplePrice.toLocaleString()}`:'품절'],
-      ['평점',`★ ${a.rating}`,`★ ${b.rating}`],
-      ['태그',a.tags.join(', '),b.tags.join(', ')],
-    ].map(([lbl,av,bv])=>`<div class="cmp-row">
-      <span class="cmp-row-lbl">${lbl}</span>
-      <div class="cmp-cells">
-        <p class="cmp-cell">${av}</p>
-        <p class="cmp-cell">${bv}</p>
-      </div>
-    </div>`).join('')}
-    <div style="display:flex;gap:10px;margin-top:20px">
-      <button class="gbtn" style="flex:1;justify-content:center" onclick="openSample()">📦 샘플 신청</button>
-    </div>
-    <div style="height:16px"></div>
-  `;
+  const sums=[`${a.name}이 더 우디하고 지속력이 강하다면, ${b.name}은 더 가볍고 일상적으로 쓰기 좋아요.`,`두 향수 모두 매력적이지만, ${a.name}은 혼자만의 조용한 시간에, ${b.name}은 봄날 외출에 더 어울려요.`,`${a.name}의 깊은 감성과 ${b.name}의 신선함, 오늘 당신의 무드는 어느 쪽인가요?`];
+  body.innerHTML=`<div class="cmp-ai-summary"><p class="cmp-ai-lbl">✦ AI 비교 한 줄 요약</p><p class="cmp-ai-txt">${sums[Math.floor(Math.random()*sums.length)]}</p></div>
+  ${[['분위기',a.poem.slice(0,22)+'...',b.poem.slice(0,22)+'...'],['계절',a.season.join(', '),b.season.join(', ')],['지속력',`${a.longevity}/5`,`${b.longevity}/5`],['확산력',`${a.sillage}/5`,`${b.sillage}/5`],['샘플',a.sampleAvail?`₩${a.samplePrice.toLocaleString()}`:'품절',b.sampleAvail?`₩${b.samplePrice.toLocaleString()}`:'품절'],['평점',`★ ${a.rating}`,`★ ${b.rating}`]].map(([l,av,bv])=>`<div class="cmp-row"><span class="cmp-row-lbl">${l}</span><div class="cmp-cells"><p class="cmp-cell">${av}</p><p class="cmp-cell">${bv}</p></div></div>`).join('')}
+  <div style="display:flex;gap:10px;margin-top:20px"><button class="gbtn" style="flex:1;justify-content:center" onclick="openSample()">📦 샘플 신청</button></div><div style="height:16px"></div>`;
 }
-
 function removeCompare(id){compareList=compareList.filter(p=>p.id!==id);renderCompare();}
 
-/* ══════════════════════════════════
-   SAMPLE SHEET
-══════════════════════════════════ */
+/* ── SAMPLE ── */
 let selectedSamples=new Set();
-
 function openSample(focusId){
   selectedSamples=new Set(focusId?[focusId]:[]);
-  const availItems=PERFUMES.filter(p=>p.sampleAvail&&liked.has(p.id));
-  const displayItems=availItems.length?availItems:PERFUMES.filter(p=>p.sampleAvail).slice(0,5);
-  document.getElementById('sample-items').innerHTML=displayItems.map(p=>`
-    <div class="sample-item${selectedSamples.has(p.id)?' selected':''}" onclick="toggleSample(${p.id},this)">
-      <span class="sample-item-emoji">${p.emoji}</span>
-      <div class="sample-item-info"><p class="sample-item-name">${p.name}</p><p class="sample-item-brand">${p.brand}</p></div>
-      <span class="sample-item-price">₩${p.samplePrice.toLocaleString()}</span>
-      <span class="sample-item-check">${selectedSamples.has(p.id)?'✓':''}</span>
-    </div>`).join('');
+  const items=liked.size?PERFUMES.filter(p=>p.sampleAvail&&liked.has(p.id)):PERFUMES.filter(p=>p.sampleAvail).slice(0,5);
+  document.getElementById('sample-items').innerHTML=items.map(p=>`<div class="sample-item${selectedSamples.has(p.id)?' selected':''}" onclick="toggleSample(${p.id},this)">
+    <span class="sample-item-emoji">${p.emoji}</span>
+    <div class="sample-item-info"><p class="sample-item-name">${p.name}</p><p class="sample-item-brand">${p.brand}</p></div>
+    <span class="sample-item-price">₩${p.samplePrice.toLocaleString()}</span>
+    <span class="sample-item-check">${selectedSamples.has(p.id)?'✓':''}</span>
+  </div>`).join('');
   document.getElementById('overlay-sample').classList.add('open');
 }
-
 function toggleSample(id,el){
   if(selectedSamples.has(id)){selectedSamples.delete(id);el.classList.remove('selected');el.querySelector('.sample-item-check').textContent='';}
   else{if(selectedSamples.size>=3)return;selectedSamples.add(id);el.classList.add('selected');el.querySelector('.sample-item-check').textContent='✓';}
 }
-
 function closeSample(){document.getElementById('overlay-sample').classList.remove('open');}
-function confirmSample(){
-  closeSample();
-  setTimeout(()=>alert('✅ 샘플 키트 신청이 완료되었어요!\n3~5일 내 도착 예정입니다.'),300);
-}
+function confirmSample(){closeSample();setTimeout(()=>alert('✅ 샘플 키트 신청 완료!\n3~5일 내 도착 예정입니다.'),300);}
 
-/* ══════════════════════════════════
-   SPACES
-══════════════════════════════════ */
+/* ── SPACES ── */
 function renderSpaces(){
-  const pLbl=['낮음','보통','높음'];
-  const pCls=['pv-low','pv-med','pv-high'];
-  document.getElementById('spaces-list').innerHTML=SPACES.map(s=>`
-    <div class="space-card">
-      <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
-      <div class="space-info">
-        <p class="space-name">${s.name}</p>
-        <p class="space-addr">📍 ${s.addr}</p>
-        <div class="pressure-row">
-          <p class="pressure-lbl">직원 개입도</p>
-          <div class="pdots">${[1,2,3].map(i=>`<div class="pdot${i<=s.pressure?' on':''}"></div>`).join('')}</div>
-          <span class="pressure-val ${pCls[s.pressure-1]}">${pLbl[s.pressure-1]}</span>
-        </div>
-        ${s.deadline?`<p style="font-size:10px;color:var(--rose);margin-top:5px;font-weight:700">⏰ ${s.deadline}</p>`:''}
-      </div>
-      <span class="space-badge ${s.status==='pop'?'sb-pop':'sb-open'}">${s.status==='pop'?'팝업':'영업중'}</span>
-    </div>`).join('');
+  const pLbl=['낮음','보통','높음'],pCls=['pv-low','pv-med','pv-high'];
+  document.getElementById('spaces-list').innerHTML=SPACES.map(s=>`<div class="space-card">
+    <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
+    <div class="space-info"><p class="space-name">${s.name}</p><p class="space-addr">📍 ${s.addr}</p>
+      <div class="pressure-row"><p class="pressure-lbl">직원 개입도</p><div class="pdots">${[1,2,3].map(i=>`<div class="pdot${i<=s.pressure?' on':''}"></div>`).join('')}</div>
+      <span class="pressure-val ${pCls[s.pressure-1]}">${pLbl[s.pressure-1]}</span></div>
+      ${s.deadline?`<p style="font-size:10px;color:var(--warm);margin-top:5px;font-weight:700">⏰ ${s.deadline}</p>`:''}
+    </div>
+    <span class="space-badge ${s.status==='pop'?'sb-pop':'sb-open'}">${s.status==='pop'?'팝업':'영업중'}</span>
+  </div>`).join('');
 }
 
-/* ══════════════════════════════════
-   AI CHAT
-══════════════════════════════════ */
+/* ── AI CHAT ── */
 const aiReplies=[
   {text:'그 감정이 느껴져요. 조용하고 깊은 향이 필요한 순간이네요.',cards:[1,2]},
   {text:'그 장면이 선명하게 그려져요. 촉촉하고 투명한 향이 어울릴 것 같아요.',cards:[3,5]},
@@ -1136,70 +941,45 @@ const aiReplies=[
   {text:'자연 속에서 숨을 고르는 느낌, 그린하고 맑은 향을 추천드려요.',cards:[5,11]},
 ];
 let riIdx=0;
-
 function initChat(){
-  const area=document.getElementById('chat-area');
-  area.innerHTML='';
+  const area=document.getElementById('chat-area');area.innerHTML='';
   appendMsg('bot','지금 이 순간, 어떤 감정이나 장면이 떠오르시나요?\n기억 속 한 장면이어도 좋고, 지금의 기분을 그냥 말씀해 주셔도 좋아요.');
   document.getElementById('chat-send').onclick=sendChat;
   const ta=document.getElementById('chat-input');
   ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}};
   ta.oninput=()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px'};
 }
-
 function clearChat(){document.getElementById('chat-area').innerHTML='';initChat();}
-
-function fillSug(el){
-  document.getElementById('chat-input').value=el.textContent;
-  switchTab('ai');
-  setTimeout(sendChat,200);
-}
-
+function fillSug(el){document.getElementById('chat-input').value=el.textContent;switchTab('ai');setTimeout(sendChat,200);}
 function sendChat(){
-  const ta=document.getElementById('chat-input');
-  const txt=ta.value.trim();if(!txt)return;
+  const ta=document.getElementById('chat-input');const txt=ta.value.trim();if(!txt)return;
   appendMsg('user',txt);ta.value='';ta.style.height='auto';
-
   const area=document.getElementById('chat-area');
-  const typing=document.createElement('div');
-  typing.className='typing';typing.innerHTML='<span></span><span></span><span></span>';
-  area.appendChild(typing);area.scrollTop=area.scrollHeight;
-
+  const t=document.createElement('div');t.className='typing';t.innerHTML='<span></span><span></span><span></span>';
+  area.appendChild(t);area.scrollTop=area.scrollHeight;
   setTimeout(()=>{
-    typing.remove();
-    const reply=aiReplies[riIdx%aiReplies.length];riIdx++;
-    appendMsg('bot',reply.text);
-    reply.cards.forEach(cid=>{
-      const p=PERFUMES.find(x=>x.id===cid);if(!p)return;
-      const d=document.createElement('div');
-      d.className='msg-card';
+    t.remove();const r=aiReplies[riIdx%aiReplies.length];riIdx++;
+    appendMsg('bot',r.text);
+    r.cards.forEach(cid=>{const p=PERFUMES.find(x=>x.id===cid);if(!p)return;
+      const d=document.createElement('div');d.className='msg-card';
       d.innerHTML=`<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.emoji} ${p.name}</p><p class="msg-card-poem">"${p.poem}"</p>`;
-      d.onclick=()=>openDetail(p.id);
-      area.appendChild(d);area.scrollTop=area.scrollHeight;
+      d.onclick=()=>openDetail(p.id);area.appendChild(d);area.scrollTop=area.scrollHeight;
     });
   },1100);
 }
-
 function appendMsg(type,text){
   const area=document.getElementById('chat-area');
-  const d=document.createElement('div');
-  d.className='msg msg-'+type;
-  d.style.whiteSpace='pre-line';
-  d.textContent=text;
-  area.appendChild(d);
-  area.scrollTop=area.scrollHeight;
+  const d=document.createElement('div');d.className='msg msg-'+type;d.style.whiteSpace='pre-line';d.textContent=text;
+  area.appendChild(d);area.scrollTop=area.scrollHeight;
 }
 
-/* ══════════════════════════════════
-   MY PAGE
-══════════════════════════════════ */
+/* ── MY ── */
 function updateMyPage(){
-  updateLikeCount();
-  const likedRow=document.getElementById('liked-row');
+  document.getElementById('liked-count').textContent=liked.size;
   const likedItems=PERFUMES.filter(p=>liked.has(p.id));
-  likedRow.innerHTML=likedItems.length?likedItems.map(p=>hcardHTML(p)).join(''):'<p style="font-size:12px;color:var(--t3);font-family:var(--serif);font-style:italic;padding:20px 0">아직 좋아요한 향수가 없어요</p>';
-  const cmpLbl=document.getElementById('compare-count-lbl');
-  if(cmpLbl)cmpLbl.textContent=compareList.length?`비교 중인 향수 ${compareList.length}개`:'비교 중인 향수 없음';
+  document.getElementById('liked-row').innerHTML=likedItems.length?likedItems.map(hcardHTML).join(''):'<p style="font-size:12px;color:var(--t3);font-family:var(--serif);font-style:italic;padding:20px 0">아직 좋아요한 향수가 없어요</p>';
+  const lbl=document.getElementById('compare-count-lbl');
+  if(lbl)lbl.textContent=compareList.length?`비교 중인 향수 ${compareList.length}개`:'비교 중인 향수 없음';
 }
 </script>
 </body>

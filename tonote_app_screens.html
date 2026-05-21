@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<title>TONOTE App Screens</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#F0EDE8;font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{width:210mm;min-height:297mm;margin:0 auto 0;background:#F0EDE8;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;page-break-after:always;position:relative}
+  .page:last-child{page-break-after:avoid}
+
+  /* phone frame */
+  .phone{width:195px;background:#000;border-radius:36px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.28),0 0 0 1.5px #222;position:relative;flex-shrink:0}
+  .phone-notch{width:70px;height:22px;background:#000;border-radius:0 0 14px 14px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10}
+  .phone-screen{width:100%;background:#000;overflow:hidden;border-radius:36px}
+
+  /* page layouts */
+  .row2{display:flex;gap:24px;align-items:flex-start;justify-content:center;width:100%}
+  .row3{display:flex;gap:16px;align-items:flex-start;justify-content:center;width:100%}
+  .row3 .phone{width:160px}
+
+  .page-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8A8078;font-weight:700;margin-bottom:20px;align-self:flex-start;padding-left:4px}
+  .screen-caption{font-size:11px;color:#8A8078;text-align:center;margin-top:10px;letter-spacing:.05em}
+
+  /* cover */
+  .cover-page{background:#000;justify-content:space-between;padding:52px 48px}
+  .cover-top{width:100%;display:flex;justify-content:space-between;align-items:center}
+  .cover-logo{font-family:Georgia,serif;font-size:32px;letter-spacing:.24em;color:#fff;font-weight:400}
+  .cover-badge{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#C8A96E;border:1px solid rgba(200,169,110,.3);padding:5px 12px;border-radius:50px}
+  .cover-center{text-align:left;width:100%}
+  .cover-sub{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C8A96E;font-weight:600;margin-bottom:16px}
+  .cover-h1{font-family:Georgia,serif;font-size:52px;font-weight:400;color:#fff;line-height:1.2;margin-bottom:6px}
+  .cover-h1 em{font-style:italic;color:#C8A96E}
+  .cover-rule{width:52px;height:1px;background:#C8A96E;opacity:.5;margin:22px 0}
+  .cover-desc{font-family:Georgia,serif;font-style:italic;font-size:14px;color:#6A6058;line-height:1.8}
+  .cover-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end}
+  .cover-info{font-size:11px;color:#4A4540;line-height:1.8}
+  .cover-num{font-family:Georgia,serif;font-style:italic;font-size:80px;color:rgba(200,169,110,.12);line-height:1}
+  .cover-glow{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,.06),transparent 65%);top:-100px;right:-80px;pointer-events:none}
+
+  /* ── SPLASH SCREEN ── */
+  .splash-sc{height:380px;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .splash-glow-inner{position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(200,169,110,.09),transparent 65%);top:-40px;left:50%;transform:translateX(-50%)}
+  .splash-oval-box{width:90px;height:66px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+  .splash-oval-box svg{position:absolute;inset:0;width:100%;height:100%}
+  .splash-ic{font-size:32px;position:relative;z-index:1}
+  .splash-logo-txt{font-family:Georgia,serif;font-size:26px;letter-spacing:.24em;color:#fff}
+  .splash-rule-inner{width:40px;height:1px;background:linear-gradient(90deg,transparent,#C8A96E,transparent);opacity:.6;margin:12px 0}
+  .splash-tagline{font-family:Georgia,serif;font-style:italic;font-size:9px;color:rgba(200,169,110,.55);text-align:center;line-height:1.8}
+  .splash-dots-inner{display:flex;gap:5px;margin-top:28px}
+  .splash-dots-inner span{width:5px;height:5px;border-radius:50%;background:rgba(200,169,110,.4)}
+  .splash-dots-inner span:nth-child(2){background:rgba(200,169,110,.7)}
+  .splash-dots-inner span:nth-child(3){background:rgba(200,169,110,.25)}
+
+  /* ── HOME SCREEN ── */
+  .home-sc{height:380px;background:#000;overflow:hidden;display:flex;flex-direction:column}
+  .sc-topbar{padding:12px 14px 8px;display:flex;justify-content:space-between;align-items:center}
+  .sc-logo{font-family:Georgia,serif;font-size:13px;letter-spacing:.18em;color:#fff}
+  .sc-icons{display:flex;gap:6px}
+  .sc-icon{width:24px;height:24px;border-radius:50%;border:1px solid rgba(200,169,110,.2);display:flex;align-items:center;justify-content:center}
+  .sc-hero{padding:6px 14px 10px}
+  .sc-eyebrow{font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:#C8A96E;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+  .sc-eyebrow::before{content:'';display:block;width:10px;height:1px;background:#C8A96E}
+  .sc-h1{font-family:Georgia,serif;font-size:17px;color:#fff;line-height:1.3;margin-bottom:4px}
+  .sc-h1 em{font-style:italic;color:#C8A96E}
+  .sc-p{font-size:7px;color:rgba(255,255,255,.35);line-height:1.6}
+  .ai-mini{margin:4px 14px 10px;background:#161616;border:1px solid rgba(200,169,110,.2);border-radius:12px;padding:9px 10px}
+  .ai-mini-badge{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+  .ai-mini-dot{width:5px;height:5px;border-radius:50%;background:#C8A96E}
+  .ai-mini-txt{font-size:6.5px;letter-spacing:.14em;text-transform:uppercase;color:#C8A96E;font-weight:700}
+  .ai-mini-ph{font-family:Georgia,serif;font-style:italic;font-size:8px;color:rgba(255,255,255,.45);line-height:1.5;margin-bottom:7px}
+  .ai-mini-row{display:flex;justify-content:flex-end}
+  .ai-mini-btn{font-size:7px;font-weight:700;background:#C8A96E;color:#000;padding:4px 9px;border-radius:50px}
+  .mood-mini{display:flex;gap:4px;padding:0 14px 8px;overflow:hidden}
+  .mood-chip-mini{padding:4px 8px;border-radius:50px;font-size:6.5px;font-weight:600;white-space:nowrap}
+  .mood-chip-mini.on{background:#C8A96E;color:#000}
+  .mood-chip-mini.off{border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4)}
+  .vcard-mini{display:flex;margin:0 14px 7px;background:#161616;border:1px solid rgba(200,169,110,.13);border-radius:11px;overflow:hidden}
+  .vcard-mini-vis{width:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px}
+  .vcard-mini-body{padding:8px 8px 8px 2px;flex:1}
+  .vcard-mini-brand{font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:#C8A96E;font-weight:700}
+  .vcard-mini-name{font-family:Georgia,serif;font-size:10px;color:#fff;margin-bottom:3px}
+  .vcard-mini-poem{font-family:Georgia,serif;font-style:italic;font-size:7.5px;color:rgba(255,255,255,.4);line-height:1.5}
+  .sc-bnav{display:flex;background:rgba(5,5,5,.98);border-top:1px solid rgba(200,169,110,.1);padding:6px 0 4px;flex-shrink:0}
+  .sc-bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:6px;color:rgba(255,255,255,.25)}
+  .sc-bni.on{color:#C8A96E}
+  .sc-bni-ic{font-size:11px}
+
+  /* ── EXPLORE SCREEN ── */
+  .explore-sc{height:380px;background:#000;overflow:hidden;display:flex;flex-direction:column}
+  .search-mini{margin:10px 14px;display:flex;align-items:center;gap:6px;background:#161616;border:1px solid rgba(200,169,110,.15);border-radius:10px;padding:8px 10px}
+  .search-placeholder{font-size:8px;color:rgba(255,255,255,.3)}
+  .cat-mini{display:flex;gap:5px;padding:0 14px 10px;overflow:hidden}
+  .cat-chip-mini{padding:4px 9px;border-radius:50px;font-size:6.5px;font-weight:600;white-space:nowrap}
+  .cat-chip-mini.on{background:#C8A96E;color:#000}
+  .cat-chip-mini.off{border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35)}
+  .pgrid-mini{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 14px}
+  .gcard-mini{background:#161616;border:1px solid rgba(200,169,110,.12);border-radius:12px;overflow:hidden}
+  .gcard-mini-top{height:68px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+  .gcard-mini-sample{position:absolute;top:5px;left:5px;font-size:6px;font-weight:700;color:#000;background:#C8A96E;padding:2px 5px;border-radius:50px}
+  .gcard-mini-body{padding:7px}
+  .gcard-mini-brand{font-size:6.5px;letter-spacing:.12em;text-transform:uppercase;color:#C8A96E;font-weight:700}
+  .gcard-mini-name{font-family:Georgia,serif;font-size:9px;color:#fff;margin:1px 0 4px}
+  .gcard-mini-price{font-size:7px;color:rgba(255,255,255,.35)}
+  .gcard-mini-price strong{color:rgba(255,255,255,.7)}
+
+  /* ── AI SCREEN ── */
+  .ai-sc{height:380px;background:#000;display:flex;flex-direction:column;overflow:hidden}
+  .ai-sc-head{padding:10px 14px;border-bottom:1px solid rgba(200,169,110,.12)}
+  .ai-sc-ttl{font-family:Georgia,serif;font-style:italic;font-size:12px;color:#fff}
+  .ai-sc-sub{font-size:7px;color:rgba(255,255,255,.3);margin-top:2px}
+  .chat-mini{flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+  .msg-mini{max-width:85%;padding:8px 10px;border-radius:10px;font-size:8px;line-height:1.6}
+  .msg-mini-bot{background:#161616;border:1px solid rgba(200,169,110,.15);border-radius:3px 10px 10px 10px;color:rgba(255,255,255,.55);font-family:Georgia,serif;font-style:italic;align-self:flex-start}
+  .msg-mini-user{background:linear-gradient(135deg,#C8A96E,#A88040);color:#000;border-radius:10px 3px 10px 10px;align-self:flex-end;font-weight:600}
+  .msg-card-mini{align-self:flex-start;max-width:90%;background:#161616;border:1px solid rgba(200,169,110,.18);border-radius:3px 10px 10px 10px;padding:8px 10px}
+  .msg-card-mini-brand{font-size:6.5px;letter-spacing:.12em;text-transform:uppercase;color:#C8A96E;font-weight:700}
+  .msg-card-mini-name{font-family:Georgia,serif;font-size:10px;color:#fff;margin:2px 0}
+  .msg-card-mini-poem{font-family:Georgia,serif;font-style:italic;font-size:7.5px;color:rgba(255,255,255,.4);line-height:1.5}
+  .typing-mini{display:flex;gap:3px;padding:7px 9px;background:#161616;border-radius:3px 10px 10px 10px;align-self:flex-start;border:1px solid rgba(200,169,110,.12)}
+  .typing-mini span{width:5px;height:5px;border-radius:50%;background:rgba(200,169,110,.5)}
+  .chat-input-mini{padding:8px 14px;border-top:1px solid rgba(200,169,110,.1);display:flex;gap:6px;align-items:center;flex-shrink:0}
+  .chat-ta-mini{flex:1;background:#161616;border:1px solid rgba(200,169,110,.15);border-radius:9px;padding:6px 9px;font-size:8px;color:rgba(255,255,255,.3);font-family:Georgia,serif;font-style:italic}
+  .chat-send-mini{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#C8A96E,#A88040);display:flex;align-items:center;justify-content:center;font-size:12px;color:#000;flex-shrink:0}
+
+  /* ── DETAIL SCREEN ── */
+  .detail-sc{height:380px;background:#000;display:flex;flex-direction:column;overflow:hidden}
+  .det-vis-mini{height:120px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
+  .det-back-mini{position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+  .det-heart-mini{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:12px}
+  .det-body-mini{flex:1;padding:12px 14px;overflow:hidden}
+  .det-brand-mini{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#C8A96E;font-weight:700;margin-bottom:2px}
+  .det-name-mini{font-family:Georgia,serif;font-size:16px;color:#fff;margin-bottom:7px}
+  .det-poem-mini{font-family:Georgia,serif;font-style:italic;font-size:8px;color:rgba(255,255,255,.5);line-height:1.6;padding:8px 10px;background:#161616;border-radius:9px;border-left:2px solid #C8A96E;margin-bottom:10px}
+  .det-tags-mini{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+  .det-tag-mini{font-size:7px;color:rgba(255,255,255,.4);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);padding:2px 7px;border-radius:50px}
+  .det-stats-mini{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:10px}
+  .det-stat-mini{text-align:center}
+  .det-stat-val-mini{font-family:Georgia,serif;font-size:14px;color:#C8A96E}
+  .det-stat-lbl-mini{font-size:7px;color:rgba(255,255,255,.3)}
+  .det-btns-mini{display:flex;gap:7px}
+  .det-btn-gold-mini{flex:1;padding:8px;border-radius:9px;background:linear-gradient(135deg,#C8A96E,#A88040);font-size:8px;font-weight:700;color:#000;text-align:center}
+  .det-btn-out-mini{flex:1;padding:8px;border-radius:9px;border:1px solid #C8A96E;font-size:8px;font-weight:700;color:#C8A96E;text-align:center}
+
+  /* ── COMPARE SCREEN ── */
+  .cmp-sc{height:380px;background:#000;display:flex;flex-direction:column;overflow:hidden}
+  .cmp-head-mini{padding:10px 14px;border-bottom:1px solid rgba(200,169,110,.12)}
+  .cmp-ttl-mini{font-family:Georgia,serif;font-size:13px;color:#fff}
+  .cmp-sub-mini{font-size:7px;color:rgba(255,255,255,.3);margin-top:2px}
+  .cmp-slots-mini{display:flex;gap:8px;padding:10px 14px}
+  .cmp-slot-mini{flex:1;background:#161616;border:1.5px solid #C8A96E;border-radius:12px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .cmp-slot-em-mini{font-size:28px}
+  .cmp-slot-brand-mini{font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:#C8A96E;font-weight:700}
+  .cmp-slot-name-mini{font-family:Georgia,serif;font-size:9px;color:#fff;text-align:center}
+  .cmp-ai-mini{margin:0 14px 8px;background:#161616;border:1px solid rgba(200,169,110,.2);border-left:2px solid #C8A96E;border-radius:10px;padding:9px 10px}
+  .cmp-ai-lbl-mini{font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:#C8A96E;font-weight:700;margin-bottom:5px}
+  .cmp-ai-txt-mini{font-family:Georgia,serif;font-style:italic;font-size:8px;color:rgba(255,255,255,.5);line-height:1.6}
+  .cmp-rows-mini{padding:0 14px;display:flex;flex-direction:column;gap:0}
+  .cmp-row-mini{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .cmp-row-lbl-mini{font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);font-weight:700;width:40px;flex-shrink:0;padding-top:2px}
+  .cmp-cells-mini{flex:1;display:flex;gap:8px}
+  .cmp-cell-mini{flex:1;font-size:8px;color:rgba(255,255,255,.45);line-height:1.5}
+
+  /* ── MY SCREEN ── */
+  .my-sc{height:380px;background:#000;display:flex;flex-direction:column;overflow:hidden}
+  .my-profile-mini{padding:12px 14px 10px;display:flex;align-items:center;gap:10px}
+  .my-avatar-mini{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#1C1C1C,#161616);border:1px solid rgba(200,169,110,.25);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .my-name-mini{font-size:12px;font-weight:700;color:#fff}
+  .my-sub-mini{font-size:7px;color:rgba(255,255,255,.35);margin-top:2px}
+  .my-stats-mini{display:flex;gap:1px;background:rgba(200,169,110,.1);margin:0 14px 10px;border-radius:12px;overflow:hidden}
+  .my-stat-mini{flex:1;background:#161616;padding:10px;text-align:center}
+  .my-stat-num-mini{font-family:Georgia,serif;font-size:16px;color:#C8A96E}
+  .my-stat-lbl-mini{font-size:7px;color:rgba(255,255,255,.3);margin-top:2px}
+  .persona-mini{margin:0 14px 10px;background:#161616;border:1px solid rgba(200,169,110,.25);border-radius:12px;padding:10px;display:flex;align-items:center;gap:9px}
+  .persona-ic-mini{width:36px;height:36px;border-radius:9px;background:rgba(200,169,110,.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .persona-name-mini{font-size:10px;font-weight:800;color:#fff}
+  .persona-desc-mini{font-size:7px;color:rgba(255,255,255,.4);margin-top:2px;line-height:1.5}
+  .my-menus-mini{padding:0 14px;display:flex;flex-direction:column}
+  .my-menu-mini{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .my-menu-left-mini{display:flex;align-items:center;gap:8px}
+  .my-menu-ic-mini{font-size:13px}
+  .my-menu-lbl-mini{font-size:9px;color:rgba(255,255,255,.7)}
+  .my-menu-arr-mini{font-size:11px;color:rgba(255,255,255,.25)}
+
+  /* ── SPACES ── */
+  .spaces-sc{height:380px;background:#000;display:flex;flex-direction:column;overflow:hidden}
+  .spaces-hero-mini{padding:10px 14px 12px}
+  .spaces-h2-mini{font-family:Georgia,serif;font-size:17px;color:#fff;margin-bottom:4px}
+  .spaces-h2-mini em{font-style:italic;color:#C8A96E}
+  .spaces-p-mini{font-size:7.5px;color:rgba(255,255,255,.35);line-height:1.6}
+  .space-card-mini{display:flex;gap:9px;background:#161616;border:1px solid rgba(200,169,110,.12);border-radius:12px;padding:10px;margin:0 14px 8px;align-items:flex-start}
+  .space-emoji-mini{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .space-info-mini{flex:1}
+  .space-name-mini{font-size:9.5px;font-weight:700;color:#fff}
+  .space-addr-mini{font-size:7px;color:rgba(255,255,255,.35);margin:1px 0 5px}
+  .pressure-mini{display:flex;align-items:center;gap:4px}
+  .pdot-mini{width:6px;height:6px;border-radius:50%}
+  .pdot-mini.on{background:#C8A96E}.pdot-mini.off{background:#222}
+  .pv-mini{font-size:7px;font-weight:700;color:#C8A96E}
+
+  @media print{
+    body{background:#F0EDE8}
+    .page{margin:0;box-shadow:none}
+  }
+  @media screen{
+    body{padding:20px 0}
+    .page{box-shadow:0 4px 24px rgba(0,0,0,.1);border-radius:4px;margin-bottom:16px}
+    #print-btn{position:fixed;top:20px;right:20px;z-index:999;background:#C8A96E;color:#000;font-size:13px;font-weight:700;padding:12px 22px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(200,169,110,.4)}
+  }
+</style>
+</head>
+<body>
+<button id="print-btn" onclick="window.print()">PDF로 저장 ↓</button>
+
+<!-- ══ P1 · COVER ══ -->
+<div class="page cover-page">
+  <div class="cover-glow"></div>
+  <div class="cover-top">
+    <span class="cover-logo">TONOTE</span>
+    <span class="cover-badge">App Screen Design</span>
+  </div>
+  <div class="cover-center">
+    <p class="cover-sub">✦ 향수 추천 앱 화면 디자인</p>
+    <h1 class="cover-h1">감정이<br><em>향이 되는</em><br>경험</h1>
+    <div class="cover-rule"></div>
+    <p class="cover-desc">
+      전문 용어 없이, 직원 눈치 없이.<br>
+      AI가 감정을 향수로 번역해드립니다.
+    </p>
+  </div>
+  <div class="cover-footer">
+    <div class="cover-info">
+      <div style="color:rgba(200,169,110,.6);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">UCD 수업 프로젝트 · 8조</div>
+      <div style="color:#4A4540">노윤송 · 배연주</div>
+      <div style="color:#4A4540;font-size:11px;margin-top:2px">2026. 05</div>
+    </div>
+    <span class="cover-num">01</span>
+  </div>
+</div>
+
+<!-- ══ P2 · SPLASH + HOME ══ -->
+<div class="page">
+  <p class="page-label">Splash & Home Screen</p>
+  <div class="row2">
+
+    <!-- Splash -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="splash-sc">
+            <div class="splash-glow-inner"></div>
+            <div class="splash-oval-box">
+              <svg viewBox="0 0 90 66"><ellipse cx="45" cy="33" rx="40" ry="28" stroke="rgba(200,169,110,.7)" stroke-width="1" fill="none"/><ellipse cx="45" cy="33" rx="32" ry="22" stroke="rgba(200,169,110,.25)" stroke-width=".7" fill="none"/></svg>
+              <span class="splash-ic">🌿</span>
+            </div>
+            <p class="splash-logo-txt">TONOTE</p>
+            <div class="splash-rule-inner"></div>
+            <div class="splash-tagline">
+              <p>당신의 기억 속에 잠든 향을,</p>
+              <p>오늘 다시 꺼내드립니다.</p>
+            </div>
+            <div class="splash-dots-inner"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">스플래시</p>
+    </div>
+
+    <!-- Home -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="home-sc">
+            <div class="sc-topbar">
+              <span class="sc-logo">TONOTE</span>
+              <div class="sc-icons"><div class="sc-icon" style="font-size:9px">📦</div><div class="sc-icon" style="font-size:9px">🔔</div></div>
+            </div>
+            <div class="sc-hero">
+              <p class="sc-eyebrow">AI 퍼스널 센트 큐레이터</p>
+              <p class="sc-h1">오늘의 감정이<br><em>향이 됩니다.</em></p>
+              <p class="sc-p">감정을 말하면, AI가 그 순간에 어울리는 향수를 시로 건네드립니다.</p>
+            </div>
+            <div class="ai-mini">
+              <div class="ai-mini-badge"><div class="ai-mini-dot"></div><span class="ai-mini-txt">Scent AI · 대화 중</span></div>
+              <p class="ai-mini-ph">"오늘은 왠지 조용한 곳에서<br>혼자 있고 싶어..."</p>
+              <div class="ai-mini-row"><span class="ai-mini-btn">향 찾기 →</span></div>
+            </div>
+            <div class="mood-mini">
+              <span class="mood-chip-mini on">전체</span>
+              <span class="mood-chip-mini off">🌧️ 비 오는 날</span>
+              <span class="mood-chip-mini off">🌿 고요한 숲</span>
+            </div>
+            <div class="vcard-mini">
+              <div class="vcard-mini-vis" style="background:linear-gradient(135deg,#191511,#2C231A)">🌿</div>
+              <div class="vcard-mini-body">
+                <p class="vcard-mini-brand">LE LABO</p>
+                <p class="vcard-mini-name">Santal 33</p>
+                <p class="vcard-mini-poem">비 온 뒤 숲 속 오솔길,<br>젖은 나무의 조용한 숨결</p>
+              </div>
+            </div>
+            <div class="vcard-mini">
+              <div class="vcard-mini-vis" style="background:linear-gradient(135deg,#17121A,#261B2C)">🪷</div>
+              <div class="vcard-mini-body">
+                <p class="vcard-mini-brand">BYREDO</p>
+                <p class="vcard-mini-name">Mojave Ghost</p>
+                <p class="vcard-mini-poem">아무도 없는 새벽,<br>창문을 스치는 서늘한 공기</p>
+              </div>
+            </div>
+            <div class="sc-bnav">
+              <div class="sc-bni on"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">홈</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ P3 · EXPLORE + AI CHAT ══ -->
+<div class="page">
+  <p class="page-label">Explore & AI Chat Screen</p>
+  <div class="row2">
+
+    <!-- Explore -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="explore-sc">
+            <div class="sc-topbar"><span class="sc-logo" style="font-size:11px">탐색</span></div>
+            <div class="search-mini">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span class="search-placeholder">향수 이름, 브랜드, 감성 태그...</span>
+            </div>
+            <div class="cat-mini">
+              <span class="cat-chip-mini on">전체</span>
+              <span class="cat-chip-mini off">🌿 우디</span>
+              <span class="cat-chip-mini off">🌸 플로럴</span>
+              <span class="cat-chip-mini off">🍊 프루티</span>
+            </div>
+            <div class="pgrid-mini">
+              <div class="gcard-mini">
+                <div class="gcard-mini-top" style="background:linear-gradient(135deg,#191511,#2C231A)">🌿<span class="gcard-mini-sample">샘플</span></div>
+                <div class="gcard-mini-body"><p class="gcard-mini-brand">LE LABO</p><p class="gcard-mini-name">Santal 33</p><p class="gcard-mini-price">샘플 <strong>₩4,500</strong></p></div>
+              </div>
+              <div class="gcard-mini">
+                <div class="gcard-mini-top" style="background:linear-gradient(135deg,#17121A,#261B2C)">🪷<span class="gcard-mini-sample">샘플</span></div>
+                <div class="gcard-mini-body"><p class="gcard-mini-brand">BYREDO</p><p class="gcard-mini-name">Mojave Ghost</p><p class="gcard-mini-price">샘플 <strong>₩4,000</strong></p></div>
+              </div>
+              <div class="gcard-mini">
+                <div class="gcard-mini-top" style="background:linear-gradient(135deg,#121618,#1A2224)">🌊<span class="gcard-mini-sample">샘플</span></div>
+                <div class="gcard-mini-body"><p class="gcard-mini-brand">JO MALONE</p><p class="gcard-mini-name">Wood Sage & Sea Salt</p><p class="gcard-mini-price">샘플 <strong>₩2,800</strong></p></div>
+              </div>
+              <div class="gcard-mini">
+                <div class="gcard-mini-top" style="background:linear-gradient(135deg,#1A1210,#281A10)">🕯️<span class="gcard-mini-sample">샘플</span></div>
+                <div class="gcard-mini-body"><p class="gcard-mini-brand">MAISON MARGIELA</p><p class="gcard-mini-name">By The Fireplace</p><p class="gcard-mini-price">샘플 <strong>₩3,200</strong></p></div>
+              </div>
+            </div>
+            <div class="sc-bnav">
+              <div class="sc-bni"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni on"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">탐색</p>
+    </div>
+
+    <!-- AI Chat -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ai-sc">
+            <div class="ai-sc-head"><p class="ai-sc-ttl">나의 향을 찾아서</p><p class="ai-sc-sub">감정을 말하면 향수로 번역해드려요</p></div>
+            <div class="chat-mini">
+              <div class="msg-mini msg-mini-bot">지금 이 순간, 어떤 감정이나 장면이 떠오르시나요? 기억 속 한 장면이어도 좋아요.</div>
+              <div class="msg-mini msg-mini-user">비 오는 날 서점 창가, 그 느낌이 그리워</div>
+              <div class="typing-mini"><span></span><span style="opacity:.6"></span><span style="opacity:.3"></span></div>
+              <div class="msg-mini msg-mini-bot">그 장면이 선명하게 그려져요. 촉촉하고 투명한 향이 어울릴 것 같아요.</div>
+              <div class="msg-card-mini">
+                <p class="msg-card-mini-brand">LE LABO</p>
+                <p class="msg-card-mini-name">🌿 Santal 33</p>
+                <p class="msg-card-mini-poem">"비 온 뒤 숲 속 오솔길, 젖은 나무의 조용한 숨결"</p>
+              </div>
+              <div class="msg-card-mini">
+                <p class="msg-card-mini-brand">DIPTYQUE</p>
+                <p class="msg-card-mini-name">🪵 Philosykos</p>
+                <p class="msg-card-mini-poem">"무화과 나무 그늘 아래, 시간이 멈춘 여름 오후"</p>
+              </div>
+            </div>
+            <div class="chat-input-mini">
+              <div class="chat-ta-mini">지금 이 순간을 표현해 보세요...</div>
+              <div class="chat-send-mini">→</div>
+            </div>
+            <div class="sc-bnav">
+              <div class="sc-bni"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni on"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">AI 향수 큐레이터</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ P4 · DETAIL + COMPARE ══ -->
+<div class="page">
+  <p class="page-label">Detail & Compare Screen</p>
+  <div class="row2">
+
+    <!-- Detail -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="detail-sc">
+            <div class="det-vis-mini" style="background:linear-gradient(135deg,#191511,#2C231A)">
+              🌿
+              <div class="det-back-mini">‹</div>
+              <div class="det-heart-mini">❤️</div>
+            </div>
+            <div class="det-body-mini">
+              <p class="det-brand-mini">LE LABO</p>
+              <p class="det-name-mini">Santal 33</p>
+              <p class="det-poem-mini">비 온 뒤 숲 속 오솔길, 젖은 나무의 조용한 숨결</p>
+              <div class="det-tags-mini">
+                <span class="det-tag-mini">고요한</span>
+                <span class="det-tag-mini">우디</span>
+                <span class="det-tag-mini">가을·겨울</span>
+                <span class="det-tag-mini" style="color:#C8A96E;border-color:rgba(200,169,110,.3)">가을</span>
+              </div>
+              <div class="det-stats-mini">
+                <div class="det-stat-mini"><p class="det-stat-val-mini">4.8</p><p class="det-stat-lbl-mini">평점</p></div>
+                <div class="det-stat-mini"><p class="det-stat-val-mini">5/5</p><p class="det-stat-lbl-mini">지속력</p></div>
+                <div class="det-stat-mini"><p class="det-stat-val-mini">3/5</p><p class="det-stat-lbl-mini">확산력</p></div>
+              </div>
+              <div class="det-btns-mini">
+                <div class="det-btn-gold-mini">📦 샘플 신청</div>
+                <div class="det-btn-out-mini">⚖️ 비교 추가</div>
+              </div>
+            </div>
+            <div class="sc-bnav">
+              <div class="sc-bni"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">향수 상세</p>
+    </div>
+
+    <!-- Compare -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="cmp-sc">
+            <div class="cmp-head-mini"><p class="cmp-ttl-mini">향수 비교</p><p class="cmp-sub-mini">두 향수의 차이를 감성 언어로</p></div>
+            <div class="cmp-slots-mini">
+              <div class="cmp-slot-mini"><span class="cmp-slot-em-mini">🌿</span><p class="cmp-slot-brand-mini">LE LABO</p><p class="cmp-slot-name-mini">Santal 33</p></div>
+              <div class="cmp-slot-mini"><span class="cmp-slot-em-mini">🪷</span><p class="cmp-slot-brand-mini">BYREDO</p><p class="cmp-slot-name-mini">Mojave Ghost</p></div>
+            </div>
+            <div class="cmp-ai-mini">
+              <p class="cmp-ai-lbl-mini">✦ AI 비교 한 줄 요약</p>
+              <p class="cmp-ai-txt-mini">Santal 33이 더 우디하고 지속력이 강하다면, Mojave Ghost는 더 가볍고 일상적으로 쓰기 좋아요.</p>
+            </div>
+            <div class="cmp-rows-mini">
+              <div class="cmp-row-mini"><span class="cmp-row-lbl-mini">계절</span><div class="cmp-cells-mini"><p class="cmp-cell-mini">가을, 겨울</p><p class="cmp-cell-mini">봄, 가을</p></div></div>
+              <div class="cmp-row-mini"><span class="cmp-row-lbl-mini">지속력</span><div class="cmp-cells-mini"><p class="cmp-cell-mini">5/5</p><p class="cmp-cell-mini">4/5</p></div></div>
+              <div class="cmp-row-mini"><span class="cmp-row-lbl-mini">샘플</span><div class="cmp-cells-mini"><p class="cmp-cell-mini">₩4,500</p><p class="cmp-cell-mini">₩4,000</p></div></div>
+              <div class="cmp-row-mini"><span class="cmp-row-lbl-mini">평점</span><div class="cmp-cells-mini"><p class="cmp-cell-mini">★ 4.8</p><p class="cmp-cell-mini">★ 4.7</p></div></div>
+            </div>
+            <div class="sc-bnav" style="margin-top:auto">
+              <div class="sc-bni"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">비교 모드</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ P5 · SPACES + MY ══ -->
+<div class="page">
+  <p class="page-label">시향 공간 & 마이 페이지</p>
+  <div class="row2">
+
+    <!-- Spaces -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="spaces-sc">
+            <div class="sc-topbar"><span class="sc-logo" style="font-size:11px">시향 공간</span></div>
+            <div class="spaces-hero-mini">
+              <p style="font-size:7px;letter-spacing:.18em;text-transform:uppercase;color:#C8A96E;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:10px;height:1px;background:#C8A96E"></span>내 주변</p>
+              <p class="spaces-h2-mini">직원 압박 없이<br><em>자유롭게</em></p>
+              <p class="spaces-p-mini">셀프 시향이 가능한 공간만 모았어요.</p>
+            </div>
+            <div class="space-card-mini">
+              <div class="space-emoji-mini" style="background:#E8F0E8">🌿</div>
+              <div class="space-info-mini">
+                <p class="space-name-mini">올리브영 홍대점</p>
+                <p class="space-addr-mini">📍 마포구 · 도보 8분</p>
+                <div class="pressure-mini">
+                  <div class="pdot-mini on"></div><div class="pdot-mini off"></div><div class="pdot-mini off"></div>
+                  <span class="pv-mini" style="margin-left:4px">낮음</span>
+                </div>
+              </div>
+              <span style="font-size:8px;font-weight:700;color:#64BE78;background:rgba(100,190,120,.12);border:1px solid rgba(100,190,120,.2);padding:3px 7px;border-radius:50px">영업중</span>
+            </div>
+            <div class="space-card-mini">
+              <div class="space-emoji-mini" style="background:#F0EAF5">🪷</div>
+              <div class="space-info-mini">
+                <p class="space-name-mini">향수 팝업 — 성수</p>
+                <p class="space-addr-mini">📍 성동구 · D-3</p>
+                <div class="pressure-mini">
+                  <div class="pdot-mini on"></div><div class="pdot-mini off"></div><div class="pdot-mini off"></div>
+                  <span class="pv-mini" style="margin-left:4px">낮음</span>
+                </div>
+              </div>
+              <span style="font-size:8px;font-weight:700;color:#C8A96E;background:rgba(200,169,110,.12);border:1px solid rgba(200,169,110,.2);padding:3px 7px;border-radius:50px">팝업</span>
+            </div>
+            <div class="space-card-mini">
+              <div class="space-emoji-mini" style="background:#FAEEE3">💄</div>
+              <div class="space-info-mini">
+                <p class="space-name-mini">세포라 강남점</p>
+                <p class="space-addr-mini">📍 강남구 · 지하철 20분</p>
+                <div class="pressure-mini">
+                  <div class="pdot-mini on"></div><div class="pdot-mini on"></div><div class="pdot-mini off"></div>
+                  <span class="pv-mini" style="margin-left:4px;color:#C4907A">보통</span>
+                </div>
+              </div>
+              <span style="font-size:8px;font-weight:700;color:#64BE78;background:rgba(100,190,120,.12);border:1px solid rgba(100,190,120,.2);padding:3px 7px;border-radius:50px">영업중</span>
+            </div>
+            <div class="sc-bnav">
+              <div class="sc-bni"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni on"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">시향 공간</p>
+    </div>
+
+    <!-- My -->
+    <div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="my-sc">
+            <div class="sc-topbar"><span class="sc-logo" style="font-size:11px">마이</span></div>
+            <div class="my-profile-mini">
+              <div class="my-avatar-mini">🌿</div>
+              <div><p class="my-name-mini">김지은</p><p class="my-sub-mini">향수 탐색 14일째 · 그린 우드 드리머</p></div>
+            </div>
+            <div class="my-stats-mini">
+              <div class="my-stat-mini"><p class="my-stat-num-mini">3</p><p class="my-stat-lbl-mini">좋아요</p></div>
+              <div class="my-stat-mini"><p class="my-stat-num-mini">2</p><p class="my-stat-lbl-mini">샘플 신청</p></div>
+              <div class="my-stat-mini"><p class="my-stat-num-mini">5</p><p class="my-stat-lbl-mini">리뷰</p></div>
+            </div>
+            <div class="persona-mini">
+              <div class="persona-ic-mini">🌿</div>
+              <div>
+                <p class="persona-name-mini">그린 우드 드리머</p>
+                <p class="persona-desc-mini">촉촉한 숲, 비 온 뒤 흙냄새를 좋아하는 유형</p>
+              </div>
+            </div>
+            <div class="my-menus-mini">
+              <div class="my-menu-mini"><div class="my-menu-left-mini"><span class="my-menu-ic-mini">📦</span><p class="my-menu-lbl-mini">샘플 키트 신청</p></div><span class="my-menu-arr-mini">›</span></div>
+              <div class="my-menu-mini"><div class="my-menu-left-mini"><span class="my-menu-ic-mini">⚖️</span><p class="my-menu-lbl-mini">비교 목록</p></div><span class="my-menu-arr-mini">›</span></div>
+              <div class="my-menu-mini"><div class="my-menu-left-mini"><span class="my-menu-ic-mini">📍</span><p class="my-menu-lbl-mini">방문한 시향 공간</p></div><span class="my-menu-arr-mini">›</span></div>
+              <div class="my-menu-mini"><div class="my-menu-left-mini"><span class="my-menu-ic-mini">⚙️</span><p class="my-menu-lbl-mini">설정</p></div><span class="my-menu-arr-mini">›</span></div>
+            </div>
+            <div class="sc-bnav" style="margin-top:auto">
+              <div class="sc-bni"><span class="sc-bni-ic">✦</span><span>홈</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">🔍</span><span>탐색</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">✨</span><span>AI</span></div>
+              <div class="sc-bni"><span class="sc-bni-ic">📍</span><span>시향</span></div>
+              <div class="sc-bni on"><span class="sc-bni-ic">👤</span><span>마이</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="screen-caption">마이 페이지</p>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
