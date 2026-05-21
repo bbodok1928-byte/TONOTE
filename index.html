@@ -81,8 +81,8 @@ input,textarea{font-family:inherit;outline:none}
 .bni.on .bni-bar{opacity:1}
 
 /* ── SHARED COMPONENTS ───────────────────── */
-.top-bar{position:sticky;top:0;z-index:20;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--bg) 65%,transparent);flex-shrink:0}
-.bar-logo{font-family:var(--serif);font-size:20px;letter-spacing:.2em;color:var(--t1)}
+.top-bar{position:sticky;top:0;z-index:20;padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--bd);flex-shrink:0}
+.bar-logo{font-family:var(--sans);font-size:22px;font-weight:900;letter-spacing:-.03em;color:var(--t1)}
 .bar-right{display:flex;gap:9px}
 .ibt{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--s1);display:flex;align-items:center;justify-content:center;color:var(--t2);transition:all .2s;box-shadow:var(--shadow)}
 .ibt:hover{border-color:var(--primary);color:var(--primary)}
@@ -115,20 +115,14 @@ input,textarea{font-family:inherit;outline:none}
 .obtn:hover{background:var(--primary-soft)}
 
 /* ── HOME ─────────────────────────────────── */
-.hero{padding:4px 20px 26px}
-.hero h1{font-family:var(--serif);font-size:32px;font-weight:400;line-height:1.32;color:var(--t1);margin-bottom:8px}
-.hero h1 em{font-style:italic;color:var(--primary)}
+.hero{padding:2px 20px 20px}
+.hero h1{font-family:var(--sans);font-size:26px;font-weight:800;line-height:1.28;color:var(--t1);margin-bottom:0;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--primary)}
 .hero p{font-size:13px;color:var(--t3);line-height:1.8}
 
-.ai-card{position:relative;overflow:hidden;border-radius:22px;border:1.5px solid rgba(176,116,102,.25);background:linear-gradient(135deg,#FFF8F5 0%,#FFF5F0 100%);padding:20px 18px 16px;cursor:pointer;transition:box-shadow .3s,border-color .3s;margin:0 20px 28px;box-shadow:0 4px 20px rgba(176,116,102,.1)}
-.ai-card:hover{box-shadow:0 8px 30px rgba(176,116,102,.18);border-color:rgba(176,116,102,.4)}
-.ai-orb{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(176,116,102,.08),transparent 70%);top:-60px;right:-44px;animation:orbf 5s ease-in-out infinite;pointer-events:none}
-@keyframes orbf{0%,100%{transform:translate(0,0)}50%{transform:translate(-10px,12px)}}
-.ai-badge{display:flex;align-items:center;gap:6px;margin-bottom:12px}
-.ai-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);animation:pulse 2.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(176,116,102,.35)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(176,116,102,0)}}
-.ai-badge-txt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);font-weight:700}
-.ai-ph{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--t2);line-height:1.65;min-height:48px;margin-bottom:18px;transition:opacity .35s}
+.ai-card{position:relative;overflow:hidden;border-radius:16px;border:1.5px solid var(--bd);background:var(--s1);padding:18px 18px 14px;cursor:pointer;transition:box-shadow .3s,border-color .3s;margin:0 20px 24px;box-shadow:var(--shadow)}
+.ai-card:hover{box-shadow:var(--shadow-m);border-color:var(--bdh)}
+.ai-ph{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--t2);line-height:1.65;min-height:44px;margin-bottom:14px;transition:opacity .35s}
 .ai-row{display:flex;align-items:center;justify-content:space-between}
 .ai-hint{font-size:11px;color:var(--t3)}
 
@@ -394,7 +388,7 @@ input,textarea{font-family:inherit;outline:none}
     <!-- ── HOME ── -->
     <div class="screen active" id="screen-home">
       <div class="top-bar">
-        <span class="bar-logo">TONOTE</span>
+        <span class="bar-logo">tonote</span>
         <div class="bar-right">
           <button class="ibt" onclick="openSample()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10H3M16 2l5 8-5 8M8 2L3 10l5 8"/></svg>
@@ -406,16 +400,13 @@ input,textarea{font-family:inherit;outline:none}
       </div>
 
       <div class="hero">
-        <p class="eyebrow">AI 퍼스널 센트 큐레이터</p>
         <h1>오늘의 감정이<br><em>향이 됩니다.</em></h1>
       </div>
 
       <div class="ai-card" onclick="switchTab('ai')">
-        <div class="ai-orb"></div>
-        <div class="ai-badge"><div class="ai-dot"></div><span class="ai-badge-txt">Scent AI · 대화 중</span></div>
         <p class="ai-ph" id="ai-ph">"오늘은 왠지 조용한 곳에서 혼자 있고 싶어..."</p>
         <div class="ai-row">
-          <span class="ai-hint">감정, 기억, 장면을 말해보세요</span>
+          <span class="ai-hint">감정이나 상황을 말해보세요</span>
           <button class="gbtn" onclick="event.stopPropagation();switchTab('ai')">향 찾기 →</button>
         </div>
       </div>
@@ -617,13 +608,13 @@ const PERFUMES=[
    longevity:3,sillage:2,price:175000,samplePrice:2800,sampleAvail:true,rating:4.6,reviews:2341,
    top:['바다 소금','세이지'],mid:['암브렛씨드'],base:['드리프트우드','머스크'],
    desc:'영국 해안가 절벽에서 맞는 바람. 세이지와 바다 소금이 만들어내는 상쾌하고 자연스러운 향.',similar:[7,9,12]},
-  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=300&q=80',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
+  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',img:'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=300&q=80',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
    poem:'겨울 밤 벽난로 앞, 따뜻한 커피 한 잔',
    moods:['늦은 밤','카페 오후'],tags:['따뜻한','스모키','겨울'],cat:'우디',season:['가을','겨울'],
    longevity:4,sillage:3,price:198000,samplePrice:3200,sampleAvail:true,rating:4.9,reviews:3102,
    top:['클로브','오렌지'],mid:['체스트넛','구아이악 우드'],base:['바닐라','캐시미어'],
    desc:'겨울 저녁 벽난로에서 타오르는 나무 연기와 바닐라의 달콤함. 포근함을 향으로 만든다.',similar:[1,13,14]},
-  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',img:'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=300&q=80',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
+  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=300&q=80',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
    poem:'무화과 나무 그늘 아래, 시간이 멈춘 여름 오후',
    moods:['고요한 숲','카페 오후'],tags:['그린','무화과','여름'],cat:'우디',season:['여름'],
    longevity:3,sillage:2,price:212000,samplePrice:3500,sampleAvail:true,rating:4.7,reviews:987,
@@ -635,19 +626,19 @@ const PERFUMES=[
    longevity:3,sillage:2,price:98000,samplePrice:1800,sampleAvail:true,rating:4.4,reviews:1456,
    top:['베르가못'],mid:['코튼 플라워','오존'],base:['머스크','화이트 우드'],
    desc:'방금 세탁해 햇살에 말린 흰 면 소재의 냄새. 가장 깨끗하고 편안한 향수로 입문자에게 최적.',similar:[3,9,10]},
-  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',img:'https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=300&q=80',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
+  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',img:'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=300&q=80',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
    poem:'봄 카페 창가, 달콤한 바람에 실려오는 꽃향기',
    moods:['봄 산책','카페 오후'],tags:['플로럴','달콤한','봄'],cat:'플로럴',season:['봄','여름'],
    longevity:4,sillage:3,price:195000,samplePrice:3200,sampleAvail:false,rating:4.8,reviews:5621,
    top:['자몽','쿼이드 드 로즈'],mid:['자스민','하이아신스'],base:['화이트 머스크','베티버'],
    desc:'샤넬 찬스 라인의 가장 맑고 여린 향. 화사하지만 과하지 않아 첫 향수로 가장 많이 추천됨.',similar:[10,11,12]},
-  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',img:'https://images.unsplash.com/photo-1619994121345-b61cd610c5a6?w=300&q=80',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
+  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',img:'https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=300&q=80',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
    poem:'저녁 시장골목, 향신료와 연기가 뒤섞이는 공기',
    moods:['늦은 밤','바다 바람'],tags:['스파이시','우디','가을'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:4,price:185000,samplePrice:3000,sampleAvail:true,rating:4.6,reviews:643,
    top:['코리앤더','카다멈'],mid:['쿠민','패출리'],base:['샌달우드','시더','앰버'],
    desc:'모로코 마라케시의 밤. 향신료와 나무가 어우러진 짙고 이국적인 향.',similar:[4,1,14]},
-  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',img:'https://images.unsplash.com/photo-1587830023934-e96f87aa7aed?w=300&q=80',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
+  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',img:'https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=300&q=80',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
    poem:'새벽 연못 위 이슬, 맑고 차갑게 맺힌 물방울',
    moods:['바다 바람','봄 산책'],tags:['아쿠아틱','청량한','사계절'],cat:'아쿠아틱',season:['봄','여름','가을'],
    longevity:3,sillage:2,price:128000,samplePrice:2200,sampleAvail:true,rating:4.5,reviews:3876,
