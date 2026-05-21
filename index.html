@@ -155,7 +155,7 @@ input,textarea{font-family:inherit;outline:none}
 .hcard{flex:0 0 148px;border-radius:18px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
 .hcard:active{transform:scale(.98)}
 .hcard:hover{box-shadow:var(--shadow-m)}
-.hcard-top{height:118px;display:flex;align-items:center;justify-content:center;font-size:50px;position:relative}
+.hcard-top{height:118px;display:flex;align-items:center;justify-content:center;font-size:50px;position:relative;overflow:hidden}
 .hcard-heart{position:absolute;top:8px;right:8px;font-size:15px;cursor:pointer}
 .hcard-body{padding:11px}
 .hcard-brand{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
@@ -408,7 +408,6 @@ input,textarea{font-family:inherit;outline:none}
       <div class="hero">
         <p class="eyebrow">AI 퍼스널 센트 큐레이터</p>
         <h1>오늘의 감정이<br><em>향이 됩니다.</em></h1>
-        <p>감정을 말하면, AI가 그 순간에 어울리는<br>향수를 시(詩)로 건네드립니다.</p>
       </div>
 
       <div class="ai-card" onclick="switchTab('ai')">
@@ -618,37 +617,37 @@ const PERFUMES=[
    longevity:3,sillage:2,price:175000,samplePrice:2800,sampleAvail:true,rating:4.6,reviews:2341,
    top:['바다 소금','세이지'],mid:['암브렛씨드'],base:['드리프트우드','머스크'],
    desc:'영국 해안가 절벽에서 맞는 바람. 세이지와 바다 소금이 만들어내는 상쾌하고 자연스러운 향.',similar:[7,9,12]},
-  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
+  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=300&q=80',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
    poem:'겨울 밤 벽난로 앞, 따뜻한 커피 한 잔',
    moods:['늦은 밤','카페 오후'],tags:['따뜻한','스모키','겨울'],cat:'우디',season:['가을','겨울'],
    longevity:4,sillage:3,price:198000,samplePrice:3200,sampleAvail:true,rating:4.9,reviews:3102,
    top:['클로브','오렌지'],mid:['체스트넛','구아이악 우드'],base:['바닐라','캐시미어'],
    desc:'겨울 저녁 벽난로에서 타오르는 나무 연기와 바닐라의 달콤함. 포근함을 향으로 만든다.',similar:[1,13,14]},
-  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
+  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',img:'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=300&q=80',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
    poem:'무화과 나무 그늘 아래, 시간이 멈춘 여름 오후',
    moods:['고요한 숲','카페 오후'],tags:['그린','무화과','여름'],cat:'우디',season:['여름'],
    longevity:3,sillage:2,price:212000,samplePrice:3500,sampleAvail:true,rating:4.7,reviews:987,
    top:['무화과 잎','목화'],mid:['무화과 나무'],base:['화이트 시더'],
    desc:'딥티크의 대표작. 무화과 나무의 우유빛 수액부터 잎과 열매까지, 나무 한 그루를 통째로 담은 향.',similar:[1,8,11]},
-  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
+  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',img:'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=300&q=80',bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
    poem:'햇살 아래 바람에 말린 흰 린넨 이불',
    moods:['봄 산책','카페 오후'],tags:['클린','머스크','봄'],cat:'머스크',season:['봄','여름'],
    longevity:3,sillage:2,price:98000,samplePrice:1800,sampleAvail:true,rating:4.4,reviews:1456,
    top:['베르가못'],mid:['코튼 플라워','오존'],base:['머스크','화이트 우드'],
    desc:'방금 세탁해 햇살에 말린 흰 면 소재의 냄새. 가장 깨끗하고 편안한 향수로 입문자에게 최적.',similar:[3,9,10]},
-  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
+  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',img:'https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=300&q=80',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
    poem:'봄 카페 창가, 달콤한 바람에 실려오는 꽃향기',
    moods:['봄 산책','카페 오후'],tags:['플로럴','달콤한','봄'],cat:'플로럴',season:['봄','여름'],
    longevity:4,sillage:3,price:195000,samplePrice:3200,sampleAvail:false,rating:4.8,reviews:5621,
    top:['자몽','쿼이드 드 로즈'],mid:['자스민','하이아신스'],base:['화이트 머스크','베티버'],
    desc:'샤넬 찬스 라인의 가장 맑고 여린 향. 화사하지만 과하지 않아 첫 향수로 가장 많이 추천됨.',similar:[10,11,12]},
-  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
+  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',img:'https://images.unsplash.com/photo-1619994121345-b61cd610c5a6?w=300&q=80',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
    poem:'저녁 시장골목, 향신료와 연기가 뒤섞이는 공기',
    moods:['늦은 밤','바다 바람'],tags:['스파이시','우디','가을'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:4,price:185000,samplePrice:3000,sampleAvail:true,rating:4.6,reviews:643,
    top:['코리앤더','카다멈'],mid:['쿠민','패출리'],base:['샌달우드','시더','앰버'],
    desc:'모로코 마라케시의 밤. 향신료와 나무가 어우러진 짙고 이국적인 향.',similar:[4,1,14]},
-  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
+  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',img:'https://images.unsplash.com/photo-1587830023934-e96f87aa7aed?w=300&q=80',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
    poem:'새벽 연못 위 이슬, 맑고 차갑게 맺힌 물방울',
    moods:['바다 바람','봄 산책'],tags:['아쿠아틱','청량한','사계절'],cat:'아쿠아틱',season:['봄','여름','가을'],
    longevity:3,sillage:2,price:128000,samplePrice:2200,sampleAvail:true,rating:4.5,reviews:3876,
@@ -759,9 +758,12 @@ function vcardHTML(p){
 }
 
 function hcardHTML(p){
+  const topInner = p.img
+    ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:0" onerror="this.style.display='none';this.parentNode.style.fontSize='44px';this.parentNode.dataset.emoji='${p.emoji}';this.parentNode.innerHTML='${p.emoji}<span class=hcard-heart onclick=\\'event.stopPropagation();toggleLike(${p.id},this)\\'>${liked.has(p.id)?'❤️':'🤍'}</span>'">`
+    : p.emoji;
   return `<div class="hcard" onclick="openDetail(${p.id})">
-    <div class="hcard-top" style="background:${p.bg}">${p.emoji}
-      <span class="hcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>
+    <div class="hcard-top" style="background:${p.bg};padding:0;overflow:hidden">${topInner}
+      ${p.img?`<span class="hcard-heart" style="position:absolute;top:8px;right:8px;z-index:2" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>`:`<span class="hcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>`}
     </div>
     <div class="hcard-body">
       <p class="hcard-brand">${p.brand}</p>
