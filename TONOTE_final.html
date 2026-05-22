@@ -1395,9 +1395,10 @@ function _highlightCard(id){
 /* ──────────────────────────────────────────
    locateUser: 두 트리거(overlay 라벨, ◎ 버튼) 공통 핸들러
    1) 버튼 펄스 애니메이션 + active 상태
-   2) Geolocation 또는 fallback(딥티크 가로수길)
-   3) 지도 flyTo + 사용자 위치 마커
-   4) 거리 계산 → 리스트 정렬 갱신
+   2) Geolocation 성공 / 실패(권한 거부·타임아웃·미지원) 모두 처리
+   3) fallback = 홍대 중심(37.556, 126.923) + 토스트 알림
+   4) 지도 flyTo + 사용자 위치 마커
+   5) 거리 계산 → 리스트 정렬 갱신 (지도 준비와 분리하여 반드시 실행)
 ────────────────────────────────────────── */
 function locateUser(){
   const btn=document.getElementById('locate-btn');
@@ -1409,33 +1410,61 @@ function locateUser(){
     btn.disabled=true;
   }
 
-  const _apply=(lat,lng)=>{
-    if(!_map)initMap();
-    // 지도 중심 이동
-    _map.flyTo([lat,lng],14,{animate:true,duration:1.2});
-    // 사용자 위치 마커 갱신
-    if(_userMarker)_map.removeLayer(_userMarker);
-    _userMarker=L.circleMarker([lat,lng],{
-      radius:8,color:'#B07466',fillColor:'#B07466',fillOpacity:.38,weight:2.5
-    }).addTo(_map)
-      .bindPopup('<div class="mpop"><p class="mpop-name">📍 현재 위치</p></div>')
-      .openPopup();
-    // 거리 기반 정렬
+  const _resetBtn=()=>{
+    if(btn){btn.textContent='◎';btn.disabled=false;btn.classList.remove('pulsing','active');}
+  };
+
+  /* 리스트 정렬은 지도와 무관하게 즉시 실행 */
+  const _applyList=(lat,lng)=>{
     updateStoreListByProximity(lat,lng);
-    // 버튼 복구 (flyTo 완료 시점에 맞춰)
-    setTimeout(()=>{
-      if(btn){btn.textContent='◎';btn.disabled=false;btn.classList.remove('pulsing');}
-    },1500);
+  };
+
+  /* 지도 조작은 _map 준비 여부를 확인 후 안전하게 실행 */
+  const _applyMap=(lat,lng)=>{
+    const _doMap=()=>{
+      try{
+        _map.flyTo([lat,lng],14,{animate:true,duration:1.2});
+        if(_userMarker)_map.removeLayer(_userMarker);
+        _userMarker=L.circleMarker([lat,lng],{
+          radius:8,color:'#B07466',fillColor:'#B07466',fillOpacity:.38,weight:2.5
+        }).addTo(_map)
+          .bindPopup('<div class="mpop"><p class="mpop-name">📍 현재 위치</p></div>')
+          .openPopup();
+      }catch(e){console.warn('[TONOTE] map op failed:',e);}
+    };
+    if(_map){
+      _doMap();
+    }else{
+      initMap();
+      /* Leaflet 초기화 완료를 기다린 후 지도 조작 */
+      setTimeout(_doMap, 300);
+    }
+  };
+
+  /* 성공 핸들러 */
+  const _onSuccess=(lat,lng)=>{
+    _applyList(lat,lng);
+    _applyMap(lat,lng);
+    setTimeout(_resetBtn, 1500);
+  };
+
+  /* 실패 핸들러: 홍대 중심으로 fallback + 토스트 */
+  const _onError=()=>{
+    const FALLBACK_LAT=37.556, FALLBACK_LNG=126.923;
+    showToast('실제 위치 정보를 가져올 수 없어 기본 위치(홍대 중심) 기준으로 시향 공간을 추천해 드립니다.');
+    _applyList(FALLBACK_LAT, FALLBACK_LNG);
+    _applyMap(FALLBACK_LAT, FALLBACK_LNG);
+    setTimeout(_resetBtn, 1500);
   };
 
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
-      pos=>_apply(pos.coords.latitude,pos.coords.longitude),
-      ()=>_apply(37.5245,127.0299),   // fallback: 딥티크 가로수길
-      {timeout:6000,maximumAge:30000}
+      pos=>_onSuccess(pos.coords.latitude, pos.coords.longitude),
+      ()=>_onError(),
+      {timeout:6000, maximumAge:30000, enableHighAccuracy:false}
     );
   }else{
-    _apply(37.5245,127.0299);          // Geolocation 미지원 fallback
+    _onError();   // Geolocation API 자체가 없는 환경
   }
 }
 
