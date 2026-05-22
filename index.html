@@ -268,8 +268,8 @@ input,textarea{font-family:inherit;outline:none}
 }
 #overlay-detail.open{transform:none}
 .det-header-vis{height:228px;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;overflow:hidden;background:#FAF7F3}
-.det-back{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--t1);font-size:18px;cursor:pointer;box-shadow:var(--shadow)}
-.det-like-btn{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .15s;box-shadow:var(--shadow)}
+.det-back{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--t1);font-size:18px;cursor:pointer;box-shadow:var(--shadow);z-index:10}
+.det-like-btn{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:transform .15s;box-shadow:var(--shadow);z-index:10}
 .det-like-btn:active{transform:scale(1.3)}
 .det-body{flex:1;overflow-y:auto;padding:22px 20px 30px;scrollbar-width:none}
 .det-body::-webkit-scrollbar{display:none}
