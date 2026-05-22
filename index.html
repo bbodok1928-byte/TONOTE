@@ -297,6 +297,33 @@ input,textarea{font-family:inherit;outline:none}
 .similar-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 4px}
 .similar-row::-webkit-scrollbar{display:none}
 
+/* ── DETAIL REDESIGN — perfumegraphy style ── */
+.det-header-vis{height:260px}
+.det-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.det-price{font-family:var(--serif);font-size:20px;color:var(--t1)}
+.det-rating{font-size:11px;color:var(--t3);letter-spacing:.02em}
+.det-story{position:relative;margin-bottom:22px;padding:20px 20px 18px 24px;
+  background:var(--primary-soft);border-radius:16px;border-left:3px solid var(--primary);overflow:hidden}
+.det-story::before{content:'\201C';font-family:Georgia,serif;font-size:60px;line-height:1;
+  color:var(--primary);opacity:.18;position:absolute;top:-2px;left:10px;pointer-events:none}
+.det-story-text{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13px;
+  color:var(--t2);line-height:1.9;white-space:pre-line;position:relative;z-index:1}
+.det-section-label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--t3);font-weight:700;margin-bottom:14px;display:block}
+.det-notes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--bd);border-radius:16px;overflow:hidden;margin-bottom:22px}
+.det-notes-col{background:var(--s1);padding:14px 10px 16px;display:flex;flex-direction:column;gap:6px}
+.det-notes-col-label{font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--primary);font-weight:700;margin-bottom:4px}
+.det-notes-col .tpill{font-size:9px;text-align:center;padding:3px 7px;line-height:1.4}
+.det-intensity-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.det-intensity-dots{display:flex;gap:5px}
+.idot{width:9px;height:9px;border-radius:50%;background:var(--s3);transition:background .3s}
+.idot.on{background:var(--primary)}
+.det-metrics{display:grid;gap:10px;margin-bottom:22px}
+.det-metric-row{display:flex;align-items:center;gap:10px}
+.det-metric-label{font-size:10px;color:var(--t3);width:32px;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
+
 /* ── COMPARE OVERLAY ─────────────────────── */
 #overlay-compare{
   position:absolute;inset:0;z-index:101;
@@ -612,92 +639,166 @@ input,textarea{font-family:inherit;outline:none}
 
 <script>
 const PERFUMES=[
-  {id:1,brand:'LE LABO',name:'Santal 33',emoji:'🌿',img:'https://perfumegraphy.com/web/product/big/202108/f18023aa44ba17ed14025cf711a2297b.jpg',bg:'linear-gradient(135deg,#E8F0E6,#D4E4D0)',
+  {id:1,brand:'LE LABO',name:'Santal 33',emoji:'🌿',
+   img:'https://perfumegraphy.com/web/product/big/202108/f18023aa44ba17ed14025cf711a2297b.jpg',
+   bg:'linear-gradient(135deg,#E8F0E6,#D4E4D0)',
    poem:'비 온 뒤 숲 속 오솔길, 젖은 나무의 조용한 숨결',
+   story:'텍사스의 황량한 고원 위, 세이지 연기가 피어오르는 새벽.\n샌달우드와 레더가 피부 위에 천천히 녹아들어 어느새 체온과 하나가 된다.\n나라와 성별의 경계를 허문 현대의 아이코닉한 우디향 —\n한 번 맡으면 쉬이 잊기 어려운 존재감.',
+   intensity:4,
    moods:['고요한 숲','비 오는 날','늦은 밤'],tags:['고요한','우디','가을·겨울'],cat:'우디',season:['가을','겨울'],
    longevity:5,sillage:3,price:295000,samplePrice:4500,sampleAvail:true,rating:4.8,reviews:1243,
    top:['카다멈','바이올렛'],mid:['아이리스','아미리스'],base:['샌달우드','레더','머스크'],
    desc:'미국 텍사스의 사막 공기와 나무 연기, 그리고 가죽이 한데 어우러진 향. 성별을 초월한 현대적 우디향의 아이콘.',similar:[2,6,8]},
-  {id:2,brand:'BYREDO',name:'Mojave Ghost',emoji:'🪷',img:'https://perfumegraphy.com/web/product/big/202211/06415a2af5051c5ab7105692980df1de.jpg',bg:'linear-gradient(135deg,#EDE8F5,#DDD4EE)',
+
+  {id:2,brand:'BYREDO',name:'Mojave Ghost',emoji:'🪷',
+   img:'https://perfumegraphy.com/web/product/big/202211/06415a2af5051c5ab7105692980df1de.jpg',
+   bg:'linear-gradient(135deg,#EDE8F5,#DDD4EE)',
    poem:'아무도 없는 새벽, 창문을 스치는 서늘한 공기',
+   story:'아무것도 없는 사막, 그 침묵 속에 유령처럼 스치고 지나가는 향기.\n잡히지 않지만 분명히 그 자리를 지나갔다는 것을 안다.\n파우더처럼 부드럽고 우디처럼 무게감 있는,\n존재와 부재 사이 어딘가에 머무는 향.',
+   intensity:3,
    moods:['늦은 밤','고요한 숲'],tags:['미스터리','파우더리','사계절'],cat:'머스크',season:['봄','가을'],
    longevity:4,sillage:3,price:265000,samplePrice:4000,sampleAvail:true,rating:4.7,reviews:876,
    top:['마그놀리아','스노우베리'],mid:['아미리스','바이올렛'],base:['샌달우드','머스크','오크모스'],
    desc:'사막의 유령처럼 조용하고 신비로운 향. 파우더리하면서도 우디한 여운이 오래 남는다.',similar:[1,5,8]},
-  {id:3,brand:'JO MALONE',name:'Wood Sage & Sea Salt',emoji:'🌊',img:'https://m.perfumegraphy.com/web/product/big/202504/93452ac1a4c21b67f16340a742767bcc.jpg',bg:'linear-gradient(135deg,#E0EEF5,#C8DFE8)',
+
+  {id:3,brand:'JO MALONE',name:'Wood Sage & Sea Salt',emoji:'🌊',
+   img:'https://m.perfumegraphy.com/web/product/big/202504/93452ac1a4c21b67f16340a742767bcc.jpg',
+   bg:'linear-gradient(135deg,#E0EEF5,#C8DFE8)',
    poem:'파도, 바람, 그리고 소금기 어린 아침 해변',
+   story:'영국 콘월 해안가 절벽 위, 바닷바람이 세이지 잎을 스쳐 지나는 이른 아침.\n소금기 머금은 공기와 이끼 낀 나무가 뒤섞이며\n자연이 만들어낸 가장 날것의 청량함이 피어난다.\n복잡함 없이 솔직하게 — 그냥 거기에 있는 향.',
+   intensity:2,
    moods:['바다 바람','봄 산책'],tags:['청량한','아쿠아틱','여름'],cat:'아쿠아틱',season:['봄','여름'],
    longevity:3,sillage:2,price:175000,samplePrice:2800,sampleAvail:true,rating:4.6,reviews:2341,
    top:['바다 소금','세이지'],mid:['암브렛씨드'],base:['드리프트우드','머스크'],
    desc:'영국 해안가 절벽에서 맞는 바람. 세이지와 바다 소금이 만들어내는 상쾌하고 자연스러운 향.',similar:[7,9,12]},
-  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',img:'https://perfumegraphy.com/web/product/big/202503/d9f9b6c1e2e0c94ad40db1b3bd7bace7.jpg',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
+
+  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',
+   img:'https://perfumegraphy.com/web/product/big/202503/d9f9b6c1e2e0c94ad40db1b3bd7bace7.jpg',
+   bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
    poem:'겨울 밤 벽난로 앞, 따뜻한 커피 한 잔',
+   story:'12월 저녁, 벽난로 앞에서 체스트넛이 타오르는 소리를 들으며.\n바닐라와 캐시미어우드가 그 온기를 피부 위에 고스란히 얹어준다.\n포근함이란 어쩌면 이런 냄새이겠구나 —\n처음으로 그것을 알게 해주는 향.',
+   intensity:4,
    moods:['늦은 밤','카페 오후'],tags:['따뜻한','스모키','겨울'],cat:'우디',season:['가을','겨울'],
    longevity:4,sillage:3,price:198000,samplePrice:3200,sampleAvail:true,rating:4.9,reviews:3102,
    top:['클로브','오렌지'],mid:['체스트넛','구아이악 우드'],base:['바닐라','캐시미어'],
    desc:'겨울 저녁 벽난로에서 타오르는 나무 연기와 바닐라의 달콤함. 포근함을 향으로 만든다.',similar:[1,13,14]},
-  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',img:'https://perfumegraphy.com/web/product/big/202111/936c6e842116e871f136122fa227b3d3.jpg',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
+
+  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',
+   img:'https://perfumegraphy.com/web/product/big/202111/936c6e842116e871f136122fa227b3d3.jpg',
+   bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
    poem:'무화과 나무 그늘 아래, 시간이 멈춘 여름 오후',
+   story:'그리스 섬의 오래된 무화과 나무 아래, 한낮의 열기가 잎사귀를 달구는 오후.\n풀빛 수액에서 익어가는 과실까지, 나무 한 그루의 생애를 한 병 안에 담았다.\n딥티크가 포착한, 여름의 가장 느긋한 순간 —\n시간이 멈춘 듯한 고요함.',
+   intensity:3,
    moods:['고요한 숲','카페 오후'],tags:['그린','무화과','여름'],cat:'우디',season:['여름'],
    longevity:3,sillage:2,price:212000,samplePrice:3500,sampleAvail:true,rating:4.7,reviews:987,
    top:['무화과 잎','목화'],mid:['무화과 나무'],base:['화이트 시더'],
    desc:'딥티크의 대표작. 무화과 나무의 우유빛 수액부터 잎과 열매까지, 나무 한 그루를 통째로 담은 향.',similar:[1,8,11]},
-  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',img:'',bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
+
+  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',
+   img:'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80',
+   bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
    poem:'햇살 아래 바람에 말린 흰 린넨 이불',
+   story:'갓 세탁을 마치고 햇살 아래 펼쳐놓은 흰 면의 냄새.\n화려함도 비밀도 없지만, 그래서 더 가까이 다가오게 되는 솔직함.\n향수 입문자가 가장 처음 안심하고 선택할 수 있는,\n삶의 가장 정직하고 순수한 클린 센트.',
+   intensity:2,
    moods:['봄 산책','카페 오후'],tags:['클린','머스크','봄'],cat:'머스크',season:['봄','여름'],
    longevity:3,sillage:2,price:98000,samplePrice:1800,sampleAvail:true,rating:4.4,reviews:1456,
    top:['베르가못'],mid:['코튼 플라워','오존'],base:['머스크','화이트 우드'],
    desc:'방금 세탁해 햇살에 말린 흰 면 소재의 냄새. 가장 깨끗하고 편안한 향수로 입문자에게 최적.',similar:[3,9,10]},
-  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',img:'',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
+
+  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',
+   img:'https://images.unsplash.com/photo-1490750967868-88df5691cc2c?w=600&q=80',
+   bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
    poem:'봄 카페 창가, 달콤한 바람에 실려오는 꽃향기',
+   story:'봄 파리의 창가, 바람에 실려온 그라팔트 꽃잎 몇 장.\n화사하지만 과하지 않고, 달콤하지만 무겁지 않다.\n샤넬이 포착한 \'우연\'의 향기 —\n딱 그만큼의 설레임이 오래도록 피부 위에 머문다.',
+   intensity:3,
    moods:['봄 산책','카페 오후'],tags:['플로럴','달콤한','봄'],cat:'플로럴',season:['봄','여름'],
    longevity:4,sillage:3,price:195000,samplePrice:3200,sampleAvail:false,rating:4.8,reviews:5621,
    top:['자몽','쿼이드 드 로즈'],mid:['자스민','하이아신스'],base:['화이트 머스크','베티버'],
    desc:'샤넬 찬스 라인의 가장 맑고 여린 향. 화사하지만 과하지 않아 첫 향수로 가장 많이 추천됨.',similar:[10,11,12]},
-  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',img:'https://perfumegraphy.com/web/product/big/202211/d6049522448ce73f10ef932ee73d766f.jpg',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
+
+  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',
+   img:'https://perfumegraphy.com/web/product/big/202211/d6049522448ce73f10ef932ee73d766f.jpg',
+   bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
    poem:'저녁 시장골목, 향신료와 연기가 뒤섞이는 공기',
+   story:'마라케시 수크의 골목 끝, 쿠민과 장미수가 뒤엉키는 황혼 무렵.\n샌달우드의 묵직함이 발아래 깔리고, 앰버가 그 위를 천천히 덮는다.\n여행의 기억이 오래 남듯,\n이 향도 당신의 피부 위에서 쉬이 지워지지 않는다.',
+   intensity:5,
    moods:['늦은 밤','바다 바람'],tags:['스파이시','우디','가을'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:4,price:185000,samplePrice:3000,sampleAvail:true,rating:4.6,reviews:643,
    top:['코리앤더','카다멈'],mid:['쿠민','패출리'],base:['샌달우드','시더','앰버'],
    desc:'모로코 마라케시의 밤. 향신료와 나무가 어우러진 짙고 이국적인 향.',similar:[4,1,14]},
-  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',img:'https://us.isseymiyake.com/cdn/shop/files/IP55AZ325-01-01_0000_IP55AZ007-01-01_1.jpg?v=1686076134',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
+
+  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',
+   img:'https://us.isseymiyake.com/cdn/shop/files/IP55AZ325-01-01_0000_IP55AZ007-01-01_1.jpg?v=1686076134',
+   bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
    poem:'새벽 연못 위 이슬, 맑고 차갑게 맺힌 물방울',
+   story:'\'물의 향기는 어떤 것일까\' — 1992년 이세이 미야케의 질문에서 탄생한 전설.\n새벽 연꽃 위 이슬, 투명하고 차가운 수면의 정적.\n아쿠아틱이라는 새 장르를 향수 역사에 새겨넣었고,\n30년이 지난 오늘도 그 클리어함은 여전히 새롭다.',
+   intensity:2,
    moods:['바다 바람','봄 산책'],tags:['아쿠아틱','청량한','사계절'],cat:'아쿠아틱',season:['봄','여름','가을'],
    longevity:3,sillage:2,price:128000,samplePrice:2200,sampleAvail:true,rating:4.5,reviews:3876,
    top:['연꽃','로즈우드'],mid:['카네이션','사이클라멘'],base:['머스크','삼나무','앰버'],
    desc:'물의 향을 최초로 포착한 전설적인 향수. 깨끗하고 미니멀하여 입문자부터 마니아까지 사랑받음.',similar:[3,6,12]},
-  {id:10,brand:'GUERLAIN',name:'Mon Guerlain',emoji:'💜',img:'',bg:'linear-gradient(135deg,#EDE8F5,#DDDAF5)',
+
+  {id:10,brand:'GUERLAIN',name:'Mon Guerlain',emoji:'💜',
+   img:'https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=600&q=80',
+   bg:'linear-gradient(135deg,#EDE8F5,#DDDAF5)',
    poem:'라벤더 밭 한가운데, 바람이 지나간 자리',
+   story:'프로방스 5월의 새벽, 이슬 머금은 라벤더 밭 위로 아직 차가운 바람이 지나간다.\n쿠마린의 달콤함과 바닐라의 온기가 라벤더의 청량함을 부드럽게 받쳐준다.\n게를랑이 그린 오늘의 여성성 —\n강하지도 연약하지도 않은, 그 균형에서 피어나는 아름다움.',
+   intensity:3,
    moods:['봄 산책','카페 오후'],tags:['라벤더','플로럴','로맨틱'],cat:'플로럴',season:['봄','여름'],
    longevity:4,sillage:3,price:148000,samplePrice:2500,sampleAvail:true,rating:4.6,reviews:2109,
    top:['라벤더','베르가못'],mid:['쿠마린'],base:['바닐라','화이트 머스크','샌달우드'],
    desc:'프로방스 라벤더에서 영감을 받은 따뜻하고 부드러운 플로럴. 달콤하지만 청량하다.',similar:[7,6,11]},
-  {id:11,brand:'HERMÈS',name:'Un Jardin sur le Nil',emoji:'🌺',img:'https://perfumegraphy.com/web/product/big/202504/2fabcc43e624a1c7df2a33ac9da1f0e7.jpg',bg:'linear-gradient(135deg,#F5F0D8,#EEE4B4)',
+
+  {id:11,brand:'HERMÈS',name:'Un Jardin sur le Nil',emoji:'🌺',
+   img:'https://perfumegraphy.com/web/product/big/202504/2fabcc43e624a1c7df2a33ac9da1f0e7.jpg',
+   bg:'linear-gradient(135deg,#F5F0D8,#EEE4B4)',
    poem:'나일강변 정원, 익어가는 과일과 꽃의 숨결',
+   story:'이집트 아스완, 나일강이 굽이치는 언덕 위의 비밀 정원.\n덜 익은 망고의 새콤함과 연꽃의 수면향, 그리고 멀리서 타오르는 인센스.\n에르메스가 직접 찾아간 그 정원의 공기를 —\n가장 정직하게 병 안에 옮겨 담은 작품.',
+   intensity:2,
    moods:['봄 산책','바다 바람'],tags:['그린','프루티','여름'],cat:'프루티',season:['봄','여름'],
    longevity:3,sillage:2,price:225000,samplePrice:3800,sampleAvail:false,rating:4.7,reviews:876,
    top:['망고','토마토 잎'],mid:['연꽃','그린노트'],base:['골드 인센스','소말리아 몰약'],
    desc:'에르메스의 정원 시리즈 대표작. 이집트 나일강 유역 정원의 이국적인 초록빛 과일향.',similar:[3,5,9]},
-  {id:12,brand:'YSL',name:'Black Opium',emoji:'☕',img:'https://perfumegraphy.com/web/product/big/202404/da2300e12f97e44f5bd5a4c1e312fbdf.jpg',bg:'linear-gradient(135deg,#EAE0F0,#D8CCE8)',
+
+  {id:12,brand:'YSL',name:'Black Opium',emoji:'☕',
+   img:'https://perfumegraphy.com/web/product/big/202404/da2300e12f97e44f5bd5a4c1e312fbdf.jpg',
+   bg:'linear-gradient(135deg,#EAE0F0,#D8CCE8)',
    poem:'밤의 카페, 커피 향과 은은한 바닐라의 잔향',
+   story:'밤의 클럽, 커피 향기가 꽃잎과 뒤엉키는 어두운 공간.\n핑크 페퍼의 날카로운 첫인상 뒤로, 바닐라와 파촐리가 피부에 조용히 스며든다.\n\'중독적\'이라는 말이 이 향만큼 잘 어울리는 향수는 없다 —\n한 번 뿌리면 다시 찾게 된다.',
+   intensity:5,
    moods:['늦은 밤','카페 오후'],tags:['커피','달콤한','밤'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:4,price:165000,samplePrice:2800,sampleAvail:true,rating:4.8,reviews:7234,
    top:['핑크 페퍼','오렌지 블라썸'],mid:['커피','자스민'],base:['파촐리','바닐라','시더'],
    desc:'커피와 바닐라의 달콤하고 중독적인 조합. 야간 외출이나 특별한 저녁을 위한 향수.',similar:[4,8,14]},
-  {id:13,brand:'NARCISO RODRIGUEZ',name:'For Her EDP',emoji:'🩷',img:'https://www.narcisorodriguezparfums.com/dw/image/v2/BCMQ_PRD/on/demandware.static/-/Sites-itemmaster_narcisorodriguez/default/dwebe27ad4/for-her-edp/FH-EDP-2012-100ml.png?sw=800&sh=900&sm=fit&q=100',bg:'linear-gradient(135deg,#F5E8EE,#EED4E0)',
+
+  {id:13,brand:'NARCISO RODRIGUEZ',name:'For Her EDP',emoji:'🩷',
+   img:'https://www.narcisorodriguezparfums.com/dw/image/v2/BCMQ_PRD/on/demandware.static/-/Sites-itemmaster_narcisorodriguez/default/dwebe27ad4/for-her-edp/FH-EDP-2012-100ml.png?sw=800&sh=900&sm=fit&q=100',
+   bg:'linear-gradient(135deg,#F5E8EE,#EED4E0)',
    poem:'따뜻한 피부 위에 남은, 조용하고 감각적인 여운',
+   story:'퍼퓸이 피부와 완전히 하나가 되는 순간.\n인간의 체온과 가장 닮은 머스크, 그 위에 살며시 얹히는 로즈.\n나르시소 로드리게즈는 \'나 자신의 향기\'를 향수로 구현했다.\n이 향을 뿌리면, 비로소 처음으로 당신의 향이 된다.',
+   intensity:4,
    moods:['늦은 밤','카페 오후'],tags:['머스크','플로럴','미니멀'],cat:'머스크',season:['봄','가을','겨울'],
    longevity:5,sillage:3,price:178000,samplePrice:2900,sampleAvail:true,rating:4.7,reviews:1876,
    top:['로즈'],mid:['머스크','앰브레트'],base:['샌달우드','베티버'],
    desc:'머스크의 완성형. 인간의 피부 향과 가장 닮아있어 "나의 체취가 이렇다면" 하는 향수.',similar:[6,2,10]},
-  {id:14,brand:'TOM FORD',name:'Tobacco Vanille',emoji:'🥃',img:'https://perfumegraphy.com/web/product/big/202503/b1ecb08362c401506c6959a662924e2a.jpg',bg:'linear-gradient(135deg,#F0E4D0,#E8D0A8)',
+
+  {id:14,brand:'TOM FORD',name:'Tobacco Vanille',emoji:'🥃',
+   img:'https://perfumegraphy.com/web/product/big/202503/b1ecb08362c401506c6959a662924e2a.jpg',
+   bg:'linear-gradient(135deg,#F0E4D0,#E8D0A8)',
    poem:'가죽 소파, 위스키 한 잔, 타오르는 벽난로',
+   story:'런던 메이페어의 프라이빗 바, 가죽 소파와 좋은 위스키.\n담배 잎의 풍성한 스모키함을 바닐라와 코코아가 감미롭게 포용한다.\n가장 화려하고 사치스러운 겨울 밤을 위한 향수 —\n톰 포드의 독보적인 서명.',
+   intensity:5,
    moods:['늦은 밤'],tags:['달콤한','스파이시','겨울'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:5,price:345000,samplePrice:5500,sampleAvail:true,rating:4.9,reviews:2134,
    top:['담배 잎','향신료'],mid:['토카빈','바닐라','코코아'],base:['드라이 프루트','우드'],
    desc:'세상에서 가장 럭셔리한 담배와 바닐라의 조합. 강렬하고 중독적이며 겨울 밤 최강의 향수.',similar:[4,8,12]},
-  {id:15,brand:'ACQUA DI PARMA',name:'Colonia',emoji:'🍋',img:'',bg:'linear-gradient(135deg,#F5F5D8,#EEEEAC)',
+
+  {id:15,brand:'ACQUA DI PARMA',name:'Colonia',emoji:'🍋',
+   img:'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=600&q=80',
+   bg:'linear-gradient(135deg,#F5F5D8,#EEEEAC)',
    poem:'이탈리아 여름 아침, 레몬과 베르가못의 산뜻함',
+   story:'1916년 이탈리아 파르마에서 탄생한, 향수 역사의 살아있는 고전.\n시칠리아 레몬, 베르가못, 라벤더가 지중해의 맑은 아침 공기를 고스란히 담아냈다.\n한 세기가 지나도 한 치도 흔들리지 않는 우아함 —\n이것이 진정한 클래식의 의미다.',
+   intensity:2,
    moods:['봄 산책','카페 오후'],tags:['시트러스','클래식','여름'],cat:'프루티',season:['봄','여름'],
    longevity:3,sillage:2,price:168000,samplePrice:2700,sampleAvail:false,rating:4.6,reviews:1543,
    top:['시칠리아 레몬','베르가못','라벤더'],mid:['로즈','자스민'],base:['베티버','샌달우드','패출리'],
@@ -919,56 +1020,89 @@ function _syncLikedRow(){
 function openDetail(id){
   const p=PERFUMES.find(x=>x.id===id);if(!p)return;
   currentDetailId=id;
+
+  /* ── 헤더 비주얼 ── */
   const vis=document.getElementById('det-vis');
   vis.style.background=p.bg;
-  vis.innerHTML=perfImgInner(p,'68px',24,'20px');
+  vis.innerHTML=perfImgInner(p,'72px',26,'22px');
   document.getElementById('det-like-btn').textContent=liked.has(id)?'❤️':'🤍';
 
-  const bar=(v,max=5)=>`<div style="display:flex;align-items:center;gap:8px;width:100%"><div class="bar-track"><div class="bar-fill" style="width:${(v/max)*100}%"></div></div><span style="font-size:11px;color:var(--t3)">${v}/${max}</span></div>`;
-  const similar=p.similar.map(sid=>{const sp=PERFUMES.find(x=>x.id===sid);if(!sp)return'';
-    return `<div class="hcard" style="flex:0 0 140px" onclick="openDetail(${sp.id})">
-      <div class="hcard-top" style="background:${sp.bg};height:100px">
-        ${perfImgInner(sp,'36px',12,'8px')}
-      </div>
+  /* ── 별점 문자열 ── */
+  const stars=Math.round(p.rating);
+  const starStr='★'.repeat(stars)+'☆'.repeat(5-stars);
+
+  /* ── 향의 강도 도트 ── */
+  const intens=(p.intensity||3);
+  const dotsHTML=[1,2,3,4,5].map(i=>`<span class="idot${i<=intens?' on':''}"></span>`).join('');
+
+  /* ── 바 렌더러 ── */
+  const bar=(v,max=5)=>`<div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${(v/max)*100}%;transition:width .7s ease"></div></div><span style="font-size:11px;color:var(--t3);width:28px;text-align:right">${v}/${max}</span>`;
+
+  /* ── 노트 그리드 ── */
+  const notesHTML=[['TOP','탑',p.top],['MID','미들',p.mid],['BASE','베이스',p.base]].map(([code,label,notes])=>`
+    <div class="det-notes-col">
+      <p class="det-notes-col-label">${code}</p>
+      <p style="font-size:9px;color:var(--t3);margin-bottom:8px">${label} 노트</p>
+      ${notes.map(n=>`<span class="tpill">${n}</span>`).join('')}
+    </div>`).join('');
+
+  /* ── 유사 향수 ── */
+  const similar=p.similar.map(sid=>{
+    const sp=PERFUMES.find(x=>x.id===sid);if(!sp)return'';
+    return`<div class="hcard" style="flex:0 0 140px" onclick="openDetail(${sp.id})">
+      <div class="hcard-top" style="background:${sp.bg};height:104px">${perfImgInner(sp,'36px',12,'8px')}</div>
       <div class="hcard-body"><p class="hcard-brand">${sp.brand}</p><p class="hcard-name">${sp.name}</p></div>
     </div>`;}).join('');
 
+  /* ── 바디 렌더링 ── */
   document.getElementById('det-body').innerHTML=`
     <p class="det-brand">${p.brand}</p>
     <p class="det-name">${p.name}</p>
-    <p class="det-poem">${p.poem}</p>
-    <div class="det-tags">${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}${p.season.map(s=>`<span class="tpill rose">${s}</span>`).join('')}</div>
+    <div class="det-price-row">
+      <span class="det-price">₩${p.price.toLocaleString()}</span>
+      <span class="det-rating">${starStr} ${p.rating} <span style="color:var(--t3)">(${p.reviews.toLocaleString()})</span></span>
+    </div>
+    <div class="det-tags" style="margin-bottom:20px">
+      ${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}
+      ${p.season.map(s=>`<span class="tpill rose">${s}</span>`).join('')}
+    </div>
     <div class="det-divider"></div>
-    <div style="display:flex;margin-bottom:20px">
-      <div style="flex:1;text-align:center"><p class="det-stat-val">${p.rating}</p><p class="det-stat-lbl">평점 (${p.reviews.toLocaleString()})</p></div>
-      <div style="flex:2;padding:0 12px">
-        <p style="font-size:10px;color:var(--t3);margin-bottom:6px;letter-spacing:.1em;text-transform:uppercase">지속력</p>${bar(p.longevity)}
-        <p style="font-size:10px;color:var(--t3);margin:10px 0 6px;letter-spacing:.1em;text-transform:uppercase">확산력</p>${bar(p.sillage)}
+
+    <div class="det-story"><p class="det-story-text">${p.story||p.desc}</p></div>
+
+    <span class="det-section-label">향수 노트</span>
+    <div class="det-notes-grid">${notesHTML}</div>
+
+    <div class="det-intensity-row">
+      <span class="det-section-label" style="margin:0">향의 강도</span>
+      <div class="det-intensity-dots">${dotsHTML}</div>
+    </div>
+    <div class="det-metrics">
+      <div class="det-metric-row">
+        <span class="det-metric-label">지속</span>${bar(p.longevity)}
+      </div>
+      <div class="det-metric-row">
+        <span class="det-metric-label">확산</span>${bar(p.sillage)}
       </div>
     </div>
     <div class="det-divider"></div>
-    <p style="font-size:12px;color:var(--t2);line-height:1.75;margin-bottom:20px">${p.desc}</p>
-    <div class="det-divider"></div>
-    <div class="notes-toggle" onclick="toggleNotes(this)">
-      <span style="font-size:13px;color:var(--t2)">🔬 향수 노트 (전문 정보)</span>
-      <span class="notes-toggle-ico">∨</span>
-    </div>
-    <div class="notes-content">
-      <div style="padding:12px 0">
-        ${[['TOP',p.top],['MID',p.mid],['BASE',p.base]].map(([t,ns])=>`<div class="note-row"><span class="note-type">${t}</span><div class="note-items">${ns.map(n=>`<span class="tpill">${n}</span>`).join('')}</div></div>`).join('')}
-      </div>
-    </div>
-    <div class="det-divider"></div>
-    <div style="margin-bottom:20px"><p style="font-size:13px;color:var(--t2);margin-bottom:12px">비슷한 향수</p><div class="similar-row">${similar}</div></div>
+
+    <span class="det-section-label">비슷한 향수</span>
+    <div class="similar-row" style="margin-bottom:24px">${similar}</div>
+
     <div class="det-ctas">
       ${p.sampleAvail?`<button class="gbtn" onclick="openSample(${id})">📦 샘플 신청</button>`:'<button class="gbtn" style="opacity:.5;cursor:not-allowed">📦 샘플 품절</button>'}
       <button class="obtn" onclick="addToCompare(${id})">⚖️ 비교 추가</button>
     </div>
-    <div style="height:20px"></div>`;
+    <div style="height:32px"></div>`;
+
   document.getElementById('overlay-detail').classList.add('open');
+  document.getElementById('det-body').scrollTop=0;
 }
 
-function closeDetail(){document.getElementById('overlay-detail').classList.remove('open')}
+function closeDetail(){
+  document.getElementById('overlay-detail').classList.remove('open');
+}
 function toggleDetailLike(){
   const id=currentDetailId;if(!id)return;
   liked.has(id)?liked.delete(id):liked.add(id);
