@@ -605,6 +605,7 @@ input,textarea{font-family:inherit;outline:none}
 <!-- ════ DETAIL OVERLAY ════ -->
 <div id="overlay-detail">
   <div class="det-header-vis" id="det-vis">
+    <div id="det-vis-inner" style="position:absolute;inset:0"></div>
     <button class="det-back" onclick="closeDetail()">‹</button>
     <button class="det-like-btn" id="det-like-btn" onclick="toggleDetailLike()">🤍</button>
   </div>
@@ -1021,10 +1022,10 @@ function openDetail(id){
   const p=PERFUMES.find(x=>x.id===id);if(!p)return;
   currentDetailId=id;
 
-  /* ── 헤더 비주얼 ── */
+  /* ── 헤더 비주얼 (det-vis-inner만 교체 → 버튼 보존) ── */
   const vis=document.getElementById('det-vis');
   vis.style.background=p.bg;
-  vis.innerHTML=perfImgInner(p,'72px',26,'22px');
+  document.getElementById('det-vis-inner').innerHTML=perfImgInner(p,'72px',26,'22px');
   document.getElementById('det-like-btn').textContent=liked.has(id)?'❤️':'🤍';
 
   /* ── 별점 문자열 ── */
