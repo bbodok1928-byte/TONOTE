@@ -405,7 +405,40 @@ input,textarea{font-family:inherit;outline:none}
 .order-item-brand{font-size:9px;color:var(--t3)}
 
 @media(min-width:420px){.app{box-shadow:0 0 60px rgba(150,100,70,.15)}}
+
+/* ── MAP (Leaflet) ──────────────────────── */
+.map-wrap{position:relative;height:230px;flex-shrink:0;background:#EDE8E0}
+#spaces-map{width:100%;height:100%}
+.map-overlay-label{position:absolute;top:12px;left:12px;z-index:400;background:rgba(251,248,244,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(180,140,110,.18);border-radius:50px;padding:5px 13px;font-size:9.5px;font-family:var(--sans);font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);pointer-events:none}
+.map-locate-btn{position:absolute;bottom:12px;right:12px;z-index:400;width:36px;height:36px;border-radius:50%;background:var(--s1);border:1px solid rgba(180,140,110,.22);box-shadow:0 2px 12px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--t2);cursor:pointer;transition:background .2s,color .2s}
+.map-locate-btn:hover{background:var(--primary);color:#fff}
+/* Leaflet overrides */
+.leaflet-control-zoom{border:none!important;box-shadow:0 2px 12px rgba(0,0,0,.1)!important;margin:12px!important}
+.leaflet-control-zoom a{background:var(--s1)!important;color:var(--t1)!important;border:1px solid rgba(180,140,110,.2)!important;width:28px!important;height:28px!important;line-height:26px!important;font-size:16px!important;border-radius:50%!important;margin-bottom:4px!important;display:block!important}
+.leaflet-control-zoom a:hover{background:var(--primary)!important;color:#fff!important;border-color:var(--primary)!important}
+.leaflet-control-attribution{font-size:8px!important;background:rgba(251,248,244,.75)!important;backdrop-filter:blur(4px)!important;border-radius:4px 0 0 0!important}
+.leaflet-popup-content-wrapper{border-radius:16px!important;box-shadow:0 6px 24px rgba(0,0,0,.13)!important;border:1px solid rgba(180,140,110,.15)!important;padding:0!important;overflow:hidden}
+.leaflet-popup-content{margin:0!important;font-family:var(--sans)!important}
+.leaflet-popup-tip-container{display:none!important}
+/* Custom marker pin */
+.cmarker{width:34px;height:34px;border-radius:50% 50% 50% 0;background:var(--s1);border:2px solid var(--primary);transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.2);transition:background .2s}
+.cmarker.sel{background:var(--primary)}
+.cmarker span{transform:rotate(45deg);font-size:16px;display:block;line-height:1}
+/* Popup card */
+.mpop{padding:13px 16px;min-width:140px}
+.mpop-name{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.mpop-addr{font-size:10.5px;color:var(--t3);margin-bottom:7px}
+.mpop-badge{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:50px;display:inline-block}
+.mpop-open{background:rgba(100,190,120,.12);color:#4EA86E}
+.mpop-pop{background:rgba(176,116,102,.1);color:var(--primary)}
+/* Active store card */
+.space-card.map-sel{border-color:rgba(176,116,102,.5);box-shadow:0 4px 18px rgba(176,116,102,.18)}
+/* Spaces subhead */
+.spaces-subhead{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 4px}
+.spaces-subhead p:last-child{font-size:11px;color:var(--t3)}
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body>
 <div class="app">
@@ -534,10 +567,16 @@ input,textarea{font-family:inherit;outline:none}
     <!-- ── SPACES ── -->
     <div class="screen" id="screen-spaces">
       <div class="top-bar"><span class="bar-logo">시향 공간</span></div>
-      <div class="spaces-hero">
-        <p class="eyebrow">내 주변</p>
-        <h2>직원 압박 없이<br><em>자유롭게</em></h2>
-        <p>셀프 시향이 가능한 공간만 모았어요.<br>방문 전에 직원 개입도를 꼭 확인하세요.</p>
+      <!-- 지도 영역 -->
+      <div class="map-wrap">
+        <div id="spaces-map"></div>
+        <div class="map-overlay-label">✦ &nbsp;내 주변 시향 공간</div>
+        <button class="map-locate-btn" onclick="locateUser()" title="내 위치">◎</button>
+      </div>
+      <!-- 매장 목록 -->
+      <div class="spaces-subhead">
+        <p class="eyebrow">매장 목록</p>
+        <p>직원 개입도를 꼭 확인하세요</p>
       </div>
       <div class="sec"><div id="spaces-list"></div></div>
     </div>
@@ -809,13 +848,15 @@ const PERFUMES=[
    desc:'1916년 탄생한 이탈리아 향수의 고전. 상쾌하고 우아한 시트러스로 성별 불문 오래 사랑받음.',similar:[3,9,6]},
 ];
 
-const SPACES=[
-  {name:'올리브영 홍대점',addr:'마포구 · 도보 8분',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open'},
-  {name:'향수 팝업 — 성수 언더스탠드에비뉴',addr:'성동구 · 도보 12분',emoji:'🪷',bg:'#F0EAF5',pressure:1,status:'pop',deadline:'D-3'},
-  {name:'세포라 강남점',addr:'강남구 · 지하철 20분',emoji:'💄',bg:'#F5EEE8',pressure:2,status:'open'},
-  {name:'롯데백화점 본점 향수관',addr:'중구 · 지하철 18분',emoji:'🏛️',bg:'#E8EEF5',pressure:3,status:'open'},
-  {name:'아로마티카 쇼룸',addr:'강남구 · 도보 20분',emoji:'🌱',bg:'#EAF5EA',pressure:1,status:'open'},
+const STORES=[
+  {id:0,name:'올리브영 홍대점',brand:'OLIVE YOUNG',addr:'마포구 양화로 188',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open',lat:37.5572,lng:126.9219},
+  {id:1,name:'언더스탠드에비뉴 팝업',brand:'POP-UP',addr:'성동구 왕십리로 2-1',emoji:'🪷',bg:'#F0EAF5',pressure:1,status:'pop',deadline:'D-3',lat:37.5447,lng:127.0557},
+  {id:2,name:'딥티크 신세계 본점',brand:'DIPTYQUE',addr:'중구 소공로 63',emoji:'🕯️',bg:'#F5F0E8',pressure:2,status:'open',lat:37.5600,lng:126.9803},
+  {id:3,name:'롯데백화점 본점 향수관',brand:'LOTTE',addr:'중구 남대문로 81',emoji:'🏛️',bg:'#E8EEF5',pressure:3,status:'open',lat:37.5655,lng:126.9822},
+  {id:4,name:'세포라 강남점',brand:'SEPHORA',addr:'강남구 테헤란로 212',emoji:'💄',bg:'#F5EEE8',pressure:2,status:'open',lat:37.4979,lng:127.0270},
+  {id:5,name:'아로마티카 쇼룸',brand:'AROMATICA',addr:'강남구 도산대로 217',emoji:'🌱',bg:'#EAF5EA',pressure:1,status:'open',lat:37.5233,lng:127.0360},
 ];
+const SPACES=STORES; // 하위 호환
 
 /* ── localStorage 키 ── */
 const LS_LIKED='tonote_liked';
@@ -858,9 +899,9 @@ function switchTab(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('screen-'+tab).classList.add('active');
-  ['home','explore','ai','spaces','my'].indexOf(tab);
   document.querySelectorAll('.bni')[['home','explore','ai','spaces','my'].indexOf(tab)]?.classList.add('on');
   if(tab==='my')updateMyPage();
+  if(tab==='spaces')setTimeout(()=>initMap(),80); // 탭 전환 후 DOM 확보
 }
 
 /* ── HOME ── */
@@ -1218,15 +1259,111 @@ function confirmSample(){
 /* ── SPACES ── */
 function renderSpaces(){
   const pLbl=['낮음','보통','높음'],pCls=['pv-low','pv-med','pv-high'];
-  document.getElementById('spaces-list').innerHTML=SPACES.map(s=>`<div class="space-card">
+  document.getElementById('spaces-list').innerHTML=STORES.map((s,i)=>`
+  <div class="space-card" id="scard-${i}" onclick="panToStore(${i})">
     <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
-    <div class="space-info"><p class="space-name">${s.name}</p><p class="space-addr">📍 ${s.addr}</p>
-      <div class="pressure-row"><p class="pressure-lbl">직원 개입도</p><div class="pdots">${[1,2,3].map(i=>`<div class="pdot${i<=s.pressure?' on':''}"></div>`).join('')}</div>
-      <span class="pressure-val ${pCls[s.pressure-1]}">${pLbl[s.pressure-1]}</span></div>
+    <div class="space-info">
+      <p class="space-name">${s.name}</p>
+      <p class="space-addr" style="font-size:9.5px;color:var(--primary);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">${s.brand}</p>
+      <p class="space-addr">📍 ${s.addr}</p>
+      <div class="pressure-row">
+        <p class="pressure-lbl">직원 개입도</p>
+        <div class="pdots">${[1,2,3].map(k=>`<div class="pdot${k<=s.pressure?' on':''}"></div>`).join('')}</div>
+        <span class="pressure-val ${pCls[s.pressure-1]}">${pLbl[s.pressure-1]}</span>
+      </div>
       ${s.deadline?`<p style="font-size:10px;color:var(--warm);margin-top:5px;font-weight:700">⏰ ${s.deadline}</p>`:''}
     </div>
     <span class="space-badge ${s.status==='pop'?'sb-pop':'sb-open'}">${s.status==='pop'?'팝업':'영업중'}</span>
   </div>`).join('');
+}
+
+/* ── MAP (Leaflet) ──────────────────────── */
+let _map=null,_markers={},_selIdx=-1;
+
+function _makeIcon(emoji,sel){
+  return L.divIcon({
+    className:'',
+    html:`<div class="cmarker${sel?' sel':''}"><span>${emoji}</span></div>`,
+    iconSize:[34,34],
+    iconAnchor:[17,34],
+    popupAnchor:[0,-36]
+  });
+}
+
+function initMap(){
+  if(!window.L)return;                          // Leaflet 미로드 방어
+  const el=document.getElementById('spaces-map');
+  if(!el)return;
+  if(_map){_map.invalidateSize();return;}       // 이미 초기화됨
+
+  // 서울 중심(시청) 기준
+  _map=L.map('spaces-map',{
+    center:[37.5640,126.9750],
+    zoom:12,
+    zoomControl:true,
+    scrollWheelZoom:false,
+    attributionControl:true
+  });
+
+  // OpenStreetMap 타일 (API 키 불필요)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom:19
+  }).addTo(_map);
+
+  // 줌 컨트롤 위치 조정
+  _map.zoomControl.setPosition('bottomleft');
+
+  // 마커 생성
+  STORES.forEach((s,i)=>{
+    const mk=L.marker([s.lat,s.lng],{icon:_makeIcon(s.emoji,false)})
+      .addTo(_map)
+      .bindPopup(
+        `<div class="mpop">
+          <p class="mpop-name">${s.name}</p>
+          <p class="mpop-addr">📍 ${s.addr}</p>
+          <span class="mpop-badge ${s.status==='pop'?'mpop-pop':'mpop-open'}">${s.status==='pop'?'팝업 '+( s.deadline||''):'영업중'}</span>
+        </div>`,
+        {closeButton:false,maxWidth:220,minWidth:160}
+      );
+    mk.on('click',()=>{
+      _highlightCard(i);
+    });
+    _markers[i]=mk;
+  });
+}
+
+function panToStore(idx){
+  if(!_map){initMap();setTimeout(()=>panToStore(idx),350);return;}
+  const s=STORES[idx];
+  _map.flyTo([s.lat,s.lng],15,{animate:true,duration:1});
+  setTimeout(()=>{if(_markers[idx])_markers[idx].openPopup();},700);
+  _highlightCard(idx);
+  // 마커 색 강조
+  if(_selIdx>=0&&_markers[_selIdx])_markers[_selIdx].setIcon(_makeIcon(STORES[_selIdx].emoji,false));
+  if(_markers[idx])_markers[idx].setIcon(_makeIcon(s.emoji,true));
+  _selIdx=idx;
+}
+
+function _highlightCard(idx){
+  document.querySelectorAll('.space-card').forEach((el,i)=>{
+    el.classList.toggle('map-sel',i===idx);
+  });
+  const card=document.getElementById('scard-'+idx);
+  if(card)card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function locateUser(){
+  if(!navigator.geolocation){alert('위치 서비스를 지원하지 않는 브라우저입니다.');return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const {latitude:lat,longitude:lng}=pos.coords;
+    if(!_map)return;
+    _map.flyTo([lat,lng],14,{animate:true,duration:1.2});
+    L.circleMarker([lat,lng],{
+      radius:8,color:'#B07466',fillColor:'#B07466',
+      fillOpacity:.35,weight:2
+    }).addTo(_map).bindPopup('<div class="mpop"><p class="mpop-name">현재 위치</p></div>').openPopup();
+  },()=>{alert('위치 정보를 가져올 수 없습니다.');});
 }
 
 /* ── AI CHAT : 키워드 매칭 알고리즘 ── */
