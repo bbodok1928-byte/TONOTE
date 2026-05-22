@@ -936,15 +936,80 @@ function renderSpaces(){
   </div>`).join('');
 }
 
-/* ── AI CHAT ── */
-const aiReplies=[
-  {text:'그 감정이 느껴져요. 조용하고 깊은 향이 필요한 순간이네요.',cards:[1,2]},
-  {text:'그 장면이 선명하게 그려져요. 촉촉하고 투명한 향이 어울릴 것 같아요.',cards:[3,5]},
-  {text:'설레는 기분엔 가볍고 화사한 향이 제격이에요.',cards:[7,10]},
-  {text:'달콤하고 따뜻한 밤을 위한 향이 잘 어울릴 것 같아요.',cards:[4,12]},
-  {text:'자연 속에서 숨을 고르는 느낌, 그린하고 맑은 향을 추천드려요.',cards:[5,11]},
-];
-let riIdx=0;
+/* ── AI CHAT : 키워드 매칭 알고리즘 ── */
+
+// 키워드 → 무드/카테고리 매핑 테이블
+const KW={
+  '비':'비 오는 날','빗소리':'비 오는 날','장마':'비 오는 날','축축':'비 오는 날','우울':'비 오는 날','흐린':'비 오는 날','보슬':'비 오는 날',
+  '숲':'고요한 숲','나무':'고요한 숲','초록':'고요한 숲','풀':'고요한 숲','자연':'고요한 숲','이끼':'고요한 숲','산':'고요한 숲','녹음':'고요한 숲',
+  '밤':'늦은 밤','새벽':'늦은 밤','고독':'늦은 밤','어둠':'늦은 밤','혼자':'늦은 밤','조용':'늦은 밤','적막':'늦은 밤','불면':'늦은 밤','외로':'늦은 밤',
+  '봄':'봄 산책','꽃':'봄 산책','산책':'봄 산책','설레':'봄 산책','따뜻':'봄 산책','포근':'봄 산책','행복':'봄 산책','기분좋':'봄 산책',
+  '카페':'카페 오후','커피':'카페 오후','오후':'카페 오후','책':'카페 오후','여유':'카페 오후','휴식':'카페 오후','피곤':'카페 오후','독서':'카페 오후',
+  '바다':'바다 바람','해변':'바다 바람','파도':'바다 바람','소금':'바다 바람','청량':'바다 바람','여름':'바다 바람','수영':'바다 바람','상쾌':'바다 바람','산뜻':'바다 바람',
+  '달콤':'달콤한','달달':'달콤한','스위트':'달콤한','바닐라':'달콤한','꿀':'달콤한',
+  '우디':'우디','나무향':'우디','목재':'우디','가죽':'우디','레더':'우디','흙':'우디',
+  '플로럴':'플로럴','장미':'플로럴','자스민':'플로럴','꽃향':'플로럴','라일락':'플로럴',
+  '레몬':'프루티','오렌지':'프루티','과일':'프루티','시트러스':'프루티','자몽':'프루티','무화과':'프루티',
+  '머스크':'머스크','클린':'클린','깔끔':'클린','세탁':'클린','린넨':'클린',
+  '향신료':'스파이시','스파이시':'스파이시','매콤':'스파이시','이국':'오리엔탈','모로코':'오리엔탈','오리엔탈':'오리엔탈',
+  '겨울':'늦은 밤','가을':'고요한 숲','담배':'늦은 밤','위스키':'늦은 밤','라벤더':'봄 산책',
+};
+
+// 무드별 시적 응답 템플릿
+const POETIC={
+  '비 오는 날':['빗소리가 창문을 두드리는 날, 이런 향이 옆에 있으면 좋겠어요.','촉촉한 공기 속에 스며드는 향이 필요한 날이네요. 이건 어떨까요.'],
+  '고요한 숲':['조용히 숨을 고르는 순간에 어울리는 향을 찾았어요.','나무와 이끼의 기억을 담은 향, 지금 당신에게 꼭 맞을 것 같아요.'],
+  '늦은 밤':['깊은 밤의 감성을 담은 향이에요. 오래 잔향이 남아요.','혼자만의 시간을 위한 향, 조용하고 묵직해요.'],
+  '봄 산책':['설레는 기분엔 가볍고 화사한 향이 제격이에요.','봄 햇살처럼 따뜻하고 산뜻한 향이 잘 어울릴 것 같아요.'],
+  '카페 오후':['여유로운 오후를 위한 향이에요. 따뜻하고 편안해요.','커피 한 잔 곁에 두면 딱인 아늑한 향이에요.'],
+  '바다 바람':['맑고 투명한 향이 그 순간과 닮아있어요.','바람처럼 가볍게 스치는 향, 지금 당신에게 필요해 보여요.'],
+  '달콤한':['달콤함이 그리운 날이네요. 이 향들이 위로가 될 거예요.','따뜻하고 달콤한 향, 포근하게 감싸줄 거예요.'],
+  '우디':['깊고 차분한 우디 향이 잘 어울릴 것 같아요.','나무의 기억을 담은 향, 오래 남아요.'],
+  '플로럴':['꽃을 담은 향이에요. 화사하지만 과하지 않아요.','은은하고 우아한 플로럴, 지금 기분에 딱이에요.'],
+  '프루티':['상큼하고 생기있는 향이에요. 기분이 밝아질 거예요.','과일의 싱그러움을 담은 향, 어떠세요.'],
+  '머스크':['피부에 밀착되는 조용한 향이에요. 은은하게 오래 남아요.','내 체향처럼 자연스럽게 스며드는 향이에요.'],
+  '클린':['깨끗하고 맑은 향이에요. 부담 없이 매일 쓸 수 있어요.','가장 편안하고 깔끔한 향으로 골랐어요.'],
+  '오리엔탈':['이국적이고 깊은 향이에요. 잊지 못할 잔향이 남아요.','향신료와 나무가 어우러진 신비로운 향이에요.'],
+  'default':['말씀해 주신 감정에서 이런 향들이 떠올랐어요.','그 순간과 닮은 향을 찾았어요. 한번 느껴보세요.','이 향들이 지금의 당신을 잘 표현해 줄 것 같아요.'],
+};
+
+// 입력 텍스트에서 향수 매칭 점수 계산
+function matchPerfumes(input){
+  const q=input.toLowerCase();
+  const moodHits={};
+  const tagHits=new Set();
+  // 키워드 스캔
+  Object.entries(KW).forEach(([kw,val])=>{
+    if(!q.includes(kw))return;
+    const isMood=PERFUMES.some(p=>p.moods.includes(val));
+    if(isMood) moodHits[val]=(moodHits[val]||0)+1;
+    else tagHits.add(val);
+  });
+  const topMood=Object.entries(moodHits).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
+  const topTag=[...tagHits][0]||null;
+
+  // 향수별 점수 계산
+  const scored=PERFUMES.map(p=>{
+    let sc=0;
+    Object.keys(moodHits).forEach(m=>{if(p.moods.includes(m))sc+=moodHits[m]*3;});
+    tagHits.forEach(t=>{
+      if(p.cat===t)sc+=2;
+      if(p.tags.some(tag=>tag.includes(t)))sc+=2;
+    });
+    // desc·poem 직접 포함 보너스
+    Object.keys(KW).forEach(kw=>{if(q.includes(kw)&&(p.desc.includes(kw)||p.poem.includes(kw)))sc+=1;});
+    return{p,sc};
+  }).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc);
+
+  return{scored,topMood,topTag};
+}
+
+// 매칭 결과에 맞는 시적 문장 선택
+function pickPoetic(topMood,topTag){
+  const pool=POETIC[topMood]||POETIC[topTag]||POETIC['default'];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
 function initChat(){
   const area=document.getElementById('chat-area');area.innerHTML='';
   appendMsg('bot','지금 이 순간, 어떤 감정이나 장면이 떠오르시나요?\n기억 속 한 장면이어도 좋고, 지금의 기분을 그냥 말씀해 주셔도 좋아요.');
@@ -955,22 +1020,48 @@ function initChat(){
 }
 function clearChat(){document.getElementById('chat-area').innerHTML='';initChat();}
 function fillSug(el){document.getElementById('chat-input').value=el.textContent;switchTab('ai');setTimeout(sendChat,200);}
+
 function sendChat(){
   const ta=document.getElementById('chat-input');const txt=ta.value.trim();if(!txt)return;
   appendMsg('user',txt);ta.value='';ta.style.height='auto';
   const area=document.getElementById('chat-area');
-  const t=document.createElement('div');t.className='typing';t.innerHTML='<span></span><span></span><span></span>';
-  area.appendChild(t);area.scrollTop=area.scrollHeight;
+  const typing=document.createElement('div');typing.className='typing';
+  typing.innerHTML='<span></span><span></span><span></span>';
+  area.appendChild(typing);area.scrollTop=area.scrollHeight;
+
   setTimeout(()=>{
-    t.remove();const r=aiReplies[riIdx%aiReplies.length];riIdx++;
-    appendMsg('bot',r.text);
-    r.cards.forEach(cid=>{const p=PERFUMES.find(x=>x.id===cid);if(!p)return;
+    typing.remove();
+    const{scored,topMood,topTag}=matchPerfumes(txt);
+    const hasMatch=scored.length>0;
+    const replyTxt=hasMatch
+      ?pickPoetic(topMood,topTag)
+      :'조금 더 구체적인 감정이나 장면을 말씀해 주시면 더 잘 찾아드릴 수 있어요.\n예: "비 오는 날 창가", "숲속 산책", "따뜻한 카페 오후" 같은 느낌으로요 ☁️';
+    appendMsg('bot',replyTxt);
+
+    // 상위 2개 향수 추천 카드 출력 (매칭 없으면 평점 상위 2개)
+    const toShow=hasMatch
+      ?scored.slice(0,2).map(x=>x.p)
+      :PERFUMES.slice().sort((a,b)=>b.rating-a.rating).slice(0,2);
+
+    toShow.forEach(p=>{
       const d=document.createElement('div');d.className='msg-card';
-      d.innerHTML=`<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.emoji} ${p.name}</p><p class="msg-card-poem">"${p.poem}"</p>`;
-      d.onclick=()=>openDetail(p.id);area.appendChild(d);area.scrollTop=area.scrollHeight;
+      const imgHTML=p.img?`<img src="${p.img}" style="width:100%;height:90px;object-fit:cover;border-radius:10px;margin-bottom:10px;display:block" onerror="this.style.display='none'">`:'';
+      d.innerHTML=`${imgHTML}<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.name}</p><p class="msg-card-poem">"${p.poem}"</p><p style="font-size:10px;color:var(--primary);margin-top:8px;font-weight:700">탭하여 상세보기 →</p>`;
+      d.onclick=()=>openDetail(p.id);
+      area.appendChild(d);area.scrollTop=area.scrollHeight;
     });
+
+    // 3개 이상 매칭 시 "더 보기" 메시지
+    if(scored.length>2){
+      const more=document.createElement('div');more.className='msg msg-bot';
+      more.style.cursor='pointer';more.style.whiteSpace='pre-line';
+      more.textContent=`+${scored.length-2}개의 향수가 더 있어요. 탐색 탭에서 확인해보세요 →`;
+      more.onclick=()=>switchTab('explore');
+      area.appendChild(more);area.scrollTop=area.scrollHeight;
+    }
   },1100);
 }
+
 function appendMsg(type,text){
   const area=document.getElementById('chat-area');
   const d=document.createElement('div');d.className='msg msg-'+type;d.style.whiteSpace='pre-line';d.textContent=text;
