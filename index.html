@@ -612,91 +612,91 @@ input,textarea{font-family:inherit;outline:none}
 
 <script>
 const PERFUMES=[
-  {id:1,brand:'LE LABO',name:'Santal 33',emoji:'🌿',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=300&q=80',bg:'linear-gradient(135deg,#E8F0E6,#D4E4D0)',
+  {id:1,brand:'LE LABO',name:'Santal 33',emoji:'🌿',img:'https://perfumegraphy.com/web/product/big/202108/f18023aa44ba17ed14025cf711a2297b.jpg',bg:'linear-gradient(135deg,#E8F0E6,#D4E4D0)',
    poem:'비 온 뒤 숲 속 오솔길, 젖은 나무의 조용한 숨결',
    moods:['고요한 숲','비 오는 날','늦은 밤'],tags:['고요한','우디','가을·겨울'],cat:'우디',season:['가을','겨울'],
    longevity:5,sillage:3,price:295000,samplePrice:4500,sampleAvail:true,rating:4.8,reviews:1243,
    top:['카다멈','바이올렛'],mid:['아이리스','아미리스'],base:['샌달우드','레더','머스크'],
    desc:'미국 텍사스의 사막 공기와 나무 연기, 그리고 가죽이 한데 어우러진 향. 성별을 초월한 현대적 우디향의 아이콘.',similar:[2,6,8]},
-  {id:2,brand:'BYREDO',name:'Mojave Ghost',emoji:'🪷',img:'https://images.unsplash.com/photo-1586495777744-4e6b58d1d16f?w=300&q=80',bg:'linear-gradient(135deg,#EDE8F5,#DDD4EE)',
+  {id:2,brand:'BYREDO',name:'Mojave Ghost',emoji:'🪷',img:'https://perfumegraphy.com/web/product/big/202211/06415a2af5051c5ab7105692980df1de.jpg',bg:'linear-gradient(135deg,#EDE8F5,#DDD4EE)',
    poem:'아무도 없는 새벽, 창문을 스치는 서늘한 공기',
    moods:['늦은 밤','고요한 숲'],tags:['미스터리','파우더리','사계절'],cat:'머스크',season:['봄','가을'],
    longevity:4,sillage:3,price:265000,samplePrice:4000,sampleAvail:true,rating:4.7,reviews:876,
    top:['마그놀리아','스노우베리'],mid:['아미리스','바이올렛'],base:['샌달우드','머스크','오크모스'],
    desc:'사막의 유령처럼 조용하고 신비로운 향. 파우더리하면서도 우디한 여운이 오래 남는다.',similar:[1,5,8]},
-  {id:3,brand:'JO MALONE',name:'Wood Sage & Sea Salt',emoji:'🌊',img:'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=300&q=80',bg:'linear-gradient(135deg,#E0EEF5,#C8DFE8)',
+  {id:3,brand:'JO MALONE',name:'Wood Sage & Sea Salt',emoji:'🌊',img:'https://m.perfumegraphy.com/web/product/big/202504/93452ac1a4c21b67f16340a742767bcc.jpg',bg:'linear-gradient(135deg,#E0EEF5,#C8DFE8)',
    poem:'파도, 바람, 그리고 소금기 어린 아침 해변',
    moods:['바다 바람','봄 산책'],tags:['청량한','아쿠아틱','여름'],cat:'아쿠아틱',season:['봄','여름'],
    longevity:3,sillage:2,price:175000,samplePrice:2800,sampleAvail:true,rating:4.6,reviews:2341,
    top:['바다 소금','세이지'],mid:['암브렛씨드'],base:['드리프트우드','머스크'],
    desc:'영국 해안가 절벽에서 맞는 바람. 세이지와 바다 소금이 만들어내는 상쾌하고 자연스러운 향.',similar:[7,9,12]},
-  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=300&q=80&crop=entropy',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
+  {id:4,brand:'MAISON MARGIELA',name:'By The Fireplace',emoji:'🕯️',img:'https://perfumegraphy.com/web/product/big/202503/d9f9b6c1e2e0c94ad40db1b3bd7bace7.jpg',bg:'linear-gradient(135deg,#F5EDE0,#EED8BE)',
    poem:'겨울 밤 벽난로 앞, 따뜻한 커피 한 잔',
    moods:['늦은 밤','카페 오후'],tags:['따뜻한','스모키','겨울'],cat:'우디',season:['가을','겨울'],
    longevity:4,sillage:3,price:198000,samplePrice:3200,sampleAvail:true,rating:4.9,reviews:3102,
    top:['클로브','오렌지'],mid:['체스트넛','구아이악 우드'],base:['바닐라','캐시미어'],
    desc:'겨울 저녁 벽난로에서 타오르는 나무 연기와 바닐라의 달콤함. 포근함을 향으로 만든다.',similar:[1,13,14]},
-  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',img:'https://images.unsplash.com/photo-1579567761406-4684ee0c75b6?w=300&q=80',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
+  {id:5,brand:'DIPTYQUE',name:'Philosykos',emoji:'🪵',img:'https://perfumegraphy.com/web/product/big/202111/936c6e842116e871f136122fa227b3d3.jpg',bg:'linear-gradient(135deg,#EEE8D8,#E0D4B4)',
    poem:'무화과 나무 그늘 아래, 시간이 멈춘 여름 오후',
    moods:['고요한 숲','카페 오후'],tags:['그린','무화과','여름'],cat:'우디',season:['여름'],
    longevity:3,sillage:2,price:212000,samplePrice:3500,sampleAvail:true,rating:4.7,reviews:987,
    top:['무화과 잎','목화'],mid:['무화과 나무'],base:['화이트 시더'],
    desc:'딥티크의 대표작. 무화과 나무의 우유빛 수액부터 잎과 열매까지, 나무 한 그루를 통째로 담은 향.',similar:[1,8,11]},
-  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',img:'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=300&q=80',bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
+  {id:6,brand:'CLEAN RESERVE',name:'Warm Cotton',emoji:'🤍',img:'',bg:'linear-gradient(135deg,#F0F0EC,#E4E4DC)',
    poem:'햇살 아래 바람에 말린 흰 린넨 이불',
    moods:['봄 산책','카페 오후'],tags:['클린','머스크','봄'],cat:'머스크',season:['봄','여름'],
    longevity:3,sillage:2,price:98000,samplePrice:1800,sampleAvail:true,rating:4.4,reviews:1456,
    top:['베르가못'],mid:['코튼 플라워','오존'],base:['머스크','화이트 우드'],
    desc:'방금 세탁해 햇살에 말린 흰 면 소재의 냄새. 가장 깨끗하고 편안한 향수로 입문자에게 최적.',similar:[3,9,10]},
-  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',img:'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&q=80',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
+  {id:7,brand:'CHANEL',name:'Chance Eau Tendre',emoji:'🌸',img:'',bg:'linear-gradient(135deg,#F5E8EE,#EDD4DE)',
    poem:'봄 카페 창가, 달콤한 바람에 실려오는 꽃향기',
    moods:['봄 산책','카페 오후'],tags:['플로럴','달콤한','봄'],cat:'플로럴',season:['봄','여름'],
    longevity:4,sillage:3,price:195000,samplePrice:3200,sampleAvail:false,rating:4.8,reviews:5621,
    top:['자몽','쿼이드 드 로즈'],mid:['자스민','하이아신스'],base:['화이트 머스크','베티버'],
    desc:'샤넬 찬스 라인의 가장 맑고 여린 향. 화사하지만 과하지 않아 첫 향수로 가장 많이 추천됨.',similar:[10,11,12]},
-  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',img:'https://images.unsplash.com/photo-1563170351-be82bc888aa4?w=300&q=80',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
+  {id:8,brand:'AESOP',name:'Marrakech Intense',emoji:'🌙',img:'https://perfumegraphy.com/web/product/big/202211/d6049522448ce73f10ef932ee73d766f.jpg',bg:'linear-gradient(135deg,#F0E8D8,#E4D4B4)',
    poem:'저녁 시장골목, 향신료와 연기가 뒤섞이는 공기',
    moods:['늦은 밤','바다 바람'],tags:['스파이시','우디','가을'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:4,price:185000,samplePrice:3000,sampleAvail:true,rating:4.6,reviews:643,
    top:['코리앤더','카다멈'],mid:['쿠민','패출리'],base:['샌달우드','시더','앰버'],
    desc:'모로코 마라케시의 밤. 향신료와 나무가 어우러진 짙고 이국적인 향.',similar:[4,1,14]},
-  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',img:'https://images.unsplash.com/photo-1539710703297-a3e7b4da5e1f?w=300&q=80',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
+  {id:9,brand:'ISSEY MIYAKE',name:"L'Eau d'Issey",emoji:'💧',img:'https://us.isseymiyake.com/cdn/shop/files/IP55AZ325-01-01_0000_IP55AZ007-01-01_1.jpg?v=1686076134',bg:'linear-gradient(135deg,#E8EEF5,#D4E0EC)',
    poem:'새벽 연못 위 이슬, 맑고 차갑게 맺힌 물방울',
    moods:['바다 바람','봄 산책'],tags:['아쿠아틱','청량한','사계절'],cat:'아쿠아틱',season:['봄','여름','가을'],
    longevity:3,sillage:2,price:128000,samplePrice:2200,sampleAvail:true,rating:4.5,reviews:3876,
    top:['연꽃','로즈우드'],mid:['카네이션','사이클라멘'],base:['머스크','삼나무','앰버'],
    desc:'물의 향을 최초로 포착한 전설적인 향수. 깨끗하고 미니멀하여 입문자부터 마니아까지 사랑받음.',similar:[3,6,12]},
-  {id:10,brand:'GUERLAIN',name:'Mon Guerlain',emoji:'💜',img:'https://images.unsplash.com/photo-1573575154488-f580de5afb35?w=300&q=80',bg:'linear-gradient(135deg,#EDE8F5,#DDDAF5)',
+  {id:10,brand:'GUERLAIN',name:'Mon Guerlain',emoji:'💜',img:'',bg:'linear-gradient(135deg,#EDE8F5,#DDDAF5)',
    poem:'라벤더 밭 한가운데, 바람이 지나간 자리',
    moods:['봄 산책','카페 오후'],tags:['라벤더','플로럴','로맨틱'],cat:'플로럴',season:['봄','여름'],
    longevity:4,sillage:3,price:148000,samplePrice:2500,sampleAvail:true,rating:4.6,reviews:2109,
    top:['라벤더','베르가못'],mid:['쿠마린'],base:['바닐라','화이트 머스크','샌달우드'],
    desc:'프로방스 라벤더에서 영감을 받은 따뜻하고 부드러운 플로럴. 달콤하지만 청량하다.',similar:[7,6,11]},
-  {id:11,brand:'HERMÈS',name:'Un Jardin sur le Nil',emoji:'🌺',img:'https://images.unsplash.com/photo-1587017185342-b4c1b0edcec5?w=300&q=80',bg:'linear-gradient(135deg,#F5F0D8,#EEE4B4)',
+  {id:11,brand:'HERMÈS',name:'Un Jardin sur le Nil',emoji:'🌺',img:'https://perfumegraphy.com/web/product/big/202504/2fabcc43e624a1c7df2a33ac9da1f0e7.jpg',bg:'linear-gradient(135deg,#F5F0D8,#EEE4B4)',
    poem:'나일강변 정원, 익어가는 과일과 꽃의 숨결',
    moods:['봄 산책','바다 바람'],tags:['그린','프루티','여름'],cat:'프루티',season:['봄','여름'],
    longevity:3,sillage:2,price:225000,samplePrice:3800,sampleAvail:false,rating:4.7,reviews:876,
    top:['망고','토마토 잎'],mid:['연꽃','그린노트'],base:['골드 인센스','소말리아 몰약'],
    desc:'에르메스의 정원 시리즈 대표작. 이집트 나일강 유역 정원의 이국적인 초록빛 과일향.',similar:[3,5,9]},
-  {id:12,brand:'YSL',name:'Black Opium',emoji:'☕',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=80',bg:'linear-gradient(135deg,#EAE0F0,#D8CCE8)',
+  {id:12,brand:'YSL',name:'Black Opium',emoji:'☕',img:'https://perfumegraphy.com/web/product/big/202404/da2300e12f97e44f5bd5a4c1e312fbdf.jpg',bg:'linear-gradient(135deg,#EAE0F0,#D8CCE8)',
    poem:'밤의 카페, 커피 향과 은은한 바닐라의 잔향',
    moods:['늦은 밤','카페 오후'],tags:['커피','달콤한','밤'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:4,price:165000,samplePrice:2800,sampleAvail:true,rating:4.8,reviews:7234,
    top:['핑크 페퍼','오렌지 블라썸'],mid:['커피','자스민'],base:['파촐리','바닐라','시더'],
    desc:'커피와 바닐라의 달콤하고 중독적인 조합. 야간 외출이나 특별한 저녁을 위한 향수.',similar:[4,8,14]},
-  {id:13,brand:'NARCISO RODRIGUEZ',name:'For Her EDP',emoji:'🩷',img:'https://images.unsplash.com/photo-1590156562745-5da9e92b9e58?w=300&q=80',bg:'linear-gradient(135deg,#F5E8EE,#EED4E0)',
+  {id:13,brand:'NARCISO RODRIGUEZ',name:'For Her EDP',emoji:'🩷',img:'https://www.narcisorodriguezparfums.com/dw/image/v2/BCMQ_PRD/on/demandware.static/-/Sites-itemmaster_narcisorodriguez/default/dwebe27ad4/for-her-edp/FH-EDP-2012-100ml.png?sw=800&sh=900&sm=fit&q=100',bg:'linear-gradient(135deg,#F5E8EE,#EED4E0)',
    poem:'따뜻한 피부 위에 남은, 조용하고 감각적인 여운',
    moods:['늦은 밤','카페 오후'],tags:['머스크','플로럴','미니멀'],cat:'머스크',season:['봄','가을','겨울'],
    longevity:5,sillage:3,price:178000,samplePrice:2900,sampleAvail:true,rating:4.7,reviews:1876,
    top:['로즈'],mid:['머스크','앰브레트'],base:['샌달우드','베티버'],
    desc:'머스크의 완성형. 인간의 피부 향과 가장 닮아있어 "나의 체취가 이렇다면" 하는 향수.',similar:[6,2,10]},
-  {id:14,brand:'TOM FORD',name:'Tobacco Vanille',emoji:'🥃',img:'https://images.unsplash.com/photo-1549590143-d5855148a9d5?w=300&q=80',bg:'linear-gradient(135deg,#F0E4D0,#E8D0A8)',
+  {id:14,brand:'TOM FORD',name:'Tobacco Vanille',emoji:'🥃',img:'https://perfumegraphy.com/web/product/big/202503/b1ecb08362c401506c6959a662924e2a.jpg',bg:'linear-gradient(135deg,#F0E4D0,#E8D0A8)',
    poem:'가죽 소파, 위스키 한 잔, 타오르는 벽난로',
    moods:['늦은 밤'],tags:['달콤한','스파이시','겨울'],cat:'오리엔탈',season:['가을','겨울'],
    longevity:5,sillage:5,price:345000,samplePrice:5500,sampleAvail:true,rating:4.9,reviews:2134,
    top:['담배 잎','향신료'],mid:['토카빈','바닐라','코코아'],base:['드라이 프루트','우드'],
    desc:'세상에서 가장 럭셔리한 담배와 바닐라의 조합. 강렬하고 중독적이며 겨울 밤 최강의 향수.',similar:[4,8,12]},
-  {id:15,brand:'ACQUA DI PARMA',name:'Colonia',emoji:'🍋',img:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=300&q=80',bg:'linear-gradient(135deg,#F5F5D8,#EEEEAC)',
+  {id:15,brand:'ACQUA DI PARMA',name:'Colonia',emoji:'🍋',img:'',bg:'linear-gradient(135deg,#F5F5D8,#EEEEAC)',
    poem:'이탈리아 여름 아침, 레몬과 베르가못의 산뜻함',
    moods:['봄 산책','카페 오후'],tags:['시트러스','클래식','여름'],cat:'프루티',season:['봄','여름'],
    longevity:3,sillage:2,price:168000,samplePrice:2700,sampleAvail:false,rating:4.6,reviews:1543,
@@ -794,10 +794,16 @@ function artVisInner(p,emojiSz,shadowSz){
     ${p.emoji}
   </div>`;
 }
+function perfImgInner(p,emojiSz,shadowSz,pad){
+  const art=artVisInner(p,emojiSz,shadowSz);
+  if(!p.img)return art;
+  const pk=pad||'10px';
+  return art+`<img src="${p.img}" alt="${p.name}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:${pk};z-index:2;background:transparent" onerror="this.remove()">`;
+}
 
 function vcardHTML(p){
   return `<div class="vcard" onclick="openDetail(${p.id})">
-    <div class="vcard-vis" style="background:${p.bg}">${artVisInner(p,'34px',12)}</div>
+    <div class="vcard-vis" style="background:${p.bg}">${perfImgInner(p,'34px',12,'6px')}</div>
     <div class="vcard-body">
       <p class="vcard-brand">${p.brand}</p>
       <p class="vcard-name">${p.name}</p>
@@ -811,7 +817,7 @@ function vcardHTML(p){
 function hcardHTML(p){
   return `<div class="hcard" onclick="openDetail(${p.id})">
     <div class="hcard-top" style="background:${p.bg}">
-      ${artVisInner(p,'40px',14)}
+      ${perfImgInner(p,'40px',14,'8px')}
       <span class="hcard-heart" style="position:absolute;top:8px;right:8px;z-index:3" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>
     </div>
     <div class="hcard-body">
@@ -842,7 +848,7 @@ function renderExplore(){
   if(!filtered.length){grid.innerHTML='<div class="no-result" style="grid-column:1/-1">해당하는 향수가 없어요</div>';return;}
   grid.innerHTML=filtered.map(p=>`<div class="gcard" onclick="openDetail(${p.id})">
     <div class="gcard-top" style="background:${p.bg}">
-      ${artVisInner(p,'46px',16)}
+      ${perfImgInner(p,'46px',16,'10px')}
       <span class="gcard-heart" onclick="event.stopPropagation();toggleLike(${p.id},this)">${liked.has(p.id)?'❤️':'🤍'}</span>
       ${p.sampleAvail?'<span class="gcard-sample">샘플</span>':''}
     </div>
@@ -891,14 +897,14 @@ function openDetail(id){
   currentDetailId=id;
   const vis=document.getElementById('det-vis');
   vis.style.background=p.bg;
-  vis.innerHTML=artVisInner(p,'68px',24);
+  vis.innerHTML=perfImgInner(p,'68px',24,'20px');
   document.getElementById('det-like-btn').textContent=liked.has(id)?'❤️':'🤍';
 
   const bar=(v,max=5)=>`<div style="display:flex;align-items:center;gap:8px;width:100%"><div class="bar-track"><div class="bar-fill" style="width:${(v/max)*100}%"></div></div><span style="font-size:11px;color:var(--t3)">${v}/${max}</span></div>`;
   const similar=p.similar.map(sid=>{const sp=PERFUMES.find(x=>x.id===sid);if(!sp)return'';
     return `<div class="hcard" style="flex:0 0 140px" onclick="openDetail(${sp.id})">
       <div class="hcard-top" style="background:${sp.bg};height:100px">
-        ${artVisInner(sp,'36px',12)}
+        ${perfImgInner(sp,'36px',12,'8px')}
       </div>
       <div class="hcard-body"><p class="hcard-brand">${sp.brand}</p><p class="hcard-name">${sp.name}</p></div>
     </div>`;}).join('');
@@ -990,7 +996,7 @@ function openSample(focusId){
     <div class="sample-item${selectedSamples.has(p.id)?' selected':''}"
          id="sitem-${p.id}" onclick="toggleSample(${p.id},this)">
       <div style="width:38px;height:38px;border-radius:10px;background:${p.bg};flex-shrink:0;position:relative;overflow:hidden">
-        ${artVisInner(p,'18px',5)}
+        ${perfImgInner(p,'18px',5,'3px')}
       </div>
       <div class="sample-item-info">
         <p class="sample-item-name">${p.name}</p>
@@ -1221,7 +1227,7 @@ function updateMyPage(){
           const full=PERFUMES.find(x=>x.id===p.id)||p;
           return`<div class="order-item">
             <div class="order-item-vis" style="background:${p.bg||full.bg||'#F0E8E0'}">
-              ${artVisInner(full,'14px',4)}
+              ${perfImgInner(full,'14px',4,'3px')}
             </div>
             <div>
               <p class="order-item-name">${p.name}</p>
