@@ -1270,9 +1270,11 @@ function renderSpaces(sortedList,distMap){
   const pLbl=['낮음','보통','높음'],pCls=['pv-low','pv-med','pv-high'];
   const list=sortedList||STORES;
   const container=document.getElementById('spaces-list');
+  if(!container)return;
   container.innerHTML=list.map((s,i)=>{
+    /* 거리 배지: distMap 있으면 "내 위치에서 XXX" 형태로 표시 */
     const dist=distMap&&distMap[s.id]!=null
-      ?`<span class="dist-badge">${_formatDist(distMap[s.id])}</span>`:'';
+      ?`<span class="dist-badge">내 위치에서 ${_formatDist(distMap[s.id])}</span>`:'';
     return`<div class="space-card" id="scard-${s.id}" style="animation-delay:${i*.045}s" onclick="panToStore(${s.id})">
     <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
     <div class="space-info">
@@ -1291,7 +1293,6 @@ function renderSpaces(sortedList,distMap){
     <span class="space-badge ${s.status==='pop'?'sb-pop':'sb-open'}">${s.status==='pop'?'팝업':'영업중'}</span>
   </div>`;
   }).join('');
-  // 페이드인 트리거
   if(distMap){
     container.classList.add('sorting');
     setTimeout(()=>container.classList.remove('sorting'),600);
@@ -1323,7 +1324,7 @@ function _makeIcon(emoji,sel){
   });
 }
 
-/* 기준 위치 → 거리 계산 → 정렬 → 리스트 갱신 */
+/* 기준 위치 → 거리 계산 → 정렬 → 리스트 즉시 갱신 */
 function updateStoreListByProximity(lat,lng){
   const distMap={};
   const sorted=STORES.map(s=>{
@@ -1332,14 +1333,19 @@ function updateStoreListByProximity(lat,lng){
     return{...s,_dist:d};
   }).sort((a,b)=>a._dist-b._dist);
 
+  /* renderSpaces를 setTimeout 없이 즉시 호출 → DOM 갱신 보장 */
+  try{renderSpaces(sorted,distMap);}catch(e){console.error('[TONOTE] updateStoreListByProximity:',e);}
+
+  /* 렌더 완료 후 페이드 인 (cosmetic) */
   const container=document.getElementById('spaces-list');
-  // 부드러운 페이드 아웃 → 렌더 → 페이드 인
-  container.style.transition='opacity .2s';
-  container.style.opacity='0';
-  setTimeout(()=>{
-    renderSpaces(sorted,distMap);
-    container.style.opacity='1';
-  },220);
+  if(container){
+    container.style.transition='none';
+    container.style.opacity='0';
+    setTimeout(function(){
+      container.style.transition='opacity .25s';
+      container.style.opacity='1';
+    },30);
+  }
 }
 
 function initMap(){
@@ -1417,7 +1423,7 @@ function locateUser(){
 
   /* ── ② 거리 계산 + 리스트 렌더 (지도와 완전 독립) ── */
   function _renderList(lat,lng){
-    /* 거리 계산 */
+    /* STEP 1: 거리 계산 & 정렬 */
     var distMap={};
     var sorted=STORES.map(function(s){
       var d=_haversineDist(lat,lng,s.lat,s.lng);
@@ -1425,27 +1431,23 @@ function locateUser(){
       return Object.assign({},s,{_dist:d});
     }).sort(function(a,b){return a._dist-b._dist;});
 
-    /* 컨테이너 확인 */
-    var container=document.getElementById('spaces-list');
-    if(!container){
-      /* DOM이 없는 예외 상황: 렌더만 시도하고 종료 */
-      try{renderSpaces(sorted,distMap);}catch(e){console.error('[TONOTE] renderSpaces(no container):',e);}
-      return;
+    /* STEP 2: 즉시 렌더 (setTimeout 없음 → DOM 갱신 100% 보장) */
+    try{
+      renderSpaces(sorted,distMap);
+    }catch(e){
+      console.error('[TONOTE] renderSpaces error:',e);
     }
 
-    /* 페이드 아웃 → 렌더 → 페이드 인 */
-    container.style.transition='opacity .18s';
-    container.style.opacity='0';
-    setTimeout(function(){
-      try{
-        renderSpaces(sorted,distMap);
-      }catch(e){
-        console.error('[TONOTE] renderSpaces failed:',e);
-      }finally{
-        /* 에러 여부와 관계없이 opacity 반드시 복구 */
+    /* STEP 3: 렌더 완료 후 페이드 애니메이션 (cosmetic only) */
+    var container=document.getElementById('spaces-list');
+    if(container){
+      container.style.transition='none';
+      container.style.opacity='0';
+      setTimeout(function(){
+        container.style.transition='opacity .28s';
         container.style.opacity='1';
-      }
-    },200);
+      },30);
+    }
   }
 
   /* ── ③ 지도 이동 + 사용자 마커 ── */
