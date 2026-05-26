@@ -418,6 +418,7 @@ input,textarea{font-family:inherit;outline:none}
 .map-locate-btn.pulsing{animation:locatePulse .55s ease-in-out}
 /* 거리 배지 */
 .dist-badge{font-size:9.5px;font-weight:700;color:var(--primary);background:var(--primary-soft);border:1px solid rgba(176,116,102,.18);border-radius:50px;padding:2px 8px;flex-shrink:0;align-self:flex-start;margin-top:1px;white-space:nowrap}
+.spaces-notice{background:#FEF9F3;border:1px solid rgba(176,116,102,.22);border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:12px;color:var(--t2);text-align:center;line-height:1.75;animation:fadeUp .35s ease both}
 /* 매장 카드 페이드인 */
 @keyframes scardIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 #spaces-list.sorting .space-card{animation:scardIn .32s ease both}
@@ -858,12 +859,25 @@ const PERFUMES=[
 ];
 
 const STORES=[
-  {id:0,name:'올리브영 홍대점',brand:'OLIVE YOUNG',addr:'마포구 양화로 188',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open',lat:37.5572,lng:126.9219},
-  {id:1,name:'언더스탠드에비뉴 팝업',brand:'POP-UP',addr:'성동구 왕십리로 2-1',emoji:'🪷',bg:'#F0EAF5',pressure:1,status:'pop',deadline:'D-3',lat:37.5447,lng:127.0557},
-  {id:2,name:'딥티크 신세계 본점',brand:'DIPTYQUE',addr:'중구 소공로 63',emoji:'🕯️',bg:'#F5F0E8',pressure:2,status:'open',lat:37.5600,lng:126.9803},
-  {id:3,name:'롯데백화점 본점 향수관',brand:'LOTTE',addr:'중구 남대문로 81',emoji:'🏛️',bg:'#E8EEF5',pressure:3,status:'open',lat:37.5655,lng:126.9822},
-  {id:4,name:'세포라 강남점',brand:'SEPHORA',addr:'강남구 테헤란로 212',emoji:'💄',bg:'#F5EEE8',pressure:2,status:'open',lat:37.4979,lng:127.0270},
-  {id:5,name:'아로마티카 쇼룸',brand:'AROMATICA',addr:'강남구 도산대로 217',emoji:'🌱',bg:'#EAF5EA',pressure:1,status:'open',lat:37.5233,lng:127.0360},
+  /* ── 서울 ── */
+  {id:0,name:'올리브영 홍대점',brand:'OLIVE YOUNG',addr:'서울 마포구 양화로 188',city:'서울',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open',lat:37.5572,lng:126.9219},
+  {id:1,name:'언더스탠드에비뉴 팝업',brand:'POP-UP',addr:'서울 성동구 왕십리로 2-1',city:'서울',emoji:'🪷',bg:'#F0EAF5',pressure:1,status:'pop',deadline:'D-3',lat:37.5447,lng:127.0557},
+  {id:2,name:'딥티크 신세계 본점',brand:'DIPTYQUE',addr:'서울 중구 소공로 63',city:'서울',emoji:'🕯️',bg:'#F5F0E8',pressure:2,status:'open',lat:37.5600,lng:126.9803},
+  {id:3,name:'롯데백화점 본점 향수관',brand:'LOTTE',addr:'서울 중구 남대문로 81',city:'서울',emoji:'🏛️',bg:'#E8EEF5',pressure:3,status:'open',lat:37.5655,lng:126.9822},
+  {id:4,name:'세포라 강남점',brand:'SEPHORA',addr:'서울 강남구 테헤란로 212',city:'서울',emoji:'💄',bg:'#F5EEE8',pressure:2,status:'open',lat:37.4979,lng:127.0270},
+  {id:5,name:'아로마티카 쇼룸',brand:'AROMATICA',addr:'서울 강남구 도산대로 217',city:'서울',emoji:'🌱',bg:'#EAF5EA',pressure:1,status:'open',lat:37.5233,lng:127.0360},
+  /* ── 수원 ── */
+  {id:6,name:'롯데백화점 수원점 향수관',brand:'LOTTE',addr:'경기 수원시 팔달구 덕영대로 924',city:'수원',emoji:'🏛️',bg:'#E8EEF5',pressure:2,status:'open',lat:37.2657,lng:127.0317},
+  /* ── 대전 ── */
+  {id:7,name:'갤러리아 타임월드',brand:'GALLERIA',addr:'대전 서구 괴정로 443',city:'대전',emoji:'✨',bg:'#F5F0E8',pressure:2,status:'open',lat:36.3539,lng:127.3766},
+  /* ── 대구 ── */
+  {id:8,name:'신세계 대구점 향수관',brand:'SINSEGAE',addr:'대구 동구 동대구로 95',city:'대구',emoji:'🕯️',bg:'#F0EAF5',pressure:2,status:'open',lat:35.8788,lng:128.6277},
+  {id:9,name:'올리브영 동성로점',brand:'OLIVE YOUNG',addr:'대구 중구 동성로 2가 157',city:'대구',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open',lat:35.8684,lng:128.5984},
+  /* ── 부산 ── */
+  {id:10,name:'신세계 센텀시티 향수관',brand:'SINSEGAE',addr:'부산 해운대구 센텀남대로 59',city:'부산',emoji:'🌊',bg:'#E8F0F5',pressure:2,status:'open',lat:35.1693,lng:129.1299},
+  {id:11,name:'올리브영 서면점',brand:'OLIVE YOUNG',addr:'부산 부산진구 서면로 64',city:'부산',emoji:'🌿',bg:'#EAF2E8',pressure:1,status:'open',lat:35.1583,lng:129.0600},
+  /* ── 제주 ── */
+  {id:12,name:'올리브영 제주중앙로점',brand:'OLIVE YOUNG',addr:'제주 제주시 중앙로 48',city:'제주',emoji:'🍊',bg:'#FFF3E8',pressure:1,status:'open',lat:33.4996,lng:126.5312},
 ];
 const SPACES=STORES; // 하위 호환
 
@@ -1271,7 +1285,18 @@ function renderSpaces(sortedList,distMap){
   const list=sortedList||STORES;
   const container=document.getElementById('spaces-list');
   if(!container)return;
-  container.innerHTML=list.map((s,i)=>{
+
+  /* 가장 가까운 매장이 30km 초과일 때 안내 배너 */
+  const NEAR_THRESHOLD=30000; // 30km in meters
+  let noticeBanner='';
+  if(distMap){
+    const nearest=list[0]?distMap[list[0].id]:null;
+    if(nearest!=null&&nearest>NEAR_THRESHOLD){
+      noticeBanner=`<div class="spaces-notice">📍 현재 위치 30km 내 등록된 시향 공간이 없어요.<br>전국 매장을 <b>가까운 순</b>으로 보여드릴게요.</div>`;
+    }
+  }
+
+  container.innerHTML=noticeBanner+list.map((s,i)=>{
     /* 거리 배지: distMap 있으면 "내 위치에서 XXX" 형태로 표시 */
     const dist=distMap&&distMap[s.id]!=null
       ?`<span class="dist-badge">내 위치에서 ${_formatDist(distMap[s.id])}</span>`:'';
