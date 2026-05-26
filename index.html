@@ -1332,20 +1332,8 @@ function updateStoreListByProximity(lat,lng){
     distMap[s.id]=d;
     return{...s,_dist:d};
   }).sort((a,b)=>a._dist-b._dist);
-
-  /* renderSpaces를 setTimeout 없이 즉시 호출 → DOM 갱신 보장 */
-  try{renderSpaces(sorted,distMap);}catch(e){console.error('[TONOTE] updateStoreListByProximity:',e);}
-
-  /* 렌더 완료 후 페이드 인 (cosmetic) */
-  const container=document.getElementById('spaces-list');
-  if(container){
-    container.style.transition='none';
-    container.style.opacity='0';
-    setTimeout(function(){
-      container.style.transition='opacity .25s';
-      container.style.opacity='1';
-    },30);
-  }
+  /* opacity 조작 없이 즉시 렌더 */
+  try{renderSpaces(sorted,distMap);}catch(e){console.error('[TONOTE] proximity:',e);}
 }
 
 function initMap(){
@@ -1423,7 +1411,7 @@ function locateUser(){
 
   /* ── ② 거리 계산 + 리스트 렌더 (지도와 완전 독립) ── */
   function _renderList(lat,lng){
-    /* STEP 1: 거리 계산 & 정렬 */
+    /* 거리 계산 & 정렬 */
     var distMap={};
     var sorted=STORES.map(function(s){
       var d=_haversineDist(lat,lng,s.lat,s.lng);
@@ -1431,23 +1419,9 @@ function locateUser(){
       return Object.assign({},s,{_dist:d});
     }).sort(function(a,b){return a._dist-b._dist;});
 
-    /* STEP 2: 즉시 렌더 (setTimeout 없음 → DOM 갱신 100% 보장) */
-    try{
-      renderSpaces(sorted,distMap);
-    }catch(e){
-      console.error('[TONOTE] renderSpaces error:',e);
-    }
-
-    /* STEP 3: 렌더 완료 후 페이드 애니메이션 (cosmetic only) */
-    var container=document.getElementById('spaces-list');
-    if(container){
-      container.style.transition='none';
-      container.style.opacity='0';
-      setTimeout(function(){
-        container.style.transition='opacity .28s';
-        container.style.opacity='1';
-      },30);
-    }
+    /* 즉시 렌더 — opacity 조작 없음 (animation 충돌 방지) */
+    try{renderSpaces(sorted,distMap);}
+    catch(e){console.error('[TONOTE] renderSpaces:',e);}
   }
 
   /* ── ③ 지도 이동 + 사용자 마커 ── */
@@ -1471,6 +1445,7 @@ function locateUser(){
   /* ── ④ 성공 파이프라인 ── */
   function _onSuccess(lat,lng){
     _renderList(lat,lng);       /* 리스트 먼저 */
+    showToast('📍 내 위치 기준으로 시향 공간을 정렬했어요');
     setTimeout(function(){_updateMap(lat,lng);},50);  /* 지도는 50ms 뒤 */
     setTimeout(_resetBtn,1600);
   }
