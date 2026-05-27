@@ -138,7 +138,7 @@ input,textarea{font-family:inherit;outline:none}
 .vcard{display:flex;gap:0;overflow:hidden;border-radius:20px;border:1px solid var(--bd);background:var(--s1);cursor:pointer;transition:box-shadow .25s,transform .15s;position:relative;margin-bottom:11px;box-shadow:var(--shadow)}
 .vcard:active{transform:scale(.99)}
 .vcard:hover{box-shadow:var(--shadow-m)}
-.vcard-vis{width:96px;height:96px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.vcard-vis{width:96px;height:96px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
 .vcard-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 52%,var(--s1));z-index:3}
 .vcard-body{padding:15px 13px 15px 4px;flex:1;min-width:0}
 .vcard-brand{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:3px}
@@ -152,7 +152,7 @@ input,textarea{font-family:inherit;outline:none}
 .hcard{flex:0 0 150px;border-radius:20px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
 .hcard:active{transform:scale(.98)}
 .hcard:hover{box-shadow:var(--shadow-m)}
-.hcard-top{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hcard-top{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
 .hcard-heart{position:absolute;top:8px;right:8px;font-size:15px;cursor:pointer}
 .hcard-body{padding:12px 11px 11px}
 .hcard-brand{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
@@ -177,7 +177,7 @@ input,textarea{font-family:inherit;outline:none}
 .gcard{border-radius:20px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
 .gcard:active{transform:scale(.98)}
 .gcard:hover{box-shadow:var(--shadow-m)}
-.gcard-top{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.gcard-top{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
 .gcard-heart{position:absolute;top:9px;right:9px;font-size:15px;cursor:pointer;z-index:3}
 .gcard-sample{position:absolute;top:9px;left:9px;font-size:9px;font-weight:700;color:#fff;background:var(--primary);padding:2px 7px;border-radius:50px;letter-spacing:.05em;z-index:3}
 .gcard-body{padding:12px}
@@ -272,29 +272,31 @@ input,textarea{font-family:inherit;outline:none}
 }
 #overlay-detail.open{transform:none}
 
-/* 헤더 비주얼 — 풀블리드 감성 이미지 영역 */
+/* 헤더 비주얼 — 향수 병 누끼 이미지 영역 */
 .det-header-vis{
   height:280px;flex-shrink:0;position:relative;overflow:hidden;
-  background:#EDE5DB;
+  background:#EDE5DB;isolation:isolate;
 }
 /* 배경 그라데이션 레이어 (항상 존재) */
 .det-hv-bg{
   position:absolute;inset:0;z-index:0;
   transition:background .4s ease;
 }
-/* 풀블리드 이미지 레이어 */
+/* 향수 병 이미지 레이어 — contain + multiply 누끼 */
 .det-hv-img{
   position:absolute;inset:0;z-index:1;
   width:100%;height:100%;
-  object-fit:cover;object-position:center;
+  object-fit:contain;object-position:center;
+  padding:20px;
+  mix-blend-mode:multiply;
   opacity:0;
-  transition:opacity .6s ease .1s;
+  transition:opacity .5s ease .1s;
 }
-.det-hv-img.loaded{opacity:.88}
+.det-hv-img.loaded{opacity:1}
 /* 아래쪽 그라데이션 오버레이 — 본문과 자연스럽게 이어지도록 */
 .det-hv-fade{
-  position:absolute;bottom:0;left:0;right:0;height:100px;z-index:2;
-  background:linear-gradient(to bottom,transparent,var(--bg));
+  position:absolute;bottom:0;left:0;right:0;height:80px;z-index:2;
+  background:linear-gradient(to bottom,transparent 0%,var(--bg) 100%);
   pointer-events:none;
 }
 /* 향수 이름 오버레이 (헤더 하단) */
@@ -304,20 +306,18 @@ input,textarea{font-family:inherit;outline:none}
 }
 .det-hv-label-brand{
   font-size:9px;letter-spacing:.22em;text-transform:uppercase;
-  font-weight:800;color:rgba(255,255,255,.9);
-  text-shadow:0 1px 6px rgba(0,0,0,.3);
+  font-weight:800;color:var(--primary);
   margin-bottom:3px;
 }
 .det-hv-label-name{
   font-family:var(--serif);font-size:22px;font-weight:400;
-  color:#fff;line-height:1.2;
-  text-shadow:0 2px 12px rgba(0,0,0,.3);
+  color:var(--t1);line-height:1.2;
   letter-spacing:-.01em;
 }
 /* 감성 이모지 배지 */
 .det-hv-emoji{
   position:absolute;bottom:26px;right:20px;z-index:3;
-  font-size:32px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));
+  font-size:32px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.12));
 }
 
 .det-back{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:var(--t1);font-size:18px;cursor:pointer;box-shadow:var(--shadow);z-index:10}
@@ -2536,7 +2536,7 @@ function perfImgInner(p,emojiSz,shadowSz,pad){
   /* ── 이미지 있을 때: contain + soft-light blend → 그라데이션과 자연스러운 융합 ── */
   const pk=pad||'12px';
   return sillage+`<img src="${p.img}" alt="${p.name}"
-    style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:16px;z-index:2;mix-blend-mode:multiply"
+    style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;z-index:2;mix-blend-mode:multiply"
     onerror="this.remove()">`;
 }
 
@@ -3184,7 +3184,7 @@ function sendChat(){
 
     toShow.forEach(p=>{
       const d=document.createElement('div');d.className='msg-card';
-      const imgHTML=p.img?`<div style="width:100%;aspect-ratio:1/1;border-radius:10px;margin-bottom:10px;background:${p.bg};overflow:hidden;position:relative"><img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply" onerror="this.parentElement.style.display='none'"></div>`:'';
+      const imgHTML=p.img?`<div style="width:100%;aspect-ratio:1/1;border-radius:10px;margin-bottom:10px;background:${p.bg};overflow:hidden;position:relative;isolation:isolate"><img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply" onerror="this.parentElement.style.display='none'"></div>`:'';
       d.innerHTML=`${imgHTML}<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.name}</p><p class="msg-card-poem">"${p.poem}"</p><p style="font-size:10px;color:var(--primary);margin-top:8px;font-weight:700">탭하여 상세보기 →</p>`;
       d.onclick=()=>openDetail(p.id);
       area.appendChild(d);area.scrollTop=area.scrollHeight;
