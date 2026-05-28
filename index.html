@@ -236,6 +236,7 @@ input,textarea{font-family:inherit;outline:none}
 .pv-low{color:var(--sage)}.pv-med{color:var(--warm)}.pv-high{color:#C47A7A}
 .space-badge{flex-shrink:0;align-self:flex-start;font-size:10px;font-weight:700;padding:4px 10px;border-radius:50px;margin-top:2px}
 .sb-open{background:rgba(100,190,120,.1);color:#4EA86E;border:1px solid rgba(100,190,120,.25)}
+.sb-closed{background:rgba(200,80,80,.07);color:#C05050;border:1px solid rgba(200,80,80,.2)}
 .sb-pop{background:var(--primary-soft);color:var(--primary);border:1px solid rgba(176,116,102,.25)}
 
 /* ── MY PAGE ──────────────────────────────── */
@@ -2832,6 +2833,33 @@ function confirmSample(){
 }
 
 /* ── SPACES ── */
+/* ── 브랜드별 기본 영업시간 ────────────────────────────── */
+const STORE_HOURS={
+  'OLIVE YOUNG':{open:'10:30',close:'22:00'},
+  'CHICOR'     :{open:'10:30',close:'22:00'},
+  'LOTTE'      :{open:'10:30',close:'20:00'},
+  'SINSEGAE'   :{open:'10:30',close:'20:30'},
+  'HYUNDAI'    :{open:'10:30',close:'20:00'},
+  'GALLERIA'   :{open:'10:30',close:'20:00'},
+  'DIPTYQUE'   :{open:'10:30',close:'20:00'},
+  'POP-UP'     :{open:'11:00',close:'21:00'},
+  'DEFAULT'    :{open:'11:00',close:'21:00'}
+};
+
+/* 현재 로컬 시간 기준으로 영업 상태 객체 반환 */
+function getStoreStatus(s){
+  if(s.status==='pop') return {type:'pop',label:'팝업',cls:'sb-pop',hours:null};
+  const h=STORE_HOURS[s.brand]||STORE_HOURS['DEFAULT'];
+  const now=new Date();
+  const cur=now.getHours()*60+now.getMinutes();
+  const [oh,om]=h.open.split(':').map(Number);
+  const [ch,cm]=h.close.split(':').map(Number);
+  const isOpen=cur>=(oh*60+om)&&cur<(ch*60+cm);
+  return isOpen
+    ?{type:'open'  ,label:'● 영업 중'  ,cls:'sb-open'  ,hours:`${h.open} – ${h.close}`}
+    :{type:'closed',label:'● 영업 종료',cls:'sb-closed',hours:`${h.open} – ${h.close}`};
+}
+
 function renderSpaces(sortedList,distMap){
   const pLbl=['낮음','보통','높음'],pCls=['pv-low','pv-med','pv-high'];
   const list=sortedList||STORES;
@@ -2849,9 +2877,14 @@ function renderSpaces(sortedList,distMap){
   }
 
   container.innerHTML=noticeBanner+list.map((s,i)=>{
-    /* 거리 배지: distMap 있으면 "내 위치에서 XXX" 형태로 표시 */
+    /* 거리 배지 */
     const dist=distMap&&distMap[s.id]!=null
       ?`<span class="dist-badge">내 위치에서 ${_formatDist(distMap[s.id])}</span>`:'';
+    /* 실시간 영업 상태 */
+    const st=getStoreStatus(s);
+    const hoursRow=st.hours
+      ?`<p style="font-size:10px;color:var(--t3);margin-top:3px;letter-spacing:.02em">🕐 ${st.hours}</p>`
+      :'';
     return`<div class="space-card" id="scard-${s.id}" style="animation-delay:${i*.045}s" onclick="panToStore(${s.id})">
     <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
     <div class="space-info">
@@ -2860,14 +2893,15 @@ function renderSpaces(sortedList,distMap){
       </div>
       <p class="space-addr" style="font-size:9.5px;color:var(--primary);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">${s.brand}</p>
       <p class="space-addr">📍 ${s.addr}</p>
-      <div class="pressure-row">
+      ${hoursRow}
+      <div class="pressure-row" style="margin-top:4px">
         <p class="pressure-lbl">직원 개입도</p>
         <div class="pdots">${[1,2,3].map(k=>`<div class="pdot${k<=s.pressure?' on':''}"></div>`).join('')}</div>
         <span class="pressure-val ${pCls[s.pressure-1]}">${pLbl[s.pressure-1]}</span>
       </div>
       ${s.deadline?`<p style="font-size:10px;color:var(--warm);margin-top:5px;font-weight:700">⏰ ${s.deadline}</p>`:''}
     </div>
-    <span class="space-badge ${s.status==='pop'?'sb-pop':'sb-open'}">${s.status==='pop'?'팝업':'영업중'}</span>
+    <span class="space-badge ${st.cls}">${st.label}</span>
   </div>`;
   }).join('');
   if(distMap){
