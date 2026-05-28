@@ -490,7 +490,12 @@ input,textarea{font-family:inherit;outline:none}
 .mpop-addr{font-size:10.5px;color:var(--t3);margin-bottom:7px}
 .mpop-badge{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:50px;display:inline-block}
 .mpop-open{background:rgba(100,190,120,.12);color:#4EA86E}
+.mpop-closed{background:rgba(200,80,80,.09);color:#C05050}
 .mpop-pop{background:rgba(176,116,102,.1);color:var(--primary)}
+.mpop-map-btn{display:block;width:100%;margin-top:10px;padding:7px 0;border-radius:10px;border:1px solid rgba(176,116,102,.28);background:rgba(176,116,102,.06);color:var(--primary);font-size:10.5px;font-weight:700;text-align:center;cursor:pointer;letter-spacing:.03em;text-decoration:none;transition:background .18s}
+.mpop-map-btn:hover{background:rgba(176,116,102,.15)}
+.map-link-btn{display:inline-flex;align-items:center;gap:5px;margin-top:9px;padding:6px 13px;border-radius:10px;border:1px solid rgba(176,116,102,.25);background:rgba(176,116,102,.05);color:var(--primary);font-size:10.5px;font-weight:700;cursor:pointer;transition:background .18s;text-decoration:none;white-space:nowrap}
+.map-link-btn:hover{background:rgba(176,116,102,.13)}
 /* Active store card */
 .space-card.map-sel{border-color:rgba(176,116,102,.5);box-shadow:0 4px 18px rgba(176,116,102,.18)}
 /* Spaces subhead */
@@ -2846,6 +2851,12 @@ const STORE_HOURS={
   'DEFAULT'    :{open:'11:00',close:'21:00'}
 };
 
+/* 매장 이름 + 주소로 네이버 지도 검색 URL 생성 */
+function getMapUrl(s){
+  const q=encodeURIComponent(s.name+' '+s.addr);
+  return`https://map.naver.com/v5/search/${q}`;
+}
+
 /* 현재 로컬 시간 기준으로 영업 상태 객체 반환 */
 function getStoreStatus(s){
   if(s.status==='pop') return {type:'pop',label:'팝업',cls:'sb-pop',hours:null};
@@ -2900,6 +2911,7 @@ function renderSpaces(sortedList,distMap){
         <span class="pressure-val ${pCls[s.pressure-1]}">${pLbl[s.pressure-1]}</span>
       </div>
       ${s.deadline?`<p style="font-size:10px;color:var(--warm);margin-top:5px;font-weight:700">⏰ ${s.deadline}</p>`:''}
+      <a class="map-link-btn" href="${getMapUrl(s)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🌐 실제 영업시간 확인하기</a>
     </div>
     <span class="space-badge ${st.cls}">${st.label}</span>
   </div>`;
@@ -2965,11 +2977,19 @@ function initMap(){
   STORES.forEach(s=>{
     const mk=L.marker([s.lat,s.lng],{icon:_makeIcon(s.emoji,false)})
       .addTo(_map)
-      .bindPopup(
-        `<div class="mpop"><p class="mpop-name">${s.name}</p><p class="mpop-addr">📍 ${s.addr}</p>
-         <span class="mpop-badge ${s.status==='pop'?'mpop-pop':'mpop-open'}">${s.status==='pop'?'팝업 '+(s.deadline||''):'영업중'}</span></div>`,
-        {closeButton:false,maxWidth:220,minWidth:160}
-      );
+      .bindPopup((()=>{
+        const st=getStoreStatus(s);
+        const badgeCls=s.status==='pop'?'mpop-pop':st.type==='open'?'mpop-open':'mpop-closed';
+        const badgeTxt=s.status==='pop'?'팝업 '+(s.deadline||''):st.label;
+        const hoursLine=st.hours?`<p style="font-size:9.5px;color:var(--t3);margin:3px 0 0"">🕐 ${st.hours}</p>`:'';
+        return`<div class="mpop">
+          <p class="mpop-name">${s.name}</p>
+          <p class="mpop-addr">📍 ${s.addr}</p>
+          <span class="mpop-badge ${badgeCls}">${badgeTxt}</span>
+          ${hoursLine}
+          <a class="mpop-map-btn" href="${getMapUrl(s)}" target="_blank" rel="noopener">🌐 실제 영업시간 확인하기</a>
+        </div>`;
+      })(),{closeButton:false,maxWidth:230,minWidth:170});
     mk.on('click',()=>_highlightCard(s.id));
     _markers[s.id]=mk;
   });
