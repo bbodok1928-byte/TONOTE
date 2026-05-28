@@ -201,9 +201,11 @@ input,textarea{font-family:inherit;outline:none}
 .msg-card-brand{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:3px}
 .msg-card-name{font-family:var(--serif);font-size:15px;color:var(--t1);margin-bottom:6px}
 .msg-card-poem{font-family:var(--serif);font-style:italic;font-size:11.5px;color:var(--t3);line-height:1.6}
-.typing{display:flex;gap:5px;padding:13px 15px;align-self:flex-start;background:var(--s1);border-radius:4px 16px 16px 16px;border:1px solid var(--bd);box-shadow:var(--shadow)}
+.typing{display:flex;align-items:center;gap:8px;padding:12px 16px;align-self:flex-start;background:var(--s1);border-radius:4px 16px 16px 16px;border:1px solid var(--bd);box-shadow:var(--shadow)}
+.typing-dots{display:flex;gap:5px;align-items:center}
 .typing span{width:7px;height:7px;border-radius:50%;background:var(--t3);animation:bounce .9s ease-in-out infinite}
 .typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+.typing-lbl{font-size:11px;color:var(--t3);font-family:var(--serif);font-style:italic;letter-spacing:.02em}
 @keyframes bounce{0%,80%,100%{transform:translateY(0);background:var(--t3)}40%{transform:translateY(-6px);background:var(--primary)}}
 .chat-input-row{padding:10px 20px 10px;border-top:1px solid var(--bd);display:flex;gap:9px;align-items:center;background:var(--bg);flex-shrink:0}
 .chat-ta{flex:1;background:var(--s1);border:1.5px solid var(--bd);border-radius:14px;padding:10px 13px;color:var(--t1);font-family:var(--serif);font-style:italic;font-size:13.5px;resize:none;line-height:1.5;min-height:44px;max-height:110px;transition:border-color .2s;box-shadow:var(--shadow)}
@@ -3214,51 +3216,85 @@ function initChat(){
 function clearChat(){document.getElementById('chat-area').innerHTML='';initChat();}
 function fillSug(el){document.getElementById('chat-input').value=el.textContent;switchTab('ai');setTimeout(sendChat,200);}
 
-function sendChat(){
-  const ta=document.getElementById('chat-input');const txt=ta.value.trim();if(!txt)return;
-  appendMsg('user',txt);ta.value='';ta.style.height='auto';
+/* 채팅 스크롤 헬퍼 — smooth 로 부드럽게 최하단 이동 */
+function _scrollChat(){
   const area=document.getElementById('chat-area');
-  const typing=document.createElement('div');typing.className='typing';
-  typing.innerHTML='<span></span><span></span><span></span>';
-  area.appendChild(typing);area.scrollTop=area.scrollHeight;
+  if(!area)return;
+  area.scrollTo({top:area.scrollHeight,behavior:'smooth'});
+}
+
+function sendChat(){
+  const ta=document.getElementById('chat-input');
+  const btn=document.getElementById('chat-send');
+  const txt=ta.value.trim();
+  if(!txt)return;
+
+  /* ① 입력창 초기화 + 포커스 유지 */
+  ta.value='';ta.style.height='auto';
+  ta.focus();
+
+  /* ② 전송 중 버튼 비활성화 (중복 전송 방지) */
+  btn.disabled=true;btn.style.opacity='.45';
+
+  appendMsg('user',txt);
+  _scrollChat();
+
+  const area=document.getElementById('chat-area');
+
+  /* ③ 타이핑 인디케이터: 텍스트 라벨 + 점 세 개 */
+  const typing=document.createElement('div');
+  typing.className='typing';
+  typing.innerHTML=`<span class="typing-lbl">향수를 찾고 있어요</span><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  area.appendChild(typing);
+  _scrollChat();
 
   setTimeout(()=>{
+    /* ④ 인디케이터 제거 후 답변 렌더 */
     typing.remove();
+
     const{scored,topMood,topTag}=matchPerfumes(txt);
     const hasMatch=scored.length>0;
     const replyTxt=hasMatch
       ?pickPoetic(topMood,topTag)
       :'조금 더 구체적인 감정이나 장면을 말씀해 주시면 더 잘 찾아드릴 수 있어요.\n예: "비 오는 날 창가", "숲속 산책", "따뜻한 카페 오후" 같은 느낌으로요 ☁️';
     appendMsg('bot',replyTxt);
+    _scrollChat();
 
-    // 상위 2개 향수 추천 카드 출력 (매칭 없으면 평점 상위 2개)
+    /* ⑤ 향수 추천 카드 출력 (매칭 없으면 평점 상위 2개) */
     const toShow=hasMatch
       ?scored.slice(0,2).map(x=>x.p)
       :PERFUMES.slice().sort((a,b)=>b.rating-a.rating).slice(0,2);
 
     toShow.forEach(p=>{
       const d=document.createElement('div');d.className='msg-card';
-      const imgHTML=p.img?`<div style="width:100%;aspect-ratio:1/1;border-radius:10px;margin-bottom:10px;background:${p.bg};overflow:hidden;position:relative;isolation:isolate"><img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply" onerror="this.parentElement.style.display='none'"></div>`:'';
+      const imgHTML=p.img?`<div style="width:100%;aspect-ratio:1/1;border-radius:10px;margin-bottom:10px;background:${p.bg};overflow:hidden;position:relative;isolation:isolate"><img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply;display:block" onerror="this.parentElement.style.display='none'"></div>`:'';
       d.innerHTML=`${imgHTML}<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.name}</p><p class="msg-card-poem">"${p.poem}"</p><p style="font-size:10px;color:var(--primary);margin-top:8px;font-weight:700">탭하여 상세보기 →</p>`;
       d.onclick=()=>openDetail(p.id);
-      area.appendChild(d);area.scrollTop=area.scrollHeight;
+      area.appendChild(d);
+      _scrollChat();
     });
 
-    // 3개 이상 매칭 시 "더 보기" 메시지
+    /* ⑥ 3개 이상 매칭 시 "더 보기" 메시지 */
     if(scored.length>2){
       const more=document.createElement('div');more.className='msg msg-bot';
       more.style.cursor='pointer';more.style.whiteSpace='pre-line';
       more.textContent=`+${scored.length-2}개의 향수가 더 있어요. 탐색 탭에서 확인해보세요 →`;
       more.onclick=()=>switchTab('explore');
-      area.appendChild(more);area.scrollTop=area.scrollHeight;
+      area.appendChild(more);
+      _scrollChat();
     }
+
+    /* ⑦ 전송 완료 후 버튼 복원 + 포커스 */
+    btn.disabled=false;btn.style.opacity='';
+    ta.focus();
   },1100);
 }
 
 function appendMsg(type,text){
   const area=document.getElementById('chat-area');
   const d=document.createElement('div');d.className='msg msg-'+type;d.style.whiteSpace='pre-line';d.textContent=text;
-  area.appendChild(d);area.scrollTop=area.scrollHeight;
+  area.appendChild(d);
+  area.scrollTo({top:area.scrollHeight,behavior:'smooth'});
 }
 
 /* ── MY ── */
