@@ -1079,13 +1079,9 @@ input,textarea{font-family:inherit;outline:none}
               <span class="set-row-lbl">향 강도 선호</span>
               <span class="set-row-val" id="lbl-intensity">무관</span>
             </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input type="range" class="set-range" id="range-intensity-min" min="1" max="5" step="1" value="1"
-                oninput="updateRangeLabel('intensity')" style="flex:1;margin:0">
-              <input type="range" class="set-range" id="range-intensity-max" min="1" max="5" step="1" value="5"
-                oninput="updateRangeLabel('intensity')" style="flex:1;margin:0">
-            </div>
-            <div class="set-range-labels"><span>가벼운 (1)</span><span>보통 (3)</span><span>진한 (5)</span></div>
+            <input type="range" class="set-range" id="range-intensity" min="1" max="5" step="1" value="1"
+              oninput="updateRangeLabel('intensity')">
+            <div class="set-range-labels"><span>은은한</span><span>보통</span><span>진한</span></div>
           </div>
           <div class="set-row">
             <div class="set-row-head">
@@ -3541,8 +3537,7 @@ function closeSettings(){
 /* ── UI → userSettings 동기화 ── */
 function _syncSettingsUI(){
   // 슬라이더 값 복원
-  document.getElementById('range-intensity-min').value=userSettings.intensityMin;
-  document.getElementById('range-intensity-max').value=userSettings.intensityMax;
+  document.getElementById('range-intensity').value=userSettings.intensityMin;
   document.getElementById('range-longevity').value=userSettings.longevityMin;
   document.getElementById('range-sillage').value=userSettings.sillageMin;
   document.getElementById('range-price').value=Math.min(60,Math.round(userSettings.priceMax/10000));
@@ -3571,22 +3566,16 @@ function _setToggle(id,on){
 }
 
 /* ── 범위 레이블 ── */
-const INTENSITY_NAMES=['','가벼운','가볍~보통','보통','보통~진한','진한'];
+const INTENSITY_NAMES=['','무관','은은한','보통','진한','아주 진한'];
 const LONGEVITY_NAMES=['','잔향 짧아도 OK','2~3시간이상','반나절 이상','종일 가는','매우 오래'];
 const SILLAGE_NAMES=['','나만 느끼는','가까이서만','적당한','은은히 퍼지는','강한 존재감'];
 
 function updateRangeLabel(type){
   if(type==='intensity'){
-    const minV=parseInt(document.getElementById('range-intensity-min').value);
-    const maxV=parseInt(document.getElementById('range-intensity-max').value);
-    // min > max 교정
-    if(minV>maxV) document.getElementById('range-intensity-min').value=maxV;
-    const mn=Math.min(minV,maxV),mx=maxV;
-    userSettings.intensityMin=mn; userSettings.intensityMax=mx;
+    const v=parseInt(document.getElementById('range-intensity').value);
+    userSettings.intensityMin=v; userSettings.intensityMax=5;
     const el=document.getElementById('lbl-intensity');
-    if(mn===1&&mx===5){el.textContent='무관';}
-    else if(mn===mx){el.textContent=INTENSITY_NAMES[mn];}
-    else{el.textContent=`${INTENSITY_NAMES[mn]} ~ ${INTENSITY_NAMES[mx]}`;}
+    el.textContent=INTENSITY_NAMES[v];
   }else if(type==='longevity'){
     const v=parseInt(document.getElementById('range-longevity').value);
     userSettings.longevityMin=v;
