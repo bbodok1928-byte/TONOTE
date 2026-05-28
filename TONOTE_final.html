@@ -595,6 +595,141 @@ input,textarea{font-family:inherit;outline:none}
 .set-price-disp em{color:var(--primary);font-style:normal}
 
 /* 리셋 버튼 */
+/* ── 설정 탭 바 ── */
+.set-tab-bar{
+  display:flex;padding:0 20px;gap:0;
+  border-bottom:1.5px solid var(--bd);
+  flex-shrink:0;background:var(--bg);
+}
+.set-tab-btn{
+  flex:1;padding:11px 4px 10px;
+  font-size:12px;font-weight:700;
+  color:var(--t3);border:none;background:none;
+  cursor:pointer;position:relative;
+  transition:color .2s;letter-spacing:.01em;
+  white-space:nowrap;
+}
+.set-tab-btn.active{color:var(--primary)}
+.set-tab-btn::after{
+  content:'';position:absolute;
+  bottom:-1.5px;left:0;right:0;height:2px;
+  border-radius:2px 2px 0 0;
+  background:var(--primary);
+  transform:scaleX(0);
+  transition:transform .22s cubic-bezier(.4,0,.2,1);
+}
+.set-tab-btn.active::after{transform:scaleX(1)}
+/* 탭 패널 */
+.set-tab-panel{display:none}
+.set-tab-panel.active{display:block}
+
+/* 알림 카드 */
+.notif-card{
+  background:var(--s1);border:1px solid var(--bd);
+  border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+.notif-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.notif-card-icon{
+  width:40px;height:40px;border-radius:12px;
+  background:var(--primary-soft);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.notif-card-info{flex:1}
+.notif-card-title{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.notif-card-desc{font-size:11px;color:var(--t3);line-height:1.55}
+.notif-card-detail{
+  margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);
+  font-size:11px;color:var(--t3);line-height:1.6;
+  display:none;
+}
+.notif-card-detail.open{display:block}
+.notif-freq{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.notif-freq-chip{
+  padding:4px 10px;border-radius:50px;font-size:11px;font-weight:600;
+  border:1.5px solid var(--bd);background:var(--s2);color:var(--t2);
+  cursor:pointer;transition:all .18s;
+}
+.notif-freq-chip.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.notif-perm-notice{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s2);border-radius:12px;padding:10px 12px;
+  margin-top:0;font-size:11px;color:var(--t2);line-height:1.5;
+}
+.notif-perm-notice .ni{font-size:14px;flex-shrink:0}
+
+/* 데이터 관리 카드 */
+.data-card{
+  background:var(--s1);border:1px solid var(--bd);
+  border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+.data-card-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.data-card-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.data-card-icon.green{background:#E8F5E8}
+.data-card-icon.amber{background:#FFF8E8}
+.data-card-icon.red{background:#FDEAEA}
+.data-card-ttl{font-size:13px;font-weight:700;color:var(--t1)}
+.data-card-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.data-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.data-stat-pill{
+  padding:5px 10px;border-radius:50px;
+  background:var(--s2);border:1px solid var(--bd);
+  font-size:11px;color:var(--t2);font-weight:600;
+}
+.data-stat-pill em{color:var(--primary);font-style:normal}
+.data-action-btn{
+  width:100%;padding:11px;border-radius:12px;
+  font-size:13px;font-weight:700;
+  border:1.5px solid;cursor:pointer;
+  transition:all .2s;
+}
+.data-action-btn.outline{
+  background:transparent;border-color:var(--bd);color:var(--t2);
+}
+.data-action-btn.outline:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.data-action-btn.danger{
+  background:transparent;border-color:#E84040;color:#E84040;
+}
+.data-action-btn.danger:hover{background:#FDEAEA}
+.data-action-btn.primary{
+  background:var(--primary);border-color:var(--primary);color:#fff;
+}
+.data-action-btn.primary:hover{background:var(--primary-dk);border-color:var(--primary-dk)}
+/* 계정 안내 배너 */
+.account-banner{
+  background:linear-gradient(135deg,var(--primary-soft),#F0F4F0);
+  border:1px solid rgba(176,116,102,.2);
+  border-radius:16px;padding:18px;margin-bottom:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.account-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--warm));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;color:#fff;
+  box-shadow:0 3px 12px rgba(176,116,102,.3);
+}
+.account-name{font-size:14px;font-weight:700;color:var(--t1)}
+.account-sub{font-size:11px;color:var(--t3);margin-top:2px;line-height:1.5}
+.account-badge{
+  display:inline-block;font-size:9px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  background:var(--primary);color:#fff;
+  padding:2px 7px;border-radius:50px;margin-top:4px;
+}
+/* 앱 버전 푸터 */
+.set-version-footer{
+  text-align:center;padding:24px 0 8px;
+  font-size:11px;color:var(--t3);line-height:1.8;
+}
+.set-version-footer strong{color:var(--t2)}
+
 .set-reset-btn{
   width:100%;margin-top:24px;padding:13px;
   border-radius:14px;background:var(--s2);
@@ -918,113 +1053,302 @@ input,textarea{font-family:inherit;outline:none}
   <div class="settings-sheet">
     <div class="settings-handle"></div>
     <div class="settings-head">
-      <p class="settings-title">⚙️ &nbsp;취향 설정</p>
+      <p class="settings-title">⚙️ &nbsp;설정</p>
       <button class="settings-close" onclick="closeSettings()">✕</button>
     </div>
+
+    <!-- ═══ 탭 바 ═══ -->
+    <div class="set-tab-bar">
+      <button class="set-tab-btn active" id="stab-preference" onclick="switchSettingsTab('preference')">취향 설정</button>
+      <button class="set-tab-btn" id="stab-notification" onclick="switchSettingsTab('notification')">알림 설정</button>
+      <button class="set-tab-btn" id="stab-data" onclick="switchSettingsTab('data')">계정 및 데이터</button>
+    </div>
+
     <div class="settings-body">
 
-      <!-- ① AI 추천 취향 컨트롤러 -->
-      <div class="set-section">
-        <p class="set-sec-title"><span>🎯</span> AI 추천 취향 조정</p>
+      <!-- ══════════════════════════════
+           탭 1: 취향 설정
+      ══════════════════════════════ -->
+      <div class="set-tab-panel active" id="spanel-preference">
 
-        <div class="set-row">
-          <div class="set-row-head">
-            <span class="set-row-lbl">향 강도 선호</span>
-            <span class="set-row-val" id="lbl-intensity">무관</span>
+        <!-- ① AI 추천 취향 컨트롤러 -->
+        <div class="set-section">
+          <p class="set-sec-title"><span>🎯</span> AI 추천 취향 조정</p>
+          <div class="set-row">
+            <div class="set-row-head">
+              <span class="set-row-lbl">향 강도 선호</span>
+              <span class="set-row-val" id="lbl-intensity">무관</span>
+            </div>
+            <input type="range" class="set-range" id="range-intensity-min" min="1" max="5" step="1" value="1"
+              oninput="updateRangeLabel('intensity')">
+            <input type="range" class="set-range" id="range-intensity-max" min="1" max="5" step="1" value="5"
+              oninput="updateRangeLabel('intensity')" style="margin-top:6px">
+            <div class="set-range-labels"><span>가벼운 (1)</span><span>보통 (3)</span><span>진한 (5)</span></div>
           </div>
-          <input type="range" class="set-range" id="range-intensity-min" min="1" max="5" step="1" value="1"
-            oninput="updateRangeLabel('intensity')">
-          <input type="range" class="set-range" id="range-intensity-max" min="1" max="5" step="1" value="5"
-            oninput="updateRangeLabel('intensity')" style="margin-top:6px">
-          <div class="set-range-labels"><span>가벼운 (1)</span><span>보통 (3)</span><span>진한 (5)</span></div>
-        </div>
-
-        <div class="set-row">
-          <div class="set-row-head">
-            <span class="set-row-lbl">지속력 최소 기준</span>
-            <span class="set-row-val" id="lbl-longevity">무관</span>
+          <div class="set-row">
+            <div class="set-row-head">
+              <span class="set-row-lbl">지속력 최소 기준</span>
+              <span class="set-row-val" id="lbl-longevity">무관</span>
+            </div>
+            <input type="range" class="set-range" id="range-longevity" min="1" max="5" step="1" value="1"
+              oninput="updateRangeLabel('longevity')">
+            <div class="set-range-labels"><span>가벼운 여운</span><span>보통</span><span>오래 지속</span></div>
           </div>
-          <input type="range" class="set-range" id="range-longevity" min="1" max="5" step="1" value="1"
-            oninput="updateRangeLabel('longevity')">
-          <div class="set-range-labels"><span>가벼운 여운</span><span>보통</span><span>오래 지속</span></div>
-        </div>
-
-        <div class="set-row" style="padding-bottom:4px">
-          <div class="set-row-head">
-            <span class="set-row-lbl">확산력 (실라쥬)</span>
-            <span class="set-row-val" id="lbl-sillage">무관</span>
+          <div class="set-row" style="padding-bottom:4px">
+            <div class="set-row-head">
+              <span class="set-row-lbl">확산력 (실라쥬)</span>
+              <span class="set-row-val" id="lbl-sillage">무관</span>
+            </div>
+            <input type="range" class="set-range" id="range-sillage" min="1" max="5" step="1" value="1"
+              oninput="updateRangeLabel('sillage')">
+            <div class="set-range-labels"><span>나만 느끼는</span><span>보통</span><span>강한 존재감</span></div>
           </div>
-          <input type="range" class="set-range" id="range-sillage" min="1" max="5" step="1" value="1"
-            oninput="updateRangeLabel('sillage')">
-          <div class="set-range-labels"><span>나만 느끼는</span><span>보통</span><span>강한 존재감</span></div>
         </div>
-      </div>
 
-      <!-- ② 제외할 카테고리 -->
-      <div class="set-section">
-        <p class="set-sec-title"><span>🚫</span> 제외할 카테고리</p>
-        <div class="set-chips" id="chips-exclude">
-          <div class="set-chip exclude" data-cat="플로럴" onclick="toggleExcludeCat(this)">플로럴</div>
-          <div class="set-chip exclude" data-cat="우디" onclick="toggleExcludeCat(this)">우디</div>
-          <div class="set-chip exclude" data-cat="프루티" onclick="toggleExcludeCat(this)">프루티</div>
-          <div class="set-chip exclude" data-cat="시트러스" onclick="toggleExcludeCat(this)">시트러스</div>
-          <div class="set-chip exclude" data-cat="머스크" onclick="toggleExcludeCat(this)">머스크</div>
-          <div class="set-chip exclude" data-cat="아쿠아틱" onclick="toggleExcludeCat(this)">아쿠아틱</div>
-          <div class="set-chip exclude" data-cat="스파이시" onclick="toggleExcludeCat(this)">스파이시</div>
-          <div class="set-chip exclude" data-cat="구르망" onclick="toggleExcludeCat(this)">구르망</div>
-        </div>
-        <p style="font-size:11px;color:var(--t3);margin-bottom:6px">선택한 카테고리는 AI 추천과 탐색에서 제외됩니다</p>
-      </div>
-
-      <!-- ③ 선호 계절 -->
-      <div class="set-section">
-        <p class="set-sec-title"><span>🌿</span> 선호 계절 (복수 선택)</p>
-        <div class="set-chips" id="chips-season">
-          <div class="set-chip" data-season="봄" onclick="toggleSeasonChip(this)">🌸 봄</div>
-          <div class="set-chip" data-season="여름" onclick="toggleSeasonChip(this)">☀️ 여름</div>
-          <div class="set-chip" data-season="가을" onclick="toggleSeasonChip(this)">🍂 가을</div>
-          <div class="set-chip" data-season="겨울" onclick="toggleSeasonChip(this)">❄️ 겨울</div>
-        </div>
-        <p style="font-size:11px;color:var(--t3);margin-bottom:6px">선택하면 해당 계절 향수가 AI 추천에서 우선 노출됩니다</p>
-      </div>
-
-      <!-- ④ 가격대 -->
-      <div class="set-section">
-        <p class="set-sec-title"><span>💰</span> 최대 가격대</p>
-        <p class="set-price-disp" id="lbl-price">₩<em id="price-val">50</em>만원 이하</p>
-        <input type="range" class="set-range" id="range-price" min="5" max="60" step="5" value="60"
-          oninput="updatePriceLabel()">
-        <div class="set-range-labels"><span>5만원</span><span>25만원</span><span>60만원</span></div>
-        <p style="font-size:11px;color:var(--t3);margin-top:6px;margin-bottom:4px">탐색 탭과 AI 추천 결과에 적용됩니다</p>
-      </div>
-
-      <!-- ⑤ 디스플레이 -->
-      <div class="set-section" style="border-bottom:none">
-        <p class="set-sec-title"><span>✨</span> 표시 설정</p>
-        <div class="set-toggle-row">
-          <div class="set-toggle-info">
-            <p class="set-toggle-lbl">샘플 가능 향수만 보기</p>
-            <p class="set-toggle-desc">탐색 탭에서 샘플 신청 가능한 향수만 표시</p>
+        <!-- ② 제외할 카테고리 -->
+        <div class="set-section">
+          <p class="set-sec-title"><span>🚫</span> 제외할 카테고리</p>
+          <div class="set-chips" id="chips-exclude">
+            <div class="set-chip exclude" data-cat="플로럴" onclick="toggleExcludeCat(this)">플로럴</div>
+            <div class="set-chip exclude" data-cat="우디" onclick="toggleExcludeCat(this)">우디</div>
+            <div class="set-chip exclude" data-cat="프루티" onclick="toggleExcludeCat(this)">프루티</div>
+            <div class="set-chip exclude" data-cat="시트러스" onclick="toggleExcludeCat(this)">시트러스</div>
+            <div class="set-chip exclude" data-cat="머스크" onclick="toggleExcludeCat(this)">머스크</div>
+            <div class="set-chip exclude" data-cat="아쿠아틱" onclick="toggleExcludeCat(this)">아쿠아틱</div>
+            <div class="set-chip exclude" data-cat="스파이시" onclick="toggleExcludeCat(this)">스파이시</div>
+            <div class="set-chip exclude" data-cat="구르망" onclick="toggleExcludeCat(this)">구르망</div>
           </div>
-          <button class="set-toggle" id="toggle-sample-only" onclick="toggleSetting('sampleOnly',this)"></button>
+          <p style="font-size:11px;color:var(--t3);margin-bottom:6px">선택한 카테고리는 AI 추천과 탐색에서 제외됩니다</p>
         </div>
-        <div class="set-toggle-row">
-          <div class="set-toggle-info">
-            <p class="set-toggle-lbl">AI 감성 문구 표시</p>
-            <p class="set-toggle-desc">추천 결과에 시적 감성 설명 표시</p>
-          </div>
-          <button class="set-toggle on" id="toggle-poetic" onclick="toggleSetting('showPoetic',this)"></button>
-        </div>
-        <div class="set-toggle-row">
-          <div class="set-toggle-info">
-            <p class="set-toggle-lbl">평점 높은 순 우선 노출</p>
-            <p class="set-toggle-desc">동점 향수 중 별점 높은 항목 먼저 표시</p>
-          </div>
-          <button class="set-toggle" id="toggle-rating-boost" onclick="toggleSetting('ratingBoost',this)"></button>
-        </div>
-      </div>
 
-      <button class="set-reset-btn" onclick="resetSettings()">↺ &nbsp;기본값으로 초기화</button>
+        <!-- ③ 선호 계절 -->
+        <div class="set-section">
+          <p class="set-sec-title"><span>🌿</span> 선호 계절 (복수 선택)</p>
+          <div class="set-chips" id="chips-season">
+            <div class="set-chip" data-season="봄" onclick="toggleSeasonChip(this)">🌸 봄</div>
+            <div class="set-chip" data-season="여름" onclick="toggleSeasonChip(this)">☀️ 여름</div>
+            <div class="set-chip" data-season="가을" onclick="toggleSeasonChip(this)">🍂 가을</div>
+            <div class="set-chip" data-season="겨울" onclick="toggleSeasonChip(this)">❄️ 겨울</div>
+          </div>
+          <p style="font-size:11px;color:var(--t3);margin-bottom:6px">선택하면 해당 계절 향수가 AI 추천에서 우선 노출됩니다</p>
+        </div>
+
+        <!-- ④ 가격대 -->
+        <div class="set-section">
+          <p class="set-sec-title"><span>💰</span> 최대 가격대</p>
+          <p class="set-price-disp" id="lbl-price">₩<em id="price-val">50</em>만원 이하</p>
+          <input type="range" class="set-range" id="range-price" min="5" max="60" step="5" value="60"
+            oninput="updatePriceLabel()">
+          <div class="set-range-labels"><span>5만원</span><span>25만원</span><span>60만원</span></div>
+          <p style="font-size:11px;color:var(--t3);margin-top:6px;margin-bottom:4px">탐색 탭과 AI 추천 결과에 적용됩니다</p>
+        </div>
+
+        <!-- ⑤ 표시 설정 -->
+        <div class="set-section" style="border-bottom:none">
+          <p class="set-sec-title"><span>✨</span> 표시 설정</p>
+          <div class="set-toggle-row">
+            <div class="set-toggle-info">
+              <p class="set-toggle-lbl">샘플 가능 향수만 보기</p>
+              <p class="set-toggle-desc">탐색 탭에서 샘플 신청 가능한 향수만 표시</p>
+            </div>
+            <button class="set-toggle" id="toggle-sample-only" onclick="toggleSetting('sampleOnly',this)"></button>
+          </div>
+          <div class="set-toggle-row">
+            <div class="set-toggle-info">
+              <p class="set-toggle-lbl">AI 감성 문구 표시</p>
+              <p class="set-toggle-desc">추천 결과에 시적 감성 설명 표시</p>
+            </div>
+            <button class="set-toggle on" id="toggle-poetic" onclick="toggleSetting('showPoetic',this)"></button>
+          </div>
+          <div class="set-toggle-row">
+            <div class="set-toggle-info">
+              <p class="set-toggle-lbl">평점 높은 순 우선 노출</p>
+              <p class="set-toggle-desc">동점 향수 중 별점 높은 항목 먼저 표시</p>
+            </div>
+            <button class="set-toggle" id="toggle-rating-boost" onclick="toggleSetting('ratingBoost',this)"></button>
+          </div>
+        </div>
+
+        <button class="set-reset-btn" onclick="resetSettings()">↺ &nbsp;취향 설정 기본값으로 초기화</button>
+
+      </div><!-- /spanel-preference -->
+
+      <!-- ══════════════════════════════
+           탭 2: 알림 설정
+      ══════════════════════════════ -->
+      <div class="set-tab-panel" id="spanel-notification">
+
+        <div style="padding-top:20px">
+          <!-- 권한 안내 -->
+          <div class="notif-perm-notice" style="margin-bottom:16px">
+            <span class="ni">🔔</span>
+            <span>알림을 받으려면 기기의 알림 권한이 필요합니다. 앱 출시 후 실제 푸시 알림으로 연동됩니다.</span>
+          </div>
+
+          <!-- 알림 1: AI 주간 추천 -->
+          <div class="notif-card">
+            <div class="notif-card-top">
+              <div class="notif-card-icon">✨</div>
+              <div class="notif-card-info">
+                <p class="notif-card-title">AI 주간 추천 향수 배달</p>
+                <p class="notif-card-desc">매주 나의 취향을 분석한 새 향수 3종을 골라 전달해 드려요</p>
+              </div>
+              <button class="set-toggle" id="toggle-notif-weekly" onclick="toggleNotif('weekly',this)"></button>
+            </div>
+            <div class="notif-card-detail" id="notif-detail-weekly">
+              <p style="margin-bottom:6px;font-weight:600;color:var(--t2)">수신 주기</p>
+              <div class="notif-freq">
+                <div class="notif-freq-chip active" data-key="weekly" data-freq="weekly" onclick="setNotifFreq(this)">매주 월요일</div>
+                <div class="notif-freq-chip" data-key="weekly" data-freq="biweekly" onclick="setNotifFreq(this)">격주</div>
+                <div class="notif-freq-chip" data-key="weekly" data-freq="monthly" onclick="setNotifFreq(this)">매월 1일</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 알림 2: 위치 기반 시향 공간 -->
+          <div class="notif-card">
+            <div class="notif-card-top">
+              <div class="notif-card-icon">📍</div>
+              <div class="notif-card-info">
+                <p class="notif-card-title">주변 시향 공간 진입 알림</p>
+                <p class="notif-card-desc">등록된 시향 공간 반경 300m 진입 시 해당 매장 정보와 추천 향수를 알려드려요</p>
+              </div>
+              <button class="set-toggle" id="toggle-notif-location" onclick="toggleNotif('location',this)"></button>
+            </div>
+            <div class="notif-card-detail" id="notif-detail-location">
+              <p style="margin-bottom:6px;font-weight:600;color:var(--t2)">감지 반경</p>
+              <div class="notif-freq">
+                <div class="notif-freq-chip" data-key="location" data-freq="100m" onclick="setNotifFreq(this)">100m</div>
+                <div class="notif-freq-chip active" data-key="location" data-freq="300m" onclick="setNotifFreq(this)">300m</div>
+                <div class="notif-freq-chip" data-key="location" data-freq="500m" onclick="setNotifFreq(this)">500m</div>
+                <div class="notif-freq-chip" data-key="location" data-freq="1km" onclick="setNotifFreq(this)">1km</div>
+              </div>
+              <p style="margin-top:10px;font-size:10.5px;color:var(--t3);line-height:1.6">
+                ⚠️ 위치 접근 권한이 필요합니다. 배터리 절약을 위해 앱 사용 중에만 위치를 확인합니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- 알림 3: 배송 현황 -->
+          <div class="notif-card">
+            <div class="notif-card-top">
+              <div class="notif-card-icon">📦</div>
+              <div class="notif-card-info">
+                <p class="notif-card-title">시향 키트 배송 현황 알림</p>
+                <p class="notif-card-desc">샘플 키트 신청 처리 · 발송 · 도착 각 단계마다 실시간으로 알려드려요</p>
+              </div>
+              <button class="set-toggle on" id="toggle-notif-delivery" onclick="toggleNotif('delivery',this)"></button>
+            </div>
+            <div class="notif-card-detail" id="notif-detail-delivery">
+              <p style="font-size:11px;color:var(--t3);line-height:1.6">
+                신청 확인 · 상품 준비 중 · 배송 시작 · 배송 완료 4단계 알림이 순차적으로 발송됩니다.
+              </p>
+            </div>
+          </div>
+
+          <!-- 마케팅 알림 -->
+          <div class="notif-card" style="margin-bottom:0">
+            <div class="notif-card-top">
+              <div class="notif-card-icon">🎁</div>
+              <div class="notif-card-info">
+                <p class="notif-card-title">신규 향수 &amp; 이벤트 소식</p>
+                <p class="notif-card-desc">새로 추가된 향수, 한정 샘플 이벤트, 시즌 큐레이션 소식을 전달해 드려요</p>
+              </div>
+              <button class="set-toggle" id="toggle-notif-marketing" onclick="toggleNotif('marketing',this)"></button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /spanel-notification -->
+
+      <!-- ══════════════════════════════
+           탭 3: 계정 및 데이터
+      ══════════════════════════════ -->
+      <div class="set-tab-panel" id="spanel-data">
+
+        <div style="padding-top:20px">
+
+          <!-- 계정 배너 -->
+          <div class="account-banner">
+            <div class="account-avatar">🌿</div>
+            <div>
+              <p class="account-name">김지은</p>
+              <p class="account-sub">그린 우드 드리머 · 향수 탐색 14일째</p>
+              <span class="account-badge">로컬 체험판</span>
+            </div>
+          </div>
+
+          <!-- 내 취향 아카이브 현황 -->
+          <div class="data-card">
+            <div class="data-card-head">
+              <div class="data-card-icon green">📊</div>
+              <div>
+                <p class="data-card-ttl">내 취향 아카이브 현황</p>
+                <p class="data-card-sub">지금까지 쌓인 나의 향수 탐색 기록</p>
+              </div>
+            </div>
+            <div class="data-stats" id="data-stats-panel">
+              <span class="data-stat-pill">좋아요 <em id="ds-liked">0</em>개</span>
+              <span class="data-stat-pill">작성 리뷰 <em id="ds-reviews">0</em>개</span>
+              <span class="data-stat-pill">AI 대화 <em id="ds-chats">0</em>회</span>
+              <span class="data-stat-pill">샘플 신청 <em id="ds-orders">0</em>건</span>
+            </div>
+            <button class="data-action-btn outline" onclick="exportData()" style="font-size:12px">
+              📤 &nbsp;취향 데이터 내보내기 (JSON)
+            </button>
+          </div>
+
+          <!-- 선택적 초기화 -->
+          <div class="data-card">
+            <div class="data-card-head">
+              <div class="data-card-icon amber">🗂️</div>
+              <div>
+                <p class="data-card-ttl">선택 데이터 초기화</p>
+                <p class="data-card-sub">특정 항목만 골라서 삭제할 수 있어요</p>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="data-action-btn outline" onclick="clearDataItem('reviews')" style="font-size:12px;text-align:left;padding:10px 14px">
+                💬 &nbsp;작성한 리뷰 전체 삭제
+              </button>
+              <button class="data-action-btn outline" onclick="clearDataItem('liked')" style="font-size:12px;text-align:left;padding:10px 14px">
+                🤍 &nbsp;좋아요 목록 초기화
+              </button>
+              <button class="data-action-btn outline" onclick="clearDataItem('orders')" style="font-size:12px;text-align:left;padding:10px 14px">
+                📦 &nbsp;샘플 신청 내역 삭제
+              </button>
+              <button class="data-action-btn outline" onclick="clearDataItem('chat')" style="font-size:12px;text-align:left;padding:10px 14px">
+                ✨ &nbsp;AI 채팅 히스토리 비우기
+              </button>
+            </div>
+          </div>
+
+          <!-- 전체 초기화 (위험 영역) -->
+          <div class="data-card" style="border-color:rgba(232,64,64,.25)">
+            <div class="data-card-head">
+              <div class="data-card-icon red">⚠️</div>
+              <div>
+                <p class="data-card-ttl" style="color:#C03030">내 취향 아카이브 전체 초기화</p>
+                <p class="data-card-sub">모든 데이터와 취향 설정을 완전히 삭제합니다</p>
+              </div>
+            </div>
+            <p style="font-size:11px;color:var(--t3);line-height:1.65;margin-bottom:12px">
+              좋아요, 리뷰, 샘플 신청 내역, AI 채팅 기록, 취향 설정이 모두 삭제되며 복구할 수 없어요. 신중하게 진행해 주세요.
+            </p>
+            <button class="data-action-btn danger" onclick="confirmFullReset()">
+              🗑️ &nbsp;전체 초기화 — 처음부터 시작하기
+            </button>
+          </div>
+
+          <!-- 앱 정보 -->
+          <div class="set-version-footer">
+            <strong>TONOTE</strong> · 향수 입문자를 위한 취향 탐색 앱<br>
+            버전 1.0.0 · UCD 수업 8조 과제 · 2025<br>
+            <span style="font-size:10px">데이터는 이 기기의 브라우저 로컬 스토리지에만 저장됩니다</span>
+          </div>
+
+        </div>
+      </div><!-- /spanel-data -->
 
     </div><!-- /settings-body -->
   </div><!-- /settings-sheet -->
@@ -3081,9 +3405,128 @@ function _updateSettingsSummary(){
   el.textContent=parts.length?parts.join(' · '):'AI 추천 · 카테고리 · 가격대';
 }
 
+/* ── 설정 탭 전환 ── */
+function switchSettingsTab(tab){
+  ['preference','notification','data'].forEach(t=>{
+    document.getElementById('stab-'+t)?.classList.toggle('active',t===tab);
+    document.getElementById('spanel-'+t)?.classList.toggle('active',t===tab);
+  });
+}
+
+/* ── 알림 설정 ── */
+const LS_NOTIF='tonote_notif';
+const DEFAULT_NOTIF={weekly:false,location:false,delivery:true,marketing:false,
+  weeklyFreq:'weekly',locationRadius:'300m'};
+let userNotif={...DEFAULT_NOTIF};
+(function loadNotif(){
+  try{const n=JSON.parse(localStorage.getItem(LS_NOTIF)||'{}');userNotif=Object.assign({},DEFAULT_NOTIF,n);}catch(e){}
+})();
+function saveNotif(){try{localStorage.setItem(LS_NOTIF,JSON.stringify(userNotif));}catch(e){}}
+
+function toggleNotif(key,btn){
+  userNotif[key]=!userNotif[key];
+  btn.classList.toggle('on',userNotif[key]);
+  // 상세 옵션 패널 열기/닫기
+  const detail=document.getElementById('notif-detail-'+key);
+  if(detail) detail.classList.toggle('open',userNotif[key]);
+  saveNotif();
+}
+
+function setNotifFreq(chip){
+  const key=chip.dataset.key;
+  const freq=chip.dataset.freq;
+  // 같은 key 칩들 초기화
+  document.querySelectorAll(`.notif-freq-chip[data-key="${key}"]`).forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  if(key==='weekly') userNotif.weeklyFreq=freq;
+  if(key==='location') userNotif.locationRadius=freq;
+  saveNotif();
+}
+
+function _syncNotifUI(){
+  ['weekly','location','delivery','marketing'].forEach(key=>{
+    const btn=document.getElementById('toggle-notif-'+key);
+    if(btn){
+      btn.classList.toggle('on',!!userNotif[key]);
+      const detail=document.getElementById('notif-detail-'+key);
+      if(detail) detail.classList.toggle('open',!!userNotif[key]);
+    }
+  });
+  // 주기 칩 복원
+  document.querySelectorAll('.notif-freq-chip[data-key="weekly"]').forEach(c=>{
+    c.classList.toggle('active',c.dataset.freq===userNotif.weeklyFreq);
+  });
+  document.querySelectorAll('.notif-freq-chip[data-key="location"]').forEach(c=>{
+    c.classList.toggle('active',c.dataset.freq===userNotif.locationRadius);
+  });
+}
+
+/* ── 데이터 관리 ── */
+function _refreshDataStats(){
+  try{
+    const likedArr=JSON.parse(localStorage.getItem(LS_LIKED)||'[]');
+    const reviewsArr=JSON.parse(localStorage.getItem('tonote_reviews')||'[]');
+    const ordersArr=JSON.parse(localStorage.getItem(LS_ORDERS)||'[]');
+    const chatLen=parseInt(localStorage.getItem('tonote_chat_count')||'0');
+    const el=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+    el('ds-liked',likedArr.length);
+    el('ds-reviews',reviewsArr.length);
+    el('ds-orders',ordersArr.length);
+    el('ds-chats',chatLen);
+  }catch(e){}
+}
+
+function clearDataItem(type){
+  const labels={reviews:'리뷰 내역',liked:'좋아요 목록',orders:'샘플 신청 내역',chat:'AI 채팅 히스토리'};
+  if(!confirm(`${labels[type]}을(를) 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`))return;
+  try{
+    if(type==='reviews') localStorage.removeItem('tonote_reviews');
+    if(type==='liked'){localStorage.removeItem(LS_LIKED);liked=new Set();updateMyPage();}
+    if(type==='orders') localStorage.removeItem(LS_ORDERS);
+    if(type==='chat'){localStorage.removeItem('tonote_chat_count');clearChat();}
+    _refreshDataStats();
+    showToast(`${labels[type]} 삭제 완료`);
+  }catch(e){showToast('삭제 중 오류가 발생했습니다');}
+}
+
+function confirmFullReset(){
+  if(!confirm('⚠️ 정말로 전체 초기화할까요?\n\n좋아요, 리뷰, 주문 내역, AI 채팅, 취향 설정이 모두 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.'))return;
+  try{
+    [LS_LIKED,LS_ORDERS,LS_SETTINGS,LS_NOTIF,'tonote_reviews','tonote_chat_count'].forEach(k=>localStorage.removeItem(k));
+    liked=new Set();
+    userSettings={...DEFAULT_SETTINGS};
+    userNotif={...DEFAULT_NOTIF};
+    clearChat();updateMyPage();_syncSettingsUI();_syncNotifUI();_refreshDataStats();
+    _updateSettingsBadge();_updateSettingsSummary();
+    showToast('앱이 초기화되었습니다');
+    closeSettings();
+  }catch(e){showToast('초기화 중 오류가 발생했습니다');}
+}
+
+function exportData(){
+  try{
+    const data={
+      liked:[...liked],
+      reviews:JSON.parse(localStorage.getItem('tonote_reviews')||'[]'),
+      orders:JSON.parse(localStorage.getItem(LS_ORDERS)||'[]'),
+      settings:userSettings,
+      exportedAt:new Date().toISOString()
+    };
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='tonote_data.json';a.click();
+    URL.revokeObjectURL(url);
+    showToast('데이터를 내보냈습니다');
+  }catch(e){showToast('내보내기 중 오류가 발생했습니다');}
+}
+
 /* ── 설정 열기 ── */
 function openSettings(){
   _syncSettingsUI();
+  _syncNotifUI();
+  _refreshDataStats();
+  switchSettingsTab('preference');  // 항상 첫 탭으로 열기
   document.getElementById('overlay-settings').classList.add('open');
 }
 
