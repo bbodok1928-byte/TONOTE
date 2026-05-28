@@ -207,6 +207,9 @@ input,textarea{font-family:inherit;outline:none}
 .typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
 .typing-lbl{font-size:11px;color:var(--t3);font-family:var(--serif);font-style:italic;letter-spacing:.02em}
 @keyframes bounce{0%,80%,100%{transform:translateY(0);background:var(--t3)}40%{transform:translateY(-6px);background:var(--primary)}}
+/* 타이핑 효과 중 커서 깜빡임 */
+.typing-cursor::after{content:'▋';font-size:.85em;color:var(--primary);opacity:1;animation:cursorBlink .55s step-end infinite;margin-left:1px}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
 .chat-input-row{padding:10px 20px 10px;border-top:1px solid var(--bd);display:flex;gap:9px;align-items:center;background:var(--bg);flex-shrink:0}
 .chat-ta{flex:1;background:var(--s1);border:1.5px solid var(--bd);border-radius:14px;padding:10px 13px;color:var(--t1);font-family:var(--serif);font-style:italic;font-size:13.5px;resize:none;line-height:1.5;min-height:44px;max-height:110px;transition:border-color .2s;box-shadow:var(--shadow)}
 .chat-ta:focus{border-color:var(--primary)}
@@ -3223,6 +3226,27 @@ function _scrollChat(){
   area.scrollTo({top:area.scrollHeight,behavior:'smooth'});
 }
 
+/* ── 타이핑 효과: el 에 text 를 글자당 speed(ms) 로 순차 출력 ── */
+function _typeEffect(el,text,speed,onDone){
+  let i=0;
+  el.textContent='';
+  const area=document.getElementById('chat-area');
+  /* 커서 깜빡임 표시 */
+  el.classList.add('typing-cursor');
+  const tick=setInterval(()=>{
+    /* 한글은 2바이트지만 JS string은 코드포인트 단위 → 그냥 index++ 사용 */
+    el.textContent+=text[i];
+    i++;
+    /* 타이핑 중 즉각 스크롤 (smooth 대신 instant — 글자마다 smooth 면 버벅임) */
+    if(area) area.scrollTop=area.scrollHeight;
+    if(i>=text.length){
+      clearInterval(tick);
+      el.classList.remove('typing-cursor');
+      if(onDone) onDone();
+    }
+  },speed);
+}
+
 function sendChat(){
   const ta=document.getElementById('chat-input');
   const btn=document.getElementById('chat-send');
@@ -3233,15 +3257,15 @@ function sendChat(){
   ta.value='';ta.style.height='auto';
   ta.focus();
 
-  /* ② 전송 중 버튼 비활성화 (중복 전송 방지) */
-  btn.disabled=true;btn.style.opacity='.45';
+  /* ② 전송 중 입력·버튼 비활성화 (중복 전송 방지) */
+  ta.disabled=true;btn.disabled=true;btn.style.opacity='.45';
 
   appendMsg('user',txt);
   _scrollChat();
 
   const area=document.getElementById('chat-area');
 
-  /* ③ 타이핑 인디케이터: 텍스트 라벨 + 점 세 개 */
+  /* ③ 로딩 인디케이터: 텍스트 라벨 + 점 세 개 */
   const typing=document.createElement('div');
   typing.className='typing';
   typing.innerHTML=`<span class="typing-lbl">향수를 찾고 있어요</span><div class="typing-dots"><span></span><span></span><span></span></div>`;
@@ -3249,7 +3273,7 @@ function sendChat(){
   _scrollChat();
 
   setTimeout(()=>{
-    /* ④ 인디케이터 제거 후 답변 렌더 */
+    /* ④ 인디케이터 제거 */
     typing.remove();
 
     const{scored,topMood,topTag}=matchPerfumes(txt);
@@ -3257,36 +3281,45 @@ function sendChat(){
     const replyTxt=hasMatch
       ?pickPoetic(topMood,topTag)
       :'조금 더 구체적인 감정이나 장면을 말씀해 주시면 더 잘 찾아드릴 수 있어요.\n예: "비 오는 날 창가", "숲속 산책", "따뜻한 카페 오후" 같은 느낌으로요 ☁️';
-    appendMsg('bot',replyTxt);
+
+    /* ⑤ 빈 말풍선 먼저 DOM에 추가 → 타이핑 효과로 채우기 */
+    const botBubble=document.createElement('div');
+    botBubble.className='msg msg-bot';
+    botBubble.style.whiteSpace='pre-line';
+    area.appendChild(botBubble);
     _scrollChat();
 
-    /* ⑤ 향수 추천 카드 출력 (매칭 없으면 평점 상위 2개) */
-    const toShow=hasMatch
-      ?scored.slice(0,2).map(x=>x.p)
-      :PERFUMES.slice().sort((a,b)=>b.rating-a.rating).slice(0,2);
+    /* ⑥ 한 글자당 28ms 로 타이핑 → 완료 콜백에서 카드 렌더 & UI 복원 */
+    _typeEffect(botBubble,replyTxt,28,()=>{
 
-    toShow.forEach(p=>{
-      const d=document.createElement('div');d.className='msg-card';
-      const imgHTML=p.img?`<div style="width:100%;aspect-ratio:1/1;border-radius:10px;margin-bottom:10px;background:${p.bg};overflow:hidden;position:relative;isolation:isolate"><img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply;display:block" onerror="this.parentElement.style.display='none'"></div>`:'';
-      d.innerHTML=`${imgHTML}<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.name}</p><p class="msg-card-poem">"${p.poem}"</p><p style="font-size:10px;color:var(--primary);margin-top:8px;font-weight:700">탭하여 상세보기 →</p>`;
-      d.onclick=()=>openDetail(p.id);
-      area.appendChild(d);
-      _scrollChat();
+      /* ⑦ 향수 추천 카드 출력 (매칭 없으면 평점 상위 2개) */
+      const toShow=hasMatch
+        ?scored.slice(0,2).map(x=>x.p)
+        :PERFUMES.slice().sort((a,b)=>b.rating-a.rating).slice(0,2);
+
+      toShow.forEach(p=>{
+        const d=document.createElement('div');d.className='msg-card';
+        const imgHTML=p.img?`<div style="width:100%;aspect-ratio:1/1;border-radius:10px;margin-bottom:10px;background:${p.bg};overflow:hidden;position:relative;isolation:isolate"><img src="${p.img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply;display:block" onerror="this.parentElement.style.display='none'"></div>`:'';
+        d.innerHTML=`${imgHTML}<p class="msg-card-brand">${p.brand}</p><p class="msg-card-name">${p.name}</p><p class="msg-card-poem">"${p.poem}"</p><p style="font-size:10px;color:var(--primary);margin-top:8px;font-weight:700">탭하여 상세보기 →</p>`;
+        d.onclick=()=>openDetail(p.id);
+        area.appendChild(d);
+        _scrollChat();
+      });
+
+      /* ⑧ 3개 이상 매칭 시 "더 보기" 메시지 */
+      if(scored.length>2){
+        const more=document.createElement('div');more.className='msg msg-bot';
+        more.style.cursor='pointer';more.style.whiteSpace='pre-line';
+        more.textContent=`+${scored.length-2}개의 향수가 더 있어요. 탐색 탭에서 확인해보세요 →`;
+        more.onclick=()=>switchTab('explore');
+        area.appendChild(more);
+        _scrollChat();
+      }
+
+      /* ⑨ 타이핑 완전 종료 후 입력·버튼 복원 + 포커스 */
+      ta.disabled=false;btn.disabled=false;btn.style.opacity='';
+      ta.focus();
     });
-
-    /* ⑥ 3개 이상 매칭 시 "더 보기" 메시지 */
-    if(scored.length>2){
-      const more=document.createElement('div');more.className='msg msg-bot';
-      more.style.cursor='pointer';more.style.whiteSpace='pre-line';
-      more.textContent=`+${scored.length-2}개의 향수가 더 있어요. 탐색 탭에서 확인해보세요 →`;
-      more.onclick=()=>switchTab('explore');
-      area.appendChild(more);
-      _scrollChat();
-    }
-
-    /* ⑦ 전송 완료 후 버튼 복원 + 포커스 */
-    btn.disabled=false;btn.style.opacity='';
-    ta.focus();
   },1100);
 }
 
