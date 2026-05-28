@@ -1079,10 +1079,12 @@ input,textarea{font-family:inherit;outline:none}
               <span class="set-row-lbl">향 강도 선호</span>
               <span class="set-row-val" id="lbl-intensity">무관</span>
             </div>
-            <input type="range" class="set-range" id="range-intensity-min" min="1" max="5" step="1" value="1"
-              oninput="updateRangeLabel('intensity')">
-            <input type="range" class="set-range" id="range-intensity-max" min="1" max="5" step="1" value="5"
-              oninput="updateRangeLabel('intensity')" style="margin-top:6px">
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="range" class="set-range" id="range-intensity-min" min="1" max="5" step="1" value="1"
+                oninput="updateRangeLabel('intensity')" style="flex:1;margin:0">
+              <input type="range" class="set-range" id="range-intensity-max" min="1" max="5" step="1" value="5"
+                oninput="updateRangeLabel('intensity')" style="flex:1;margin:0">
+            </div>
             <div class="set-range-labels"><span>가벼운 (1)</span><span>보통 (3)</span><span>진한 (5)</span></div>
           </div>
           <div class="set-row">
