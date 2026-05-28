@@ -465,6 +465,152 @@ input,textarea{font-family:inherit;outline:none}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
+/* ── SETTINGS OVERLAY ───────────────────── */
+#overlay-settings{
+  position:absolute;inset:0;z-index:103;
+  background:rgba(30,24,20,.45);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+#overlay-settings.open{opacity:1;pointer-events:all}
+.settings-sheet{
+  background:var(--bg);border-radius:24px 24px 0 0;
+  width:100%;
+  max-height:92svh;
+  display:flex;flex-direction:column;
+  transform:translateY(100%);
+  transition:transform .42s cubic-bezier(.32,0,.12,1);
+  overflow:hidden;
+}
+#overlay-settings.open .settings-sheet{transform:none}
+.settings-handle{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:14px auto 0;flex-shrink:0}
+.settings-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 12px;flex-shrink:0;
+  border-bottom:1px solid var(--bd);
+}
+.settings-title{font-family:var(--serif);font-size:19px;color:var(--t1)}
+.settings-close{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--s3);border:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--t2);cursor:pointer;
+  transition:background .2s;
+}
+.settings-close:hover{background:var(--primary-soft)}
+.settings-body{flex:1;overflow-y:auto;padding:0 20px 32px;scrollbar-width:none}
+.settings-body::-webkit-scrollbar{display:none}
+
+/* 섹션 구분 */
+.set-section{padding:20px 0 0;border-bottom:1px solid var(--bd)}
+.set-section:last-of-type{border-bottom:none}
+.set-sec-title{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:800;color:var(--primary);margin-bottom:14px;
+  display:flex;align-items:center;gap:6px;
+}
+.set-sec-title span{font-size:14px}
+
+/* 슬라이더 행 */
+.set-row{margin-bottom:18px}
+.set-row-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.set-row-lbl{font-size:13px;font-weight:600;color:var(--t1)}
+.set-row-val{
+  font-size:11px;font-weight:700;
+  color:var(--primary);background:var(--primary-soft);
+  padding:2px 9px;border-radius:50px;
+}
+/* range input 커스텀 */
+.set-range{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:4px;border-radius:2px;
+  background:var(--s3);outline:none;cursor:pointer;
+}
+.set-range::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--primary);border:2px solid #fff;
+  box-shadow:0 2px 8px rgba(176,116,102,.35);
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+}
+.set-range::-webkit-slider-thumb:active{transform:scale(1.2);box-shadow:0 4px 14px rgba(176,116,102,.45)}
+.set-range::-moz-range-thumb{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--primary);border:2px solid #fff;
+  box-shadow:0 2px 8px rgba(176,116,102,.35);cursor:pointer;
+}
+.set-range-labels{display:flex;justify-content:space-between;margin-top:5px}
+.set-range-labels span{font-size:10px;color:var(--t3)}
+
+/* 카테고리·계절 칩 */
+.set-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+.set-chip{
+  padding:6px 13px;border-radius:50px;
+  font-size:12px;font-weight:600;
+  border:1.5px solid var(--bd);
+  background:var(--s1);color:var(--t2);
+  cursor:pointer;transition:all .18s;user-select:none;
+}
+.set-chip.active{
+  background:var(--primary);border-color:var(--primary);
+  color:#fff;box-shadow:0 2px 10px rgba(176,116,102,.28);
+}
+.set-chip.exclude.active{
+  background:#E84040;border-color:#E84040;
+  box-shadow:0 2px 10px rgba(232,64,64,.25);
+}
+
+/* 토글 스위치 */
+.set-toggle-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 0;border-bottom:1px solid var(--bd);
+}
+.set-toggle-row:last-child{border-bottom:none}
+.set-toggle-info{flex:1}
+.set-toggle-lbl{font-size:13px;font-weight:600;color:var(--t1)}
+.set-toggle-desc{font-size:11px;color:var(--t3);margin-top:2px}
+.set-toggle{
+  width:44px;height:26px;border-radius:13px;
+  background:var(--s3);border:none;
+  position:relative;cursor:pointer;
+  transition:background .22s;flex-shrink:0;
+}
+.set-toggle.on{background:var(--primary)}
+.set-toggle::after{
+  content:'';position:absolute;
+  width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.15);
+  top:3px;left:3px;
+  transition:transform .22s cubic-bezier(.4,0,.2,1);
+}
+.set-toggle.on::after{transform:translateX(18px)}
+
+/* 가격 이중 슬라이더 표시 */
+.set-price-disp{
+  text-align:center;font-size:12px;color:var(--t2);
+  font-weight:600;margin-bottom:8px;
+}
+.set-price-disp em{color:var(--primary);font-style:normal}
+
+/* 리셋 버튼 */
+.set-reset-btn{
+  width:100%;margin-top:24px;padding:13px;
+  border-radius:14px;background:var(--s2);
+  border:1px solid var(--bd);
+  font-size:13px;font-weight:700;color:var(--t2);
+  cursor:pointer;transition:all .2s;
+}
+.set-reset-btn:hover{background:var(--primary-soft);color:var(--primary);border-color:var(--primary)}
+.set-apply-badge{
+  position:absolute;top:8px;right:8px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--primary);
+  opacity:0;transition:opacity .2s;pointer-events:none;
+}
+.set-apply-badge.show{opacity:1}
+
 /* ── TOAST ── */
 .toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--t1);color:#fff;font-size:13px;font-weight:600;padding:12px 20px;border-radius:50px;white-space:nowrap;opacity:0;transition:opacity .3s,transform .3s;z-index:999;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -716,9 +862,9 @@ input,textarea{font-family:inherit;outline:none}
           <div class="my-menu-left"><span class="my-menu-icon">📍</span><div><p class="my-menu-lbl">방문한 시향 공간</p><p class="my-menu-sub">홍대 올리브영 외 1곳</p></div></div>
           <span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-menu-item">
-          <div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p></div></div>
-          <span class="my-menu-arrow">›</span>
+        <div class="my-menu-item" onclick="openSettings()">
+          <div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p><p class="my-menu-sub" id="settings-summary-lbl">AI 추천 · 카테고리 · 가격대</p></div></div>
+          <span class="my-menu-arrow" style="position:relative">›<span class="set-apply-badge" id="settings-badge"></span></span>
         </div>
       </div>
     </div>
@@ -766,6 +912,123 @@ input,textarea{font-family:inherit;outline:none}
   <div class="cmp-slots" id="cmp-slots"></div>
   <div class="cmp-body" id="cmp-body"></div>
 </div>
+
+<!-- ════ SETTINGS OVERLAY ════ -->
+<div id="overlay-settings" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-sheet">
+    <div class="settings-handle"></div>
+    <div class="settings-head">
+      <p class="settings-title">⚙️ &nbsp;취향 설정</p>
+      <button class="settings-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="settings-body">
+
+      <!-- ① AI 추천 취향 컨트롤러 -->
+      <div class="set-section">
+        <p class="set-sec-title"><span>🎯</span> AI 추천 취향 조정</p>
+
+        <div class="set-row">
+          <div class="set-row-head">
+            <span class="set-row-lbl">향 강도 선호</span>
+            <span class="set-row-val" id="lbl-intensity">무관</span>
+          </div>
+          <input type="range" class="set-range" id="range-intensity-min" min="1" max="5" step="1" value="1"
+            oninput="updateRangeLabel('intensity')">
+          <input type="range" class="set-range" id="range-intensity-max" min="1" max="5" step="1" value="5"
+            oninput="updateRangeLabel('intensity')" style="margin-top:6px">
+          <div class="set-range-labels"><span>가벼운 (1)</span><span>보통 (3)</span><span>진한 (5)</span></div>
+        </div>
+
+        <div class="set-row">
+          <div class="set-row-head">
+            <span class="set-row-lbl">지속력 최소 기준</span>
+            <span class="set-row-val" id="lbl-longevity">무관</span>
+          </div>
+          <input type="range" class="set-range" id="range-longevity" min="1" max="5" step="1" value="1"
+            oninput="updateRangeLabel('longevity')">
+          <div class="set-range-labels"><span>가벼운 여운</span><span>보통</span><span>오래 지속</span></div>
+        </div>
+
+        <div class="set-row" style="padding-bottom:4px">
+          <div class="set-row-head">
+            <span class="set-row-lbl">확산력 (실라쥬)</span>
+            <span class="set-row-val" id="lbl-sillage">무관</span>
+          </div>
+          <input type="range" class="set-range" id="range-sillage" min="1" max="5" step="1" value="1"
+            oninput="updateRangeLabel('sillage')">
+          <div class="set-range-labels"><span>나만 느끼는</span><span>보통</span><span>강한 존재감</span></div>
+        </div>
+      </div>
+
+      <!-- ② 제외할 카테고리 -->
+      <div class="set-section">
+        <p class="set-sec-title"><span>🚫</span> 제외할 카테고리</p>
+        <div class="set-chips" id="chips-exclude">
+          <div class="set-chip exclude" data-cat="플로럴" onclick="toggleExcludeCat(this)">플로럴</div>
+          <div class="set-chip exclude" data-cat="우디" onclick="toggleExcludeCat(this)">우디</div>
+          <div class="set-chip exclude" data-cat="프루티" onclick="toggleExcludeCat(this)">프루티</div>
+          <div class="set-chip exclude" data-cat="시트러스" onclick="toggleExcludeCat(this)">시트러스</div>
+          <div class="set-chip exclude" data-cat="머스크" onclick="toggleExcludeCat(this)">머스크</div>
+          <div class="set-chip exclude" data-cat="아쿠아틱" onclick="toggleExcludeCat(this)">아쿠아틱</div>
+          <div class="set-chip exclude" data-cat="스파이시" onclick="toggleExcludeCat(this)">스파이시</div>
+          <div class="set-chip exclude" data-cat="구르망" onclick="toggleExcludeCat(this)">구르망</div>
+        </div>
+        <p style="font-size:11px;color:var(--t3);margin-bottom:6px">선택한 카테고리는 AI 추천과 탐색에서 제외됩니다</p>
+      </div>
+
+      <!-- ③ 선호 계절 -->
+      <div class="set-section">
+        <p class="set-sec-title"><span>🌿</span> 선호 계절 (복수 선택)</p>
+        <div class="set-chips" id="chips-season">
+          <div class="set-chip" data-season="봄" onclick="toggleSeasonChip(this)">🌸 봄</div>
+          <div class="set-chip" data-season="여름" onclick="toggleSeasonChip(this)">☀️ 여름</div>
+          <div class="set-chip" data-season="가을" onclick="toggleSeasonChip(this)">🍂 가을</div>
+          <div class="set-chip" data-season="겨울" onclick="toggleSeasonChip(this)">❄️ 겨울</div>
+        </div>
+        <p style="font-size:11px;color:var(--t3);margin-bottom:6px">선택하면 해당 계절 향수가 AI 추천에서 우선 노출됩니다</p>
+      </div>
+
+      <!-- ④ 가격대 -->
+      <div class="set-section">
+        <p class="set-sec-title"><span>💰</span> 최대 가격대</p>
+        <p class="set-price-disp" id="lbl-price">₩<em id="price-val">50</em>만원 이하</p>
+        <input type="range" class="set-range" id="range-price" min="5" max="60" step="5" value="60"
+          oninput="updatePriceLabel()">
+        <div class="set-range-labels"><span>5만원</span><span>25만원</span><span>60만원</span></div>
+        <p style="font-size:11px;color:var(--t3);margin-top:6px;margin-bottom:4px">탐색 탭과 AI 추천 결과에 적용됩니다</p>
+      </div>
+
+      <!-- ⑤ 디스플레이 -->
+      <div class="set-section" style="border-bottom:none">
+        <p class="set-sec-title"><span>✨</span> 표시 설정</p>
+        <div class="set-toggle-row">
+          <div class="set-toggle-info">
+            <p class="set-toggle-lbl">샘플 가능 향수만 보기</p>
+            <p class="set-toggle-desc">탐색 탭에서 샘플 신청 가능한 향수만 표시</p>
+          </div>
+          <button class="set-toggle" id="toggle-sample-only" onclick="toggleSetting('sampleOnly',this)"></button>
+        </div>
+        <div class="set-toggle-row">
+          <div class="set-toggle-info">
+            <p class="set-toggle-lbl">AI 감성 문구 표시</p>
+            <p class="set-toggle-desc">추천 결과에 시적 감성 설명 표시</p>
+          </div>
+          <button class="set-toggle on" id="toggle-poetic" onclick="toggleSetting('showPoetic',this)"></button>
+        </div>
+        <div class="set-toggle-row">
+          <div class="set-toggle-info">
+            <p class="set-toggle-lbl">평점 높은 순 우선 노출</p>
+            <p class="set-toggle-desc">동점 향수 중 별점 높은 항목 먼저 표시</p>
+          </div>
+          <button class="set-toggle" id="toggle-rating-boost" onclick="toggleSetting('ratingBoost',this)"></button>
+        </div>
+      </div>
+
+      <button class="set-reset-btn" onclick="resetSettings()">↺ &nbsp;기본값으로 초기화</button>
+
+    </div><!-- /settings-body -->
+  </div><!-- /settings-sheet -->
+</div><!-- /#overlay-settings -->
 
 <!-- ════ TOAST ════ -->
 <div class="toast" id="toast"></div>
@@ -2763,6 +3026,188 @@ const SPACES=STORES; // 하위 호환
 /* ── localStorage 키 ── */
 const LS_LIKED='tonote_liked';
 const LS_ORDERS='tonote_orders';
+const LS_SETTINGS='tonote_settings';
+
+/* ── 설정 기본값 ── */
+const DEFAULT_SETTINGS={
+  intensityMin:1, intensityMax:5,
+  longevityMin:1,
+  sillageMin:1,
+  excludedCats:[],
+  seasons:[],
+  priceMax:600000,   // 원 단위 (60만원)
+  sampleOnly:false,
+  showPoetic:true,
+  ratingBoost:false,
+};
+
+/* ── 사용자 설정 로드 ── */
+let userSettings={...DEFAULT_SETTINGS};
+(function loadSettings(){
+  try{
+    const s=JSON.parse(localStorage.getItem(LS_SETTINGS)||'{}');
+    userSettings=Object.assign({},DEFAULT_SETTINGS,s);
+  }catch(e){userSettings={...DEFAULT_SETTINGS};}
+})();
+
+/* ── 설정 저장 ── */
+function saveSettings(){
+  try{localStorage.setItem(LS_SETTINGS,JSON.stringify(userSettings));}catch(e){}
+  _updateSettingsBadge();
+  _updateSettingsSummary();
+}
+
+/* ── 설정 배지 (변경 있으면 빨간 점) ── */
+function _updateSettingsBadge(){
+  const isDefault=
+    userSettings.intensityMin===1&&userSettings.intensityMax===5&&
+    userSettings.longevityMin===1&&userSettings.sillageMin===1&&
+    userSettings.excludedCats.length===0&&userSettings.seasons.length===0&&
+    userSettings.priceMax>=600000&&!userSettings.sampleOnly&&
+    userSettings.showPoetic&&!userSettings.ratingBoost;
+  const badge=document.getElementById('settings-badge');
+  if(badge) badge.classList.toggle('show',!isDefault);
+}
+
+/* ── 마이 탭 설정 요약 레이블 업데이트 ── */
+function _updateSettingsSummary(){
+  const el=document.getElementById('settings-summary-lbl');
+  if(!el)return;
+  const parts=[];
+  if(userSettings.excludedCats.length) parts.push(`${userSettings.excludedCats.length}개 카테고리 제외`);
+  if(userSettings.priceMax<600000) parts.push(`${Math.round(userSettings.priceMax/10000)}만원 이하`);
+  if(userSettings.sampleOnly) parts.push('샘플 가능만');
+  if(userSettings.seasons.length) parts.push(userSettings.seasons.join('·')+'만');
+  el.textContent=parts.length?parts.join(' · '):'AI 추천 · 카테고리 · 가격대';
+}
+
+/* ── 설정 열기 ── */
+function openSettings(){
+  _syncSettingsUI();
+  document.getElementById('overlay-settings').classList.add('open');
+}
+
+/* ── 설정 닫기 (변경사항 즉시 적용) ── */
+function closeSettings(){
+  document.getElementById('overlay-settings').classList.remove('open');
+  _applySettings();
+}
+
+/* ── UI → userSettings 동기화 ── */
+function _syncSettingsUI(){
+  // 슬라이더 값 복원
+  document.getElementById('range-intensity-min').value=userSettings.intensityMin;
+  document.getElementById('range-intensity-max').value=userSettings.intensityMax;
+  document.getElementById('range-longevity').value=userSettings.longevityMin;
+  document.getElementById('range-sillage').value=userSettings.sillageMin;
+  document.getElementById('range-price').value=Math.min(60,Math.round(userSettings.priceMax/10000));
+  // 레이블 업데이트
+  updateRangeLabel('intensity');
+  updateRangeLabel('longevity');
+  updateRangeLabel('sillage');
+  updatePriceLabel();
+  // 카테고리 제외 칩
+  document.querySelectorAll('#chips-exclude .set-chip').forEach(chip=>{
+    chip.classList.toggle('active',userSettings.excludedCats.includes(chip.dataset.cat));
+  });
+  // 계절 칩
+  document.querySelectorAll('#chips-season .set-chip').forEach(chip=>{
+    chip.classList.toggle('active',userSettings.seasons.includes(chip.dataset.season));
+  });
+  // 토글
+  _setToggle('toggle-sample-only',userSettings.sampleOnly);
+  _setToggle('toggle-poetic',userSettings.showPoetic);
+  _setToggle('toggle-rating-boost',userSettings.ratingBoost);
+}
+
+function _setToggle(id,on){
+  const el=document.getElementById(id);
+  if(el) on?el.classList.add('on'):el.classList.remove('on');
+}
+
+/* ── 범위 레이블 ── */
+const INTENSITY_NAMES=['','가벼운','가볍~보통','보통','보통~진한','진한'];
+const LONGEVITY_NAMES=['','잔향 짧아도 OK','2~3시간이상','반나절 이상','종일 가는','매우 오래'];
+const SILLAGE_NAMES=['','나만 느끼는','가까이서만','적당한','은은히 퍼지는','강한 존재감'];
+
+function updateRangeLabel(type){
+  if(type==='intensity'){
+    const minV=parseInt(document.getElementById('range-intensity-min').value);
+    const maxV=parseInt(document.getElementById('range-intensity-max').value);
+    // min > max 교정
+    if(minV>maxV) document.getElementById('range-intensity-min').value=maxV;
+    const mn=Math.min(minV,maxV),mx=maxV;
+    userSettings.intensityMin=mn; userSettings.intensityMax=mx;
+    const el=document.getElementById('lbl-intensity');
+    if(mn===1&&mx===5){el.textContent='무관';}
+    else if(mn===mx){el.textContent=INTENSITY_NAMES[mn];}
+    else{el.textContent=`${INTENSITY_NAMES[mn]} ~ ${INTENSITY_NAMES[mx]}`;}
+  }else if(type==='longevity'){
+    const v=parseInt(document.getElementById('range-longevity').value);
+    userSettings.longevityMin=v;
+    document.getElementById('lbl-longevity').textContent=v===1?'무관':LONGEVITY_NAMES[v]+' 이상';
+  }else if(type==='sillage'){
+    const v=parseInt(document.getElementById('range-sillage').value);
+    userSettings.sillageMin=v;
+    document.getElementById('lbl-sillage').textContent=v===1?'무관':SILLAGE_NAMES[v]+' 이상';
+  }
+  saveSettings();
+}
+
+function updatePriceLabel(){
+  const v=parseInt(document.getElementById('range-price').value);
+  userSettings.priceMax=v*10000;
+  const el=document.getElementById('price-val');
+  if(el) el.textContent=v>=60?'제한 없음':v;
+  const parent=document.getElementById('lbl-price');
+  if(parent) parent.innerHTML=v>=60?'<em>가격 제한 없음</em>':('₩<em id="price-val">'+v+'</em>만원 이하');
+  saveSettings();
+}
+
+/* ── 카테고리 칩 토글 ── */
+function toggleExcludeCat(chip){
+  chip.classList.toggle('active');
+  userSettings.excludedCats=Array.from(
+    document.querySelectorAll('#chips-exclude .set-chip.active')
+  ).map(c=>c.dataset.cat);
+  saveSettings();
+  _flashFeedback(chip);
+}
+
+/* ── 계절 칩 토글 ── */
+function toggleSeasonChip(chip){
+  chip.classList.toggle('active');
+  userSettings.seasons=Array.from(
+    document.querySelectorAll('#chips-season .set-chip.active')
+  ).map(c=>c.dataset.season);
+  saveSettings();
+}
+
+/* ── 토글 스위치 ── */
+function toggleSetting(key,btn){
+  userSettings[key]=!userSettings[key];
+  btn.classList.toggle('on',userSettings[key]);
+  saveSettings();
+}
+
+/* ── 초기화 ── */
+function resetSettings(){
+  userSettings={...DEFAULT_SETTINGS};
+  saveSettings();
+  _syncSettingsUI();
+  showToast('설정이 초기화되었습니다');
+}
+
+/* ── 설정 적용 (탐색·AI에 반영) ── */
+function _applySettings(){
+  renderExplore();   // 탐색 탭 필터 재적용
+}
+
+/* ── 칩 누를 때 미세한 피드백 ── */
+function _flashFeedback(el){
+  el.style.transform='scale(.93)';
+  setTimeout(()=>el.style.transform='',130);
+}
 
 /* ── 초기 상태 로드 ── */
 let liked=new Set(),compareList=[],currentDetailId=null,activeMood='',activeCat='';
@@ -2795,6 +3240,9 @@ function initAll(){
   // localStorage에서 불러온 데이터로 마이페이지 초기화
   document.getElementById('liked-count').textContent=liked.size;
   updateMyPage();
+  // 설정 배지·요약 초기 반영
+  _updateSettingsBadge();
+  _updateSettingsSummary();
 }
 
 function switchTab(tab){
@@ -2913,7 +3361,11 @@ function renderExplore(){
   const filtered=PERFUMES.filter(p=>{
     const catOk=!activeCat||p.cat===activeCat;
     const qOk=!q||p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q)||p.tags.some(t=>t.includes(q))||p.poem.includes(q);
-    return catOk&&qOk;
+    // 설정 필터
+    const notExcluded=!userSettings.excludedCats.includes(p.cat);
+    const priceOk=userSettings.priceMax>=600000||p.price<=userSettings.priceMax;
+    const sampleOk=!userSettings.sampleOnly||p.sampleAvail;
+    return catOk&&qOk&&notExcluded&&priceOk&&sampleOk;
   });
   const grid=document.getElementById('explore-grid');
   if(!filtered.length){grid.innerHTML='<div class="no-result" style="grid-column:1/-1">해당하는 향수가 없어요</div>';return;}
@@ -3985,6 +4437,17 @@ function matchPerfumes(input){
   // 향수별 점수 계산
   const scored=PERFUMES.map(p=>{
     let sc=0;
+    // 설정 필터: 제외 카테고리
+    if(userSettings.excludedCats.includes(p.cat)) return{p,sc:-1};
+    // 설정 필터: 가격대
+    if(userSettings.priceMax<600000&&p.price>userSettings.priceMax) return{p,sc:-1};
+    // 설정 필터: 강도
+    if(p.intensity<userSettings.intensityMin||p.intensity>userSettings.intensityMax) return{p,sc:-1};
+    // 설정 필터: 지속력
+    if(userSettings.longevityMin>1&&p.longevity<userSettings.longevityMin) return{p,sc:-1};
+    // 설정 필터: 확산력
+    if(userSettings.sillageMin>1&&p.sillage<userSettings.sillageMin) return{p,sc:-1};
+
     Object.keys(moodHits).forEach(m=>{if(p.moods.includes(m))sc+=moodHits[m]*3;});
     tagHits.forEach(t=>{
       if(p.cat===t)sc+=2;
@@ -3992,6 +4455,10 @@ function matchPerfumes(input){
     });
     // desc·poem 직접 포함 보너스
     Object.keys(KW).forEach(kw=>{if(q.includes(kw)&&(p.desc.includes(kw)||p.poem.includes(kw)))sc+=1;});
+    // 계절 우선 부스트
+    if(userSettings.seasons.length&&p.season.some(s=>userSettings.seasons.includes(s))) sc+=2;
+    // 평점 부스트
+    if(userSettings.ratingBoost) sc+=p.rating*0.3;
     return{p,sc};
   }).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc);
 
@@ -4074,8 +4541,9 @@ function sendChat(){
 
     const{scored,topMood,topTag}=matchPerfumes(txt);
     const hasMatch=scored.length>0;
+    const poeticLine=userSettings.showPoetic?pickPoetic(topMood,topTag):'';
     const replyTxt=hasMatch
-      ?pickPoetic(topMood,topTag)
+      ?(poeticLine?poeticLine+'\n\n이런 향수들이 어울릴 것 같아요 ✦':'이런 향수들이 어울릴 것 같아요 ✦')
       :'조금 더 구체적인 감정이나 장면을 말씀해 주시면 더 잘 찾아드릴 수 있어요.\n예: "비 오는 날 창가", "숲속 산책", "따뜻한 카페 오후" 같은 느낌으로요 ☁️';
 
     /* ⑤ 빈 말풍선 먼저 DOM에 추가 → 타이핑 효과로 채우기 */
