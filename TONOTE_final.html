@@ -138,7 +138,7 @@ input,textarea{font-family:inherit;outline:none}
 .vcard{display:flex;gap:0;overflow:hidden;border-radius:20px;border:1px solid var(--bd);background:var(--s1);cursor:pointer;transition:box-shadow .25s,transform .15s;position:relative;margin-bottom:11px;box-shadow:var(--shadow)}
 .vcard:active{transform:scale(.99)}
 .vcard:hover{box-shadow:var(--shadow-m)}
-.vcard-vis{width:96px;height:96px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
+.vcard-vis{width:96px;min-height:96px;align-self:stretch;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
 .vcard-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 52%,var(--s1));z-index:3}
 .vcard-body{padding:15px 13px 15px 4px;flex:1;min-width:0}
 .vcard-brand{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:3px}
@@ -2536,7 +2536,7 @@ function perfImgInner(p,emojiSz,shadowSz,pad){
   /* ── 이미지 있을 때: contain + soft-light blend → 그라데이션과 자연스러운 융합 ── */
   const pk=pad||'12px';
   return sillage+`<img src="${p.img}" alt="${p.name}"
-    style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center top;padding:12px 12px 4px 12px;z-index:2;mix-blend-mode:multiply;display:block;vertical-align:bottom"
+    style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;padding:12px;z-index:2;mix-blend-mode:multiply;display:block;vertical-align:bottom"
     onerror="this.remove()">`;
 }
 
