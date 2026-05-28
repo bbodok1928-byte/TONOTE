@@ -382,6 +382,27 @@ input,textarea{font-family:inherit;outline:none}
 .det-metric-row{display:flex;align-items:center;gap:10px}
 .det-metric-label{font-size:10px;color:var(--t3);width:32px;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
 
+/* ── REVIEW SECTION ─────────────────────── */
+.review-write-box{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:18px;box-shadow:var(--shadow)}
+.review-star-row{display:flex;gap:6px;margin-bottom:12px}
+.review-star{font-size:26px;cursor:pointer;color:var(--s3);transition:color .12s,transform .1s;line-height:1;user-select:none}
+.review-star.on{color:#F5C518}
+.review-star:active{transform:scale(1.25)}
+.review-input{width:100%;box-sizing:border-box;background:var(--bg);border:1.5px solid var(--bd);border-radius:12px;padding:10px 13px;font-size:13px;font-family:var(--sans);color:var(--t1);resize:none;line-height:1.6;transition:border-color .2s;min-height:70px}
+.review-input:focus{outline:none;border-color:rgba(176,116,102,.5)}
+.review-submit-btn{margin-top:10px;width:100%;padding:11px;border-radius:12px;background:var(--primary);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:opacity .2s}
+.review-submit-btn:hover{opacity:.88}
+.review-submit-btn:active{opacity:.72}
+.review-list-empty{font-size:12px;color:var(--t3);text-align:center;padding:20px 0;font-style:italic}
+.review-item{padding:14px 0;border-top:1px solid var(--bd)}
+.review-item:first-child{border-top:none}
+.review-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.review-item-stars{color:#F5C518;font-size:12px;letter-spacing:1px}
+.review-item-date{font-size:10px;color:var(--t3)}
+.review-item-nick{font-size:10.5px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.review-item-text{font-size:13px;color:var(--t2);line-height:1.65}
+@keyframes shakeStar{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
 /* ── COMPARE OVERLAY ─────────────────────── */
 #overlay-compare{
   position:absolute;inset:0;z-index:101;
@@ -2725,14 +2746,169 @@ function openDetail(id){
       ${p.sampleAvail?`<button class="gbtn" onclick="openSample(${id})">📦 샘플 신청</button>`:'<button class="gbtn" style="opacity:.5;cursor:not-allowed">📦 샘플 품절</button>'}
       <button class="obtn" onclick="addToCompare(${id})">⚖️ 비교 추가</button>
     </div>
-    <div style="height:32px"></div>`;
+
+    <div class="det-divider" style="margin-top:8px"></div>
+    <span class="det-section-label">사용자 후기</span>
+
+    <div class="review-write-box">
+      <input type="hidden" id="rsel-${id}" value="0">
+      <div class="review-star-row" id="rstar-row-${id}">
+        ${[1,2,3,4,5].map(n=>`<span class="review-star rstar" data-pid="${id}"
+          onmouseenter="_hoverStar(${id},${n})" onmouseleave="_leaveStar(${id})"
+          ontouchstart="_clickStar(${id},${n})" onclick="_clickStar(${id},${n})">★</span>`).join('')}
+        <span style="font-size:11px;color:var(--t3);margin-left:6px;align-self:center">별점을 선택해 주세요</span>
+      </div>
+      <textarea class="review-input" id="review-ta-${id}" rows="2"
+        placeholder="이 향수에 대한 솔직한 후기를 남겨주세요."></textarea>
+      <button class="review-submit-btn" onclick="submitReview(${id},'${p.cat}')">등록하기</button>
+    </div>
+
+    <div id="review-list-${id}"></div>
+    <div style="height:40px"></div>`;
 
   document.getElementById('overlay-detail').classList.add('open');
   document.getElementById('det-body').scrollTop=0;
+  /* 리뷰 리스트 렌더 (DOM이 이미 삽입된 뒤 호출) */
+  renderReviews(id,p.cat);
 }
 
 function closeDetail(){
   document.getElementById('overlay-detail').classList.remove('open');
+}
+
+/* ══════════════════════════════════════════
+   REVIEW SYSTEM — localStorage 연동
+══════════════════════════════════════════ */
+const _RK='tonote_reviews_v1';
+
+/* 더미 리뷰: 카테고리별 사전 시딩 데이터 */
+const DUMMY_REVIEWS={
+  woody:[
+    {nick:'향수덕후',star:5,text:'처음엔 묵직한 우드 향이 확 퍼지더니 시간이 지날수록 부드럽게 가라앉아요. 가을 가디건에 뿌리면 완벽해요.',date:'2025.03.12'},
+    {nick:'조용한고양이',star:4,text:'오래 지속되고 확산력도 좋아요. 사무실엔 살짝 강할 수 있으니 조심하세요.',date:'2025.01.28'}
+  ],
+  floral:[
+    {nick:'봄여름가을',star:5,text:'꽃밭을 걷는 기분이에요. 무겁지 않고 가볍게 퍼지는 플로럴이라 데일리로 최고!',date:'2025.04.03'},
+    {nick:'향수초보',star:4,text:'처음으로 구입한 플로럴 향수인데 완전 만족해요. 지속력이 더 길었으면 좋겠어요.',date:'2025.02.17'}
+  ],
+  citrus:[
+    {nick:'상큼중독',star:5,text:'아침에 뿌리면 하루가 상쾌해요. 시트러스인데도 오래 가서 신기해요.',date:'2025.05.01'},
+    {nick:'드라이브족',star:4,text:'운전할 때 뿌리면 피로가 풀리는 느낌. 여름 필수템으로 등극.',date:'2025.03.22'}
+  ],
+  musk:[
+    {nick:'포근한하루',star:5,text:'피부에 밀착되는 따뜻한 머스크. 포옹 받는 기분이에요.',date:'2025.04.15'},
+    {nick:'미니멀리스트',star:4,text:'향이 너무 튀지 않아서 매일 쓰기 편해요. 퇴근 후까지 은은하게 남는 게 포인트.',date:'2025.02.05'}
+  ],
+  fruity:[
+    {nick:'달콤한하루',star:5,text:'과하게 달지 않고 자연스러운 과일향이에요. 여름 파티 룩에 잘 어울려요.',date:'2025.04.22'},
+    {nick:'20대여성',star:4,text:'발색처럼 향도 선명해요! 지속력이 조금 더 있었으면 하는 아쉬움은 있지만 재구매 예정.',date:'2025.03.09'}
+  ],
+  aquatic:[
+    {nick:'바다소년',star:5,text:'파도가 밀려오는 느낌? 해변에 있는 것처럼 상쾌해요.',date:'2025.05.10'},
+    {nick:'여름이좋아',star:4,text:'마린 계열 중 가장 자연스러운 향 같아요. 남녀 구분 없이 좋아할 것 같아요.',date:'2025.04.01'}
+  ],
+  spicy:[
+    {nick:'시크가이',star:5,text:'향이 범상치 않아요. 입고 가면 주변에서 꼭 향수 뭐냐고 물어봐요.',date:'2025.03.30'},
+    {nick:'향집착러',star:4,text:'스파이시한데 무겁지 않아요. 저녁 데이트용으로 완벽.',date:'2025.02.11'}
+  ],
+  gourmand:[
+    {nick:'달콤쟁이',star:5,text:'먹고 싶어질 정도로 향이 맛있어요. 바닐라 좋아하는 분들 강추!',date:'2025.04.28'},
+    {nick:'베이커리덕후',star:4,text:'카페에서 갓 구운 빵 냄새 같아요. 자꾸 맡고 싶어지는 중독성 있는 향.',date:'2025.03.14'}
+  ],
+  default:[
+    {nick:'향수러버',star:5,text:'기대 이상이에요. 첫 향과 마지막 향이 모두 매력적이에요.',date:'2025.04.18'},
+    {nick:'은은한일상',star:4,text:'뿌리는 양만 조절하면 어떤 상황에서든 잘 어울려요. 재구매 의사 있어요.',date:'2025.02.27'}
+  ]
+};
+
+/* 향수 카테고리 → 더미 리뷰 키 매핑 */
+function _dummyKey(cat){
+  return{
+    '우디':'woody','플로럴':'floral','시트러스':'citrus',
+    '머스크':'musk','프루티':'fruity','아쿠아틱':'aquatic',
+    '스파이시':'spicy','구르망':'gourmand'
+  }[cat]||'default';
+}
+
+/* localStorage 전체 리뷰 로드 */
+function _loadAllReviews(){
+  try{return JSON.parse(localStorage.getItem(_RK))||[];}
+  catch{return[];}
+}
+
+/* 리뷰 저장 */
+function _saveReview(pid,star,text){
+  const all=_loadAllReviews();
+  const now=new Date();
+  const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+  all.push({pid,star,text,date,nick:'나'});
+  localStorage.setItem(_RK,JSON.stringify(all));
+}
+
+/* 별점 호버/선택 UI */
+function _hoverStar(pid,n){
+  document.querySelectorAll('.rstar[data-pid="'+pid+'"]').forEach((el,i)=>{
+    el.classList.toggle('on',i<n);
+  });
+}
+function _leaveStar(pid){
+  const sel=parseInt(document.getElementById('rsel-'+pid)?.value||0);
+  document.querySelectorAll('.rstar[data-pid="'+pid+'"]').forEach((el,i)=>{
+    el.classList.toggle('on',i<sel);
+  });
+}
+function _clickStar(pid,n){
+  const inp=document.getElementById('rsel-'+pid);
+  if(inp){inp.value=n;}
+  document.querySelectorAll('.rstar[data-pid="'+pid+'"]').forEach((el,i)=>{
+    el.classList.toggle('on',i<n);
+  });
+}
+
+/* 리뷰 리스트 렌더링 */
+function renderReviews(pid,cat){
+  const container=document.getElementById('review-list-'+pid);
+  if(!container)return;
+  const userReviews=_loadAllReviews().filter(r=>r.pid===pid).reverse();
+  const dummy=DUMMY_REVIEWS[_dummyKey(cat)]||DUMMY_REVIEWS.default;
+  const all=[...userReviews,...dummy];
+  if(all.length===0){
+    container.innerHTML='<p class="review-list-empty">아직 작성된 후기가 없어요. 첫 리뷰를 남겨주세요!</p>';
+    return;
+  }
+  container.innerHTML=all.map(r=>`
+    <div class="review-item">
+      <div class="review-item-header">
+        <span class="review-item-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</span>
+        <span class="review-item-date">${r.date}</span>
+      </div>
+      <p class="review-item-nick">${r.nick||'익명'}</p>
+      <p class="review-item-text">${r.text}</p>
+    </div>`).join('');
+}
+
+/* 리뷰 등록 */
+function submitReview(pid,cat){
+  const sel=parseInt(document.getElementById('rsel-'+pid)?.value||0);
+  if(!sel){
+    /* 별점 미선택 시 별점 영역 살짝 흔들기 */
+    const row=document.getElementById('rstar-row-'+pid);
+    if(row){row.style.animation='none';requestAnimationFrame(()=>{row.style.animation='shakeStar .35s ease';});}
+    return;
+  }
+  const ta=document.getElementById('review-ta-'+pid);
+  const text=(ta?.value||'').trim();
+  if(!text){ta?.focus();return;}
+  _saveReview(pid,sel,text);
+  /* 초기화 */
+  if(ta)ta.value='';
+  const inp=document.getElementById('rsel-'+pid);
+  if(inp)inp.value=0;
+  document.querySelectorAll('.rstar[data-pid="'+pid+'"]').forEach(el=>el.classList.remove('on'));
+  renderReviews(pid,cat);
+  /* 리뷰 목록으로 부드럽게 스크롤 */
+  const list=document.getElementById('review-list-'+pid);
+  if(list)list.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function toggleDetailLike(){
   const id=currentDetailId;if(!id)return;
