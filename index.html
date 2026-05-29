@@ -149,10 +149,10 @@ input,textarea{font-family:inherit;outline:none}
 .vcard-heart:active{transform:scale(1.35)}
 
 /* small horizontal card */
-.hcard{flex:0 0 150px;border-radius:20px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
+.hcard{flex:0 0 150px;border-radius:20px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow);box-sizing:border-box}
 .hcard:active{transform:scale(.98)}
 .hcard:hover{box-shadow:var(--shadow-m)}
-.hcard-top{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
+.hcard-top{aspect-ratio:1/1;width:100%;box-sizing:border-box;margin:0;padding:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;isolation:isolate}
 .hcard-heart{position:absolute;top:8px;right:8px;font-size:15px;cursor:pointer}
 .hcard-body{padding:12px 11px 11px}
 .hcard-brand{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
@@ -3958,8 +3958,8 @@ function openDetail(id){
   /* ── 유사 향수 ── */
   const similar=p.similar.map(sid=>{
     const sp=PERFUMES.find(x=>x.id===sid);if(!sp)return'';
-    return`<div class="hcard" style="flex:0 0 140px" onclick="openDetail(${sp.id})">
-      <div class="hcard-top" style="background:${sp.bg};height:104px">${perfImgInner(sp,'36px',12,'8px')}</div>
+    return`<div class="hcard" style="flex:0 0 140px;overflow:hidden" onclick="openDetail(${sp.id})">
+      <div class="hcard-top" style="width:100%;box-sizing:border-box;margin:0;padding:0;background:${sp.bg};height:104px">${perfImgInner(sp,'36px',12,'8px')}</div>
       <div class="hcard-body"><p class="hcard-brand">${sp.brand}</p><p class="hcard-name">${sp.name}</p></div>
     </div>`;}).join('');
 
