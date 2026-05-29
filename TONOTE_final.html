@@ -4342,6 +4342,87 @@ function initCatChips(){
   });
 }
 
+/* ── 한국어 브랜드 검색 alias 딕셔너리 ── */
+const _BRAND_KO={
+  'LE LABO':['르라보','르 라보','르라보'],
+  'JO MALONE':['조말론','조 말론','조말론런던'],
+  'DIPTYQUE':['딥티크'],
+  'CHANEL':['샤넬'],
+  'DIOR':['디올'],
+  'AESOP':['이솝'],
+  'BYREDO':['바이레도'],
+  'MAISON MARGIELA':['마르지엘라','마이슨마르지엘라','메종마르지엘라','mm레플리카'],
+  'MAISON FRANCIS KURKDJIAN':['mfk','메종프란시스쿠르잔','쿠르잔','바카라루즈'],
+  'HERMÈS':['에르메스','에르메'],
+  'GUERLAIN':['겔랑'],
+  'LANCÔME':['랑콤'],
+  'CALVIN KLEIN':['캘빈클라인','캘빈 클라인','ck'],
+  'THIERRY MUGLER':['뮈글러','티에리뮈글러','뮈글러'],
+  'MARC JACOBS':['마크제이콥스','마크 제이콥스'],
+  'ELIE SAAB':['엘리사브','엘리 사브'],
+  'VALENTINO':['발렌티노'],
+  'CAROLINA HERRERA':['캐롤리나헤레라','캐롤리나 에레라'],
+  'DOLCE & GABBANA':['돌체앤가바나','돌체 앤 가바나','dg','d&g'],
+  'PACO RABANNE':['팩코라반느','팩코 라반느','파코라반느'],
+  'VERSACE':['베르사체'],
+  'BURBERRY':['버버리'],
+  'SALVATORE FERRAGAMO':['페라가모','살바토레페라가모'],
+  'DKNY':['dkny','도나카란뉴욕'],
+  'JIMMY CHOO':['지미추','지미 추'],
+  'HUGO BOSS':['휴고보스','휴고 보스'],
+  'DAVIDOFF':['다비도프'],
+  'JOHN VARVATOS':['존바바토스','존 바바토스'],
+  'LANVIN':['랑방'],
+  'YSL':['입생로랑','이브 생 로랑','이브생로랑'],
+  'TOM FORD':['톰포드','톰 포드'],
+  'CREED':['크리드'],
+  'AMOUAGE':['아무아쥬'],
+  "PENHALIGON'S":['페날리곤스','페날리곤'],
+  'FREDERIC MALLE':['프레데릭말','프레데릭 말'],
+  'BVLGARI':['불가리','불가리'],
+  "L'OCCITANE":['록시땅','록시땅'],
+  'NARCISO RODRIGUEZ':['나르시소로드리게스','나르시소'],
+  'ARMANI':['아르마니'],
+  'ISSEY MIYAKE':['이세이미야케','이세미야케'],
+  'KILIAN':['킬리안'],
+  'PARFUMS DE MARLY':['파르팡드말리','드말리'],
+  'ACQUA DI PARMA':['아쿠아디파르마','아쿠아 디 파르마'],
+  'GIVENCHY':['지방시'],
+  'CHLOÉ':['클로에'],
+  'PRADA':['프라다'],
+  'SERGE LUTENS':['세르쥬루탕','세르쥬 루탕'],
+  'NISHANE':['니샤네'],
+  'XERJOFF':['제르조프'],
+  'MEMO PARIS':['메모파리','메모 파리'],
+  'INITIO':['이니시오'],
+  'CLEAN RESERVE':['클린리저브','클린'],
+  'COACH':['코치'],
+  'BJÖRK & BERRIES':['비요크앤베리스','비요크'],
+  'GUCCI':['구찌'],
+  'VIKTOR & ROLF':['빅토르앤롤프','빅토르롤프'],
+  'BULY 1803':['불리1803','불리'],
+  'SANTA MARIA NOVELLA':['산타마리아노벨라'],
+  'THE DIFFERENT COMPANY':['더디퍼런트컴퍼니'],
+  'MM':['마르지엘라','mm'],
+  'BYREDO':['바이레도']
+};
+function _qMatch(q,p){
+  if(!q)return true;
+  if((p.name||'').toLowerCase().includes(q))return true;
+  if((p.brand||'').toLowerCase().includes(q))return true;
+  const aliases=_BRAND_KO[p.brand]||[];
+  if(aliases.some(a=>a.toLowerCase().includes(q)||q.includes(a.toLowerCase())))return true;
+  if((p.tags||[]).some(t=>(t||'').toLowerCase().includes(q)))return true;
+  if((p.moods||[]).some(m=>(m||'').toLowerCase().includes(q)))return true;
+  if((p.cat||'').toLowerCase().includes(q))return true;
+  if((p.poem||'').toLowerCase().includes(q))return true;
+  if((p.desc||'').toLowerCase().includes(q))return true;
+  if((p.top||[]).some(n=>(n||'').toLowerCase().includes(q)))return true;
+  if((p.mid||[]).some(n=>(n||'').toLowerCase().includes(q)))return true;
+  if((p.base||[]).some(n=>(n||'').toLowerCase().includes(q)))return true;
+  return false;
+}
+
 function renderExplore(){
   const q=(document.getElementById('search-input')?.value||'').toLowerCase().trim();
   const excl=Array.isArray(userSettings?.excludedCats)?userSettings.excludedCats:[];
@@ -4351,12 +4432,7 @@ function renderExplore(){
   const sillageMin=userSettings?.sillageMin||1;
   const filtered=PERFUMES.filter(p=>{
     const catOk=!activeCat||p.cat===activeCat;
-    const qOk=!q||
-      (p.name||'').toLowerCase().includes(q)||
-      (p.brand||'').toLowerCase().includes(q)||
-      (p.tags||[]).some(t=>(t||'').toLowerCase().includes(q))||
-      (p.poem||'').toLowerCase().includes(q)||
-      (p.cat||'').toLowerCase().includes(q);
+    const qOk=_qMatch(q,p);
     const notExcluded=!excl.includes(p.cat);
     const priceOk=(userSettings?.priceMax||600000)>=600000||p.price<=(userSettings?.priceMax||600000);
     const sampleOk=!userSettings?.sampleOnly||p.sampleAvail;
