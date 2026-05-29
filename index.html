@@ -5828,7 +5828,7 @@ const STORE_HOURS={
 
 /* 매장 이름 + 주소로 네이버 지도 검색 URL 생성 */
 function getMapUrl(s){
-  const raw=((s.name||'')+' '+(s.addr||'')).trim();
+  const raw=(s.name||'').trim();
   const q=encodeURIComponent(raw);
   return`https://map.naver.com/v5/search/${q}`;
 }
