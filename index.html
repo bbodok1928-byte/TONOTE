@@ -193,8 +193,12 @@ input,textarea{font-family:inherit;outline:none}
 .ef-chip.excl.on{background:#e8404020;border-color:#e84040;color:#c03030}
 .ef-toggle-row{display:flex;justify-content:space-between;align-items:center;padding:2px 0}
 .ef-toggle-lbl{font-size:12px;color:var(--t2);font-weight:600}
-.ef-reset{width:100%;padding:9px;border-radius:10px;border:1.5px dashed var(--bd);background:none;color:var(--t3);font-size:12px;cursor:pointer;margin-top:4px;transition:all .18s}
-.ef-reset:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.ef-btn-row{display:flex;gap:8px;margin-top:4px}
+.ef-btn-reset{flex:0 0 auto;padding:11px 16px;border-radius:12px;border:1.5px solid var(--bd);background:none;color:var(--t3);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.ef-btn-reset:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.ef-btn-apply{flex:1;padding:11px 0;border-radius:12px;border:none;background:var(--primary);color:#fff;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em;box-shadow:0 4px 14px rgba(176,116,102,.35);transition:all .18s}
+.ef-btn-apply:hover{background:#9e6a5a;box-shadow:0 6px 18px rgba(176,116,102,.45)}
+.ef-btn-apply:active{transform:scale(.97)}
 .ef-divider{height:1px;background:var(--bd);margin:2px 0}
 .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px;padding:14px 20px 0}
 .gcard{border-radius:20px;border:1px solid var(--bd);background:var(--s1);overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;box-shadow:var(--shadow)}
@@ -947,7 +951,7 @@ input,textarea{font-family:inherit;outline:none}
               <span class="ef-row-lbl">향 강도 선호</span>
               <span class="ef-row-val" id="ef-lbl-intensity">무관</span>
             </div>
-            <input type="range" class="set-range" id="ef-intensity" min="1" max="5" step="1" value="1" oninput="efUpdateLabel('intensity');renderExplore()">
+            <input type="range" class="set-range" id="ef-intensity" min="1" max="5" step="1" value="1" oninput="efUpdateLabel('intensity')">
             <div class="ef-range-labels"><span>은은한</span><span>보통</span><span>진한</span></div>
           </div>
 
@@ -957,7 +961,7 @@ input,textarea{font-family:inherit;outline:none}
               <span class="ef-row-lbl">지속력 최소 기준</span>
               <span class="ef-row-val" id="ef-lbl-longevity">무관</span>
             </div>
-            <input type="range" class="set-range" id="ef-longevity" min="1" max="5" step="1" value="1" oninput="efUpdateLabel('longevity');renderExplore()">
+            <input type="range" class="set-range" id="ef-longevity" min="1" max="5" step="1" value="1" oninput="efUpdateLabel('longevity')">
             <div class="ef-range-labels"><span>가벼운 여운</span><span>보통</span><span>오래 지속</span></div>
           </div>
 
@@ -967,7 +971,7 @@ input,textarea{font-family:inherit;outline:none}
               <span class="ef-row-lbl">확산력 (실라쥬)</span>
               <span class="ef-row-val" id="ef-lbl-sillage">무관</span>
             </div>
-            <input type="range" class="set-range" id="ef-sillage" min="1" max="5" step="1" value="1" oninput="efUpdateLabel('sillage');renderExplore()">
+            <input type="range" class="set-range" id="ef-sillage" min="1" max="5" step="1" value="1" oninput="efUpdateLabel('sillage')">
             <div class="ef-range-labels"><span>나만 느끼는</span><span>보통</span><span>강한 존재감</span></div>
           </div>
 
@@ -977,7 +981,7 @@ input,textarea{font-family:inherit;outline:none}
               <span class="ef-row-lbl">최대 가격대</span>
               <span class="ef-row-val" id="ef-lbl-price">₩60만원 이하</span>
             </div>
-            <input type="range" class="set-range" id="ef-price" min="5" max="60" step="5" value="60" oninput="efUpdatePriceLabel();renderExplore()">
+            <input type="range" class="set-range" id="ef-price" min="5" max="60" step="5" value="60" oninput="efUpdatePriceLabel()">
             <div class="ef-range-labels"><span>5만원</span><span>25만원</span><span>60만원</span></div>
           </div>
 
@@ -1016,7 +1020,10 @@ input,textarea{font-family:inherit;outline:none}
             <button class="set-toggle" id="ef-sample-only" onclick="efToggleSampleOnly(this)"></button>
           </div>
 
-          <button class="ef-reset" onclick="efResetFilters()">↺ 필터 초기화</button>
+          <div class="ef-btn-row">
+            <button class="ef-btn-reset" onclick="efResetFilters()">↺ 초기화</button>
+            <button class="ef-btn-apply" onclick="applyExploreFilter()">필터 적용하기</button>
+          </div>
         </div>
       </div>
 
@@ -3599,8 +3606,6 @@ function efToggleExcl(chip){
   userSettings.excludedCats=Array.from(
     document.querySelectorAll('#ef-excl-chips .ef-chip.on')
   ).map(c=>c.dataset.cat);
-  saveSettings();
-  renderExplore();
   _updateExploreFilterBadge();
 }
 
@@ -3609,17 +3614,24 @@ function efToggleSeason(chip){
   userSettings.seasons=Array.from(
     document.querySelectorAll('#ef-season-chips .ef-chip.on')
   ).map(c=>c.dataset.season);
-  saveSettings();
-  renderExplore();
   _updateExploreFilterBadge();
 }
 
 function efToggleSampleOnly(btn){
   userSettings.sampleOnly=!userSettings.sampleOnly;
   btn.classList.toggle('on',userSettings.sampleOnly);
+  _updateExploreFilterBadge();
+}
+
+function applyExploreFilter(){
   saveSettings();
   renderExplore();
-  _updateExploreFilterBadge();
+  // 아코디언 접기
+  const panel=document.getElementById('ef-panel');
+  const arrow=document.getElementById('ef-arrow');
+  if(panel) panel.style.display='none';
+  if(arrow) arrow.classList.remove('open');
+  showToast('필터가 적용됐어요');
 }
 
 function efResetFilters(){
