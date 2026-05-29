@@ -3809,7 +3809,15 @@ function renderExplore(){
     return catOk&&qOk&&notExcluded&&priceOk&&sampleOk;
   });
   const grid=document.getElementById('explore-grid');
-  if(!filtered.length){grid.innerHTML='<div class="no-result" style="grid-column:1/-1">해당하는 향수가 없어요</div>';return;}
+  if(!filtered.length){
+    const hasExcl=(userSettings?.excludedCats||[]).length>0;
+    const isSampleOnly=userSettings?.sampleOnly;
+    const hint=hasExcl||isSampleOnly
+      ?`<button onclick="resetSettings();document.getElementById('search-input').value='';activeCat='';document.querySelectorAll('.cchip').forEach(c=>c.classList.remove('on'));document.querySelector('.cchip[data-cat=\\'\\']').classList.add('on');" style="margin-top:12px;padding:8px 20px;border-radius:50px;background:var(--primary);color:#fff;border:none;font-size:12px;cursor:pointer;">설정 초기화</button>`
+      :'';
+    grid.innerHTML=`<div class="no-result" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center">해당하는 향수가 없어요${hint}</div>`;
+    return;
+  }
   grid.innerHTML=filtered.map(p=>`<div class="gcard" onclick="openDetail(${p.id})">
     <div class="gcard-top" style="background:${p.bg}">
       ${perfImgInner(p,'46px',16,'10px')}
