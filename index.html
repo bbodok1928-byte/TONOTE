@@ -3829,7 +3829,7 @@ function perfImgInner(p,emojiSz,shadowSz,pad){
   return bgLayers+`<img src="${p.img}" alt="${p.name}"
     style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;
            padding:12px;z-index:2;mix-blend-mode:multiply;display:block"
-    onerror="this.insertAdjacentHTML('afterend','${textFallback.replace(/'/g,'\\\'').replace(/\n/g,' ')}');this.remove()">`;
+    onerror="this.remove()">`;
 }
 
 function vcardHTML(p){
