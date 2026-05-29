@@ -464,6 +464,43 @@ input,textarea{font-family:inherit;outline:none}
 .cmp-ai-txt{font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--t2);line-height:1.7}
 .cmp-empty-hint{padding:40px 0;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.8}
 
+/* ── COMPARE SEARCH SHEET ───────────────── */
+#cmp-search-sheet{
+  position:absolute;inset:0;z-index:110;
+  background:rgba(30,24,20,.45);
+  display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+}
+#cmp-search-sheet.open{opacity:1;pointer-events:all}
+.cmp-search-inner{
+  background:var(--s1);border-radius:24px 24px 0 0;
+  width:100%;max-height:78vh;display:flex;flex-direction:column;overflow:hidden;
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+#cmp-search-sheet.open .cmp-search-inner{transform:none}
+.cmp-search-head{padding:18px 20px 12px;flex-shrink:0}
+.cmp-search-handle{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 16px}
+.cmp-search-input-wrap{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:14px;padding:10px 14px;border:1.5px solid var(--bd);transition:border-color .2s}
+.cmp-search-input-wrap:focus-within{border-color:var(--primary)}
+.cmp-search-icon{font-size:15px;flex-shrink:0;color:var(--t3)}
+.cmp-search-inp{flex:1;border:none;background:none;font-size:14px;color:var(--t1);outline:none}
+.cmp-search-inp::placeholder{color:var(--t3)}
+.cmp-search-cancel{font-size:13px;color:var(--t3);cursor:pointer;flex-shrink:0;padding:4px}
+.cmp-search-results{overflow-y:auto;flex:1;min-height:0;padding:4px 20px 28px;scrollbar-width:none}
+.cmp-search-results::-webkit-scrollbar{display:none}
+.cmp-search-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd)}
+.cmp-search-item:last-child{border-bottom:none}
+.cmp-search-item-img{width:46px;height:46px;border-radius:13px;flex-shrink:0;position:relative;overflow:hidden}
+.cmp-search-item-info{flex:1;min-width:0}
+.cmp-search-item-brand{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
+.cmp-search-item-name{font-size:13px;font-weight:700;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-search-item-cat{font-size:11px;color:var(--t3);margin-top:2px}
+.cmp-search-item-btn{flex-shrink:0;padding:7px 16px;border-radius:50px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;border:none;cursor:pointer;letter-spacing:.03em;white-space:nowrap}
+.cmp-search-item-btn:active{transform:scale(.95)}
+.cmp-search-empty{padding:44px 0;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.8}
+
 /* ── SAMPLE SHEET ────────────────────────── */
 #overlay-sample{
   position:absolute;inset:0;z-index:102;
@@ -1172,6 +1209,23 @@ input,textarea{font-family:inherit;outline:none}
   </div>
   <div class="cmp-slots" id="cmp-slots"></div>
   <div class="cmp-body" id="cmp-body"></div>
+
+  <!-- 인앱 향수 검색 시트 -->
+  <div id="cmp-search-sheet" onclick="if(event.target===this)closeCmpSearch()">
+    <div class="cmp-search-inner">
+      <div class="cmp-search-head">
+        <div class="cmp-search-handle"></div>
+        <div class="cmp-search-input-wrap">
+          <span class="cmp-search-icon">🔍</span>
+          <input id="cmp-search-inp" class="cmp-search-inp" type="text" autocomplete="off"
+                 placeholder="브랜드 또는 향수명 검색…"
+                 oninput="renderCmpSearchResults(this.value)">
+          <span class="cmp-search-cancel" onclick="closeCmpSearch()">취소</span>
+        </div>
+      </div>
+      <div class="cmp-search-results" id="cmp-search-results"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ════ SETTINGS OVERLAY ════ -->
@@ -5508,7 +5562,7 @@ function renderCompare(){
   const slots=document.getElementById('cmp-slots');
   slots.innerHTML=[0,1].map(i=>{const p=compareList[i];
     if(p)return `<div class="cmp-slot filled"><span class="cmp-slot-emoji">${p.emoji}</span><p class="cmp-slot-brand">${p.brand}</p><p class="cmp-slot-name">${p.name}</p><span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span></div>`;
-    return `<div class="cmp-slot" onclick="switchTab('explore');closeCompare()"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">탐색에서 추가</p></div>`;
+    return `<div class="cmp-slot" onclick="openCmpSearch(${i})"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">검색해서 추가</p></div>`;
   }).join('');
   const body=document.getElementById('cmp-body');
   if(compareList.length<2){body.innerHTML='<p class="cmp-empty-hint">향수 2개를 추가하면<br>차이를 비교해드려요</p>';return;}
@@ -5519,6 +5573,57 @@ function renderCompare(){
   <div style="display:flex;gap:10px;margin-top:20px"><button class="gbtn" style="flex:1;justify-content:center" onclick="openSample()">📦 샘플 신청</button></div><div style="height:16px"></div>`;
 }
 function removeCompare(id){compareList=compareList.filter(p=>p.id!==id);renderCompare();}
+
+/* ── COMPARE IN-APP SEARCH ── */
+let _cmpSearchSlot=0;
+function openCmpSearch(slotIdx){
+  _cmpSearchSlot=slotIdx;
+  const inp=document.getElementById('cmp-search-inp');
+  if(inp){inp.value='';renderCmpSearchResults('');}
+  document.getElementById('cmp-search-sheet').classList.add('open');
+  setTimeout(()=>{const i=document.getElementById('cmp-search-inp');if(i)i.focus();},380);
+}
+function closeCmpSearch(){
+  document.getElementById('cmp-search-sheet').classList.remove('open');
+}
+function renderCmpSearchResults(q){
+  const container=document.getElementById('cmp-search-results');
+  if(!container)return;
+  const qNorm=(q||'').trim().toLowerCase();
+  const already=new Set(compareList.map(c=>c.id));
+  const list=PERFUMES.filter(p=>_qMatch(qNorm,p)&&!already.has(p.id)).slice(0,40);
+  if(!list.length){
+    container.innerHTML='<p class="cmp-search-empty">검색 결과가 없어요<br>다른 키워드로 찾아보세요 🔍</p>';
+    return;
+  }
+  container.innerHTML=list.map(p=>`
+    <div class="cmp-search-item">
+      <div class="cmp-search-item-img" style="background:${p.bg}">
+        ${perfImgInner(p,'10px',4,'3px')}
+      </div>
+      <div class="cmp-search-item-info">
+        <p class="cmp-search-item-brand">${p.brand}</p>
+        <p class="cmp-search-item-name">${p.name}</p>
+        <p class="cmp-search-item-cat">${p.cat} · ${(p.moods||[])[0]||''}</p>
+      </div>
+      <button class="cmp-search-item-btn" onclick="pickCmpPerfume(${p.id})">추가</button>
+    </div>
+  `).join('');
+}
+function pickCmpPerfume(id){
+  const p=PERFUMES.find(x=>x.id===id);if(!p)return;
+  if(compareList.find(c=>c.id===id)){closeCmpSearch();return;}
+  if(_cmpSearchSlot===0){
+    if(compareList.length===0) compareList.push(p);
+    else compareList[0]=p;
+  } else {
+    if(compareList.length<2) compareList.push(p);
+    else compareList[1]=p;
+  }
+  closeCmpSearch();
+  renderCompare();
+  updateMyPage();
+}
 
 /* ── SAMPLE ── */
 let selectedSamples=new Set();
