@@ -3670,13 +3670,16 @@ let phi=0;
 setInterval(()=>{const el=document.getElementById('ai-ph');if(!el)return;el.style.opacity='0';setTimeout(()=>{phi=(phi+1)%phs.length;el.textContent=phs[phi];el.style.opacity='1';},380);},3800);
 
 function initAll(){
-  renderHome();renderExplore();renderSpaces();initChat();initMoodChips();initCatChips();
-  // localStorage에서 불러온 데이터로 마이페이지 초기화
-  document.getElementById('liked-count').textContent=liked.size;
-  updateMyPage();
-  // 설정 배지·요약 초기 반영
-  _updateSettingsBadge();
-  _updateSettingsSummary();
+  try{renderHome();}catch(e){console.error('[initHome]',e);}
+  try{renderExplore();}catch(e){console.error('[initExplore]',e);}
+  try{renderSpaces();}catch(e){console.error('[initSpaces]',e);}
+  try{initChat();}catch(e){console.error('[initChat]',e);}
+  try{initMoodChips();}catch(e){console.error('[initMoodChips]',e);}
+  try{initCatChips();}catch(e){console.error('[initCatChips]',e);}
+  try{document.getElementById('liked-count').textContent=liked.size;}catch(e){}
+  try{updateMyPage();}catch(e){}
+  try{_updateSettingsBadge();}catch(e){}
+  try{_updateSettingsSummary();}catch(e){}
 }
 
 function switchTab(tab){
@@ -3789,14 +3792,20 @@ function initCatChips(){
 }
 
 function renderExplore(){
-  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase().trim();
+  const excl=Array.isArray(userSettings?.excludedCats)?userSettings.excludedCats:[];
   const filtered=PERFUMES.filter(p=>{
     const catOk=!activeCat||p.cat===activeCat;
-    const qOk=!q||p.name.toLowerCase().includes(q)||p.brand.toLowerCase().includes(q)||p.tags.some(t=>t.includes(q))||p.poem.includes(q);
+    const qOk=!q||
+      (p.name||'').toLowerCase().includes(q)||
+      (p.brand||'').toLowerCase().includes(q)||
+      (p.tags||[]).some(t=>(t||'').toLowerCase().includes(q))||
+      (p.poem||'').toLowerCase().includes(q)||
+      (p.cat||'').toLowerCase().includes(q);
     // 설정 필터
-    const notExcluded=!userSettings.excludedCats.includes(p.cat);
-    const priceOk=userSettings.priceMax>=600000||p.price<=userSettings.priceMax;
-    const sampleOk=!userSettings.sampleOnly||p.sampleAvail;
+    const notExcluded=!excl.includes(p.cat);
+    const priceOk=(userSettings?.priceMax||600000)>=600000||p.price<=(userSettings?.priceMax||600000);
+    const sampleOk=!userSettings?.sampleOnly||p.sampleAvail;
     return catOk&&qOk&&notExcluded&&priceOk&&sampleOk;
   });
   const grid=document.getElementById('explore-grid');
