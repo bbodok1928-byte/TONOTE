@@ -5830,7 +5830,7 @@ const STORE_HOURS={
 function getMapUrl(s){
   const raw=((s.name||'')+' '+(s.addr||'')).trim();
   const q=encodeURIComponent(raw);
-  return`https://map.naver.com/v5/search?query=${q}`;
+  return`https://map.naver.com/v5/search/${q}`;
 }
 
 /* 현재 로컬 시간 기준으로 영업 상태 객체 반환 */
