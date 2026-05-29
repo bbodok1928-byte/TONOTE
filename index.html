@@ -473,11 +473,14 @@ input,textarea{font-family:inherit;outline:none}
   transition:opacity .3s;
 }
 #overlay-sample.open{opacity:1;pointer-events:all}
-.sample-sheet{background:var(--s1);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0));width:100%;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.sample-sheet{background:var(--s1);border-radius:24px 24px 0 0;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
 #overlay-sample.open .sample-sheet{transform:none}
 .sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--bd);margin:0 auto 20px}
 .sheet-ttl{font-family:var(--serif);font-size:20px;color:var(--t1);margin-bottom:6px}
 .sheet-sub{font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:20px}
+.sample-sheet-header{padding:22px 20px 0;flex-shrink:0}
+#sample-items{overflow-y:auto;flex:1;min-height:0;padding:0 20px;scrollbar-width:none}
+#sample-items::-webkit-scrollbar{display:none}
 .sample-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--s2);border-radius:14px;margin-bottom:9px;border:1.5px solid transparent;cursor:pointer;transition:all .2s}
 .sample-item.selected{border-color:var(--primary);background:var(--primary-soft)}
 .sample-item-emoji{font-size:26px;flex-shrink:0}
@@ -487,10 +490,11 @@ input,textarea{font-family:inherit;outline:none}
 .sample-item-price{font-size:12px;color:var(--primary);font-weight:700;flex-shrink:0}
 .sample-item-check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .2s}
 .sample-item.selected .sample-item-check{background:var(--primary);border-color:var(--primary);color:#fff}
-.sample-notice{font-size:11px;color:var(--t3);text-align:center;margin:12px 0 16px;line-height:1.6}
+.sample-sheet-footer{padding:12px 20px calc(22px + env(safe-area-inset-bottom,0));flex-shrink:0}
+.sample-notice{font-size:11px;color:var(--t3);text-align:center;margin:0 0 14px;line-height:1.6}
 .sample-cta{width:100%;padding:14px;border-radius:14px;background:var(--primary);color:#fff;font-size:14px;font-weight:700;letter-spacing:.03em;cursor:pointer;border:none;transition:transform .15s;box-shadow:0 4px 16px rgba(176,116,102,.3)}
 .sample-cta:active{transform:scale(.98)}
-.sample-cancel{width:100%;padding:12px;color:var(--t3);font-size:13px;cursor:pointer;margin-top:6px;border:none;background:none}
+.sample-cancel{width:100%;padding:10px;color:var(--t3);font-size:13px;cursor:pointer;margin-top:4px;border:none;background:none}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
@@ -1374,13 +1378,17 @@ input,textarea{font-family:inherit;outline:none}
 <!-- ════ SAMPLE SHEET ════ -->
 <div id="overlay-sample" onclick="if(event.target===this)closeSample()">
   <div class="sample-sheet">
-    <div class="sheet-handle"></div>
-    <p class="sheet-ttl">📦 셀프 시향 키트 신청</p>
-    <p class="sheet-sub">좋아요한 향수 중 최대 3개를 소량 샘플(1~2ml)로 집에서 받아보세요.</p>
+    <div class="sample-sheet-header">
+      <div class="sheet-handle"></div>
+      <p class="sheet-ttl">📦 셀프 시향 키트 신청</p>
+      <p class="sheet-sub">좋아요한 향수 중 최대 3개를 소량 샘플(1~2ml)로 집에서 받아보세요.</p>
+    </div>
     <div id="sample-items"></div>
-    <p class="sample-notice">무료 배송 · 3~5일 이내 도착 · 결제는 수령 후</p>
-    <button class="sample-cta" onclick="confirmSample()">신청 완료</button>
-    <button class="sample-cancel" onclick="closeSample()">취소</button>
+    <div class="sample-sheet-footer">
+      <p class="sample-notice">무료 배송 · 3~5일 이내 도착 · 결제는 수령 후</p>
+      <button class="sample-cta" onclick="confirmSample()">신청 완료</button>
+      <button class="sample-cancel" onclick="closeSample()">취소</button>
+    </div>
   </div>
 </div>
 
