@@ -464,6 +464,50 @@ input,textarea{font-family:inherit;outline:none}
 .cmp-ai-txt{font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--t2);line-height:1.7}
 .cmp-empty-hint{padding:40px 0;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.8}
 
+/* ── NOTIFICATIONS OVERLAY ──────────────── */
+#overlay-notifications{
+  position:absolute;inset:0;z-index:200;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .2s;
+}
+#overlay-notifications.open{pointer-events:all;opacity:1}
+.notif-backdrop{position:absolute;inset:0;background:rgba(30,24,20,.18)}
+.notif-panel{
+  position:absolute;top:58px;left:14px;right:14px;
+  background:var(--s1);border-radius:20px;
+  box-shadow:0 8px 32px rgba(30,24,20,.18);
+  border:1px solid var(--bd);
+  display:flex;flex-direction:column;
+  max-height:72vh;overflow:hidden;
+  transform:translateY(-10px) scale(.97);
+  transition:transform .28s cubic-bezier(.4,0,.2,1),opacity .28s;
+  opacity:0;
+}
+#overlay-notifications.open .notif-panel{transform:none;opacity:1}
+.notif-panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.notif-panel-title{font-family:var(--serif);font-size:16px;color:var(--t1)}
+.notif-panel-actions{display:flex;align-items:center;gap:10px}
+.notif-readall{font-size:11px;color:var(--primary);cursor:pointer;font-weight:700}
+.notif-close{font-size:18px;color:var(--t3);cursor:pointer;line-height:1}
+.notif-list{overflow-y:auto;flex:1;min-height:0;scrollbar-width:none}
+.notif-list::-webkit-scrollbar{display:none}
+.notif-item{display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
+.notif-item:last-child{border-bottom:none}
+.notif-item:active{background:var(--s2)}
+.notif-item.read{opacity:.55}
+.notif-item-icon{width:38px;height:38px;border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.notif-item-content{flex:1;min-width:0}
+.notif-item-title{font-size:12px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.notif-item-body{font-size:11.5px;color:var(--t2);line-height:1.55}
+.notif-item-time{font-size:10px;color:var(--t3);margin-top:4px}
+.notif-item-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:5px}
+.notif-empty{padding:40px 0;text-align:center;color:var(--t3);font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.8}
+/* 종 아이콘 뱃지 */
+.ibt-wrap{position:relative}
+.notif-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;background:var(--primary);border:1.5px solid var(--bg);display:none}
+.notif-badge.on{display:block}
+
 /* ── COMPARE SEARCH SHEET ───────────────── */
 #cmp-search-sheet{
   position:absolute;inset:0;z-index:110;
@@ -913,9 +957,12 @@ input,textarea{font-family:inherit;outline:none}
           <button class="ibt" onclick="openCompare()">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10H3M16 2l5 8-5 8M8 2L3 10l5 8"/></svg>
           </button>
-          <button class="ibt">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </button>
+          <div class="ibt-wrap">
+            <button class="ibt" onclick="openNotifications()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <span class="notif-badge on" id="notif-badge"></span>
+          </div>
         </div>
       </div>
 
@@ -1199,6 +1246,21 @@ input,textarea{font-family:inherit;outline:none}
     <button class="det-like-btn" id="det-like-btn" onclick="toggleDetailLike()">🤍</button>
   </div>
   <div class="det-body" id="det-body"></div>
+</div>
+
+<!-- ════ NOTIFICATIONS OVERLAY ════ -->
+<div id="overlay-notifications">
+  <div class="notif-backdrop" onclick="closeNotifications()"></div>
+  <div class="notif-panel">
+    <div class="notif-panel-head">
+      <p class="notif-panel-title">알림</p>
+      <div class="notif-panel-actions">
+        <span class="notif-readall" onclick="markAllNotifRead()">모두 읽음</span>
+        <span class="notif-close" onclick="closeNotifications()">✕</span>
+      </div>
+    </div>
+    <div class="notif-list" id="notif-list"></div>
+  </div>
 </div>
 
 <!-- ════ COMPARE OVERLAY ════ -->
@@ -5556,6 +5618,56 @@ function addToCompare(id){
   if(compareList.length>=2)compareList.shift();
   compareList.push(p);openCompare();updateMyPage();
 }
+/* ── NOTIFICATIONS ── */
+const NOTIF_DATA=[
+  {id:1,icon:'📦',title:'시향지 배송 시작',body:"신청하신 'LE LABO Santal 33' 시향지가 지금 마법처럼 출발했어요! 빠르게 만나보실 수 있어요.",time:'방금 전',read:false},
+  {id:2,icon:'🌧️',title:'AI 오늘의 향수 추천',body:'오늘 부산에 촉촉한 밤비가 내려요. 이 무드에 딱 어울리는 AI 추천 향수가 도착했습니다. 지금 확인해 보세요.',time:'20분 전',read:false},
+  {id:3,icon:'📍',title:'근처 팝업 알림',body:"근처 '신세계 센텀시티점'에서 DIPTYQUE의 새로운 시향 팝업이 열려 있어요. 가볍게 들러보세요.",time:'1시간 전',read:false},
+  {id:4,icon:'🤍',title:'리뷰 공감 알림',body:"작성하신 'JO MALONE Wood Sage & Sea Salt' 후기에 다른 사용자가 좋아요를 누르며 공감했습니다.",time:'어제',read:false},
+];
+let _notifState=NOTIF_DATA.map(n=>({...n}));
+function openNotifications(){
+  renderNotifList();
+  document.getElementById('overlay-notifications').classList.add('open');
+}
+function closeNotifications(){
+  document.getElementById('overlay-notifications').classList.remove('open');
+}
+function renderNotifList(){
+  const container=document.getElementById('notif-list');
+  if(!container)return;
+  if(!_notifState.length){
+    container.innerHTML='<p class="notif-empty">새로운 알림이 없어요 🔔</p>';return;
+  }
+  container.innerHTML=_notifState.map(n=>`
+    <div class="notif-item${n.read?' read':''}" onclick="readNotif(${n.id})">
+      <div class="notif-item-icon">${n.icon}</div>
+      <div class="notif-item-content">
+        <p class="notif-item-title">${n.title}</p>
+        <p class="notif-item-body">${n.body}</p>
+        <p class="notif-item-time">${n.time}</p>
+      </div>
+      ${n.read?'':'<div class="notif-item-dot"></div>'}
+    </div>
+  `).join('');
+  _updateNotifBadge();
+}
+function readNotif(id){
+  const n=_notifState.find(x=>x.id===id);
+  if(n)n.read=true;
+  renderNotifList();
+}
+function markAllNotifRead(){
+  _notifState.forEach(n=>n.read=true);
+  renderNotifList();
+}
+function _updateNotifBadge(){
+  const badge=document.getElementById('notif-badge');
+  if(!badge)return;
+  const hasUnread=_notifState.some(n=>!n.read);
+  badge.classList.toggle('on',hasUnread);
+}
+
 function openCompare(){renderCompare();document.getElementById('overlay-compare').classList.add('open');}
 function closeCompare(){document.getElementById('overlay-compare').classList.remove('open');}
 function renderCompare(){
