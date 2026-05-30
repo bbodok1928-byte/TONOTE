@@ -4529,7 +4529,7 @@ function openDetail(id){
     <p class="det-name">${p.name}</p>
     <div class="det-price-row">
       <span class="det-price">₩${p.price.toLocaleString()}</span>
-      <span class="det-rating" id="det-dyn-rating-${id}">${starStr} ${p.rating} <span class="det-review-link" onclick="scrollToDetReviews(${id})">(후기 ${p.reviews.toLocaleString()}개)</span></span>
+      <span class="det-rating" id="det-dyn-rating-${id}">${starStr} ${p.rating} <span class="det-review-link" onclick="scrollToDetReviews(${id})">(리뷰 ${p.reviews.toLocaleString()}개)</span></span>
     </div>
     <div class="det-tags" style="margin-bottom:20px">
       ${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}
@@ -4565,7 +4565,7 @@ function openDetail(id){
     </div>
 
     <div class="det-divider" style="margin-top:8px"></div>
-    <span class="det-section-label" id="det-review-anchor-${id}">사용자 후기</span>
+    <span class="det-section-label" id="det-review-anchor-${id}">사용자 리뷰</span>
 
     <div class="review-write-box">
       <input type="hidden" id="rsel-${id}" value="0">
@@ -4576,7 +4576,7 @@ function openDetail(id){
         <span style="font-size:11px;color:var(--t3);margin-left:6px;align-self:center">별점을 선택해 주세요</span>
       </div>
       <textarea class="review-input" id="review-ta-${id}" rows="2"
-        placeholder="이 향수에 대한 솔직한 후기를 남겨주세요."></textarea>
+        placeholder="이 향수에 대한 솔직한 리뷰를 남겨주세요."></textarea>
       <button class="review-submit-btn" onclick="submitReview(${id})">등록하기</button>
     </div>
 
@@ -5429,11 +5429,11 @@ function renderReviews(pid){
   if(dynEl&&all.length>0){
     const avg=(all.reduce((s,r)=>s+r.star,0)/all.length).toFixed(1);
     const stars=Math.round(parseFloat(avg));
-    dynEl.innerHTML=`${'★'.repeat(stars)}${'☆'.repeat(5-stars)} <b>${avg}</b> <span class="det-review-link" onclick="scrollToDetReviews(${pid})">(후기 ${all.length}개)</span>`;
+    dynEl.innerHTML=`${'★'.repeat(stars)}${'☆'.repeat(5-stars)} <b>${avg}</b> <span class="det-review-link" onclick="scrollToDetReviews(${pid})">(리뷰 ${all.length}개)</span>`;
   }
 
   if(all.length===0){
-    container.innerHTML='<p class="review-list-empty">아직 작성된 후기가 없어요. 첫 리뷰를 남겨주세요!</p>';
+    container.innerHTML='<p class="review-list-empty">아직 작성된 리뷰가 없어요. 첫 리뷰를 남겨주세요!</p>';
     return;
   }
   container.innerHTML=all.map(r=>`
@@ -5487,7 +5487,7 @@ const NOTIF_DATA=[
   {id:1,icon:'📦',title:'시향지 배송 시작',body:"신청하신 'LE LABO Santal 33' 시향지가 지금 마법처럼 출발했어요! 빠르게 만나보실 수 있어요.",time:'방금 전',read:false},
   {id:2,icon:'🌧️',title:'AI 오늘의 향수 추천',body:'오늘 부산에 촉촉한 밤비가 내려요. 이 무드에 딱 어울리는 AI 추천 향수가 도착했습니다. 지금 확인해 보세요.',time:'20분 전',read:false},
   {id:3,icon:'📍',title:'근처 팝업 알림',body:"근처 '신세계 센텀시티점'에서 DIPTYQUE의 새로운 시향 팝업이 열려 있어요. 가볍게 들러보세요.",time:'1시간 전',read:false},
-  {id:4,icon:'🤍',title:'리뷰 공감 알림',body:"작성하신 'JO MALONE Wood Sage & Sea Salt' 후기에 다른 사용자가 좋아요를 누르며 공감했습니다.",time:'어제',read:false},
+  {id:4,icon:'🤍',title:'리뷰 공감 알림',body:"작성하신 'JO MALONE Wood Sage & Sea Salt' 리뷰에 다른 사용자가 좋아요를 누르며 공감했습니다.",time:'어제',read:false},
 ];
 let _notifState=NOTIF_DATA.map(n=>({...n}));
 function openNotifications(){
