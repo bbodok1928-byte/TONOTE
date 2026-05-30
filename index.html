@@ -294,6 +294,31 @@ input,textarea{font-family:inherit;outline:none}
 .my-menu-sub{font-size:11px;color:var(--t3);margin-top:1px}
 .my-menu-arrow{color:var(--t3);font-size:14px}
 
+/* ── 마이 프로필 편집 ── */
+.my-name-row{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+.my-edit-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:8px;color:var(--t3);line-height:1;transition:background .15s,color .15s}
+.my-edit-btn:hover{background:var(--primary-soft);color:var(--primary)}
+.my-sig-line{font-size:11px;color:var(--primary);font-family:var(--serif);font-style:italic;margin-top:5px;line-height:1.5;letter-spacing:.01em}
+
+/* ── 프로필 편집 모달 ── */
+#profile-modal{position:absolute;inset:0;z-index:220;background:rgba(30,24,20,.42);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s}
+#profile-modal.open{opacity:1;pointer-events:all}
+.profile-sheet{width:100%;background:var(--s1);border-radius:28px 28px 0 0;padding:0 0 env(safe-area-inset-bottom,0);transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-height:88vh;overflow-y:auto}
+#profile-modal.open .profile-sheet{transform:none}
+.profile-sheet-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0}
+.profile-sheet-ttl{font-size:16px;font-weight:800;color:var(--t1)}
+.profile-close-btn{background:none;border:none;cursor:pointer;font-size:18px;color:var(--t3);padding:4px;line-height:1}
+.profile-avatar-area{display:flex;flex-direction:column;align-items:center;padding:22px 0 16px}
+.profile-avatar-big{width:80px;height:80px;border-radius:50%;background:var(--primary-soft);border:2.5px solid rgba(176,116,102,.22);display:flex;align-items:center;justify-content:center;font-size:36px;box-shadow:0 4px 16px rgba(176,116,102,.15)}
+.profile-avatar-hint{font-size:11px;color:var(--t3);margin-top:10px;font-family:var(--serif);font-style:italic}
+.profile-form{padding:0 20px}
+.profile-field-lbl{display:block;font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px}
+.profile-input{width:100%;box-sizing:border-box;background:var(--s2);border:1.5px solid var(--bd);border-radius:12px;padding:13px 14px;font-size:14px;color:var(--t1);font-family:inherit;outline:none;transition:border-color .2s}
+.profile-input:focus{border-color:var(--primary)}
+.profile-input::placeholder{color:var(--t3)}
+.profile-save-btn{display:block;width:calc(100% - 40px);margin:20px 20px 28px;background:var(--primary);color:#fff;font-size:15px;font-weight:800;padding:16px;border:none;border-radius:16px;cursor:pointer;letter-spacing:.03em;transition:opacity .2s}
+.profile-save-btn:active{opacity:.85}
+
 /* ── DETAIL OVERLAY ──────────────────────── */
 #overlay-detail{
   position:absolute;inset:0;z-index:100;
@@ -1209,10 +1234,14 @@ input,textarea{font-family:inherit;outline:none}
     <div class="screen" id="screen-my">
       <div class="top-bar"><span class="bar-logo">마이</span></div>
       <div class="my-profile">
-        <div class="my-avatar">🌿</div>
-        <div>
-          <p class="my-name">김지은</p>
-          <p class="my-sub">향수 탐색 14일째 · 그린 우드 드리머</p>
+        <div class="my-avatar" id="my-avatar-el">🌿</div>
+        <div style="flex:1;min-width:0">
+          <div class="my-name-row">
+            <p class="my-name" id="my-name-el">배연주</p>
+            <button class="my-edit-btn" onclick="openProfileModal()" title="프로필 편집">✏️</button>
+          </div>
+          <p class="my-sub" id="my-sub-el">향수 탐색 14일째 · 그린 우드 드리머</p>
+          <p class="my-sig-line" id="my-sig-line" style="display:none"></p>
         </div>
       </div>
       <div class="my-stats">
@@ -1617,6 +1646,27 @@ input,textarea{font-family:inherit;outline:none}
       <p class="complete-perf-ttl">신청 시향 키트</p>
     </div>
     <button class="complete-close-btn" onclick="closeSampleComplete()">확인</button>
+  </div>
+</div>
+
+<!-- ════ PROFILE EDIT MODAL ════ -->
+<div id="profile-modal" onclick="if(event.target===this)closeProfileModal()">
+  <div class="profile-sheet">
+    <div class="profile-sheet-hd">
+      <span class="profile-sheet-ttl">프로필 편집</span>
+      <button class="profile-close-btn" onclick="closeProfileModal()">✕</button>
+    </div>
+    <div class="profile-avatar-area">
+      <div class="profile-avatar-big">🌿</div>
+      <p class="profile-avatar-hint">나를 표현하는 향기 유형</p>
+    </div>
+    <div class="profile-form">
+      <label class="profile-field-lbl">닉네임</label>
+      <input class="profile-input" id="p-nickname" type="text" maxlength="20" placeholder="배연주" autocomplete="off">
+      <label class="profile-field-lbl" style="margin-top:16px">나만의 시그니처 향수</label>
+      <input class="profile-input" id="p-sig" type="text" maxlength="50" placeholder="예: 르라보 상탈 33" autocomplete="off">
+    </div>
+    <button class="profile-save-btn" onclick="saveProfile()">저장하기</button>
   </div>
 </div>
 
@@ -6374,6 +6424,60 @@ function appendMsg(type,text){
 }
 
 /* ── MY ── */
+/* ══════════════════════════════════════════
+   프로필 편집 모달
+═══════════════════════════════════════════ */
+const LS_PROFILE='tonote_profile';
+
+function _loadProfile(){
+  try{return JSON.parse(localStorage.getItem(LS_PROFILE)||'{}');}catch(e){return{};}
+}
+
+function _applyProfile(){
+  const prof=_loadProfile();
+  const nameEl=document.getElementById('my-name-el');
+  const sigEl=document.getElementById('my-sig-line');
+  if(nameEl)nameEl.textContent=prof.nickname||'배연주';
+  if(sigEl){
+    if(prof.sig&&prof.sig.trim()){
+      sigEl.textContent='시그니처 향 · '+prof.sig.trim();
+      sigEl.style.display='block';
+    }else{
+      sigEl.style.display='none';
+    }
+  }
+  /* complete-modal 수신인명 동기화 */
+  const ct=document.getElementById('complete-title');
+  if(ct){
+    const nm=prof.nickname||'배연주';
+    ct.innerHTML=nm+'님의 공간으로<br>향기가 출발할 준비를 마쳤어요!';
+  }
+}
+
+function openProfileModal(){
+  const prof=_loadProfile();
+  const ni=document.getElementById('p-nickname');
+  const si=document.getElementById('p-sig');
+  if(ni)ni.value=prof.nickname||'';
+  if(si)si.value=prof.sig||'';
+  document.getElementById('profile-modal').classList.add('open');
+  setTimeout(()=>{if(ni)ni.focus();},420);
+}
+
+function closeProfileModal(){
+  document.getElementById('profile-modal').classList.remove('open');
+}
+
+function saveProfile(){
+  const nickname=(document.getElementById('p-nickname')?.value||'').trim();
+  const sig=(document.getElementById('p-sig')?.value||'').trim();
+  const prof={nickname:nickname||'배연주',sig};
+  localStorage.setItem(LS_PROFILE,JSON.stringify(prof));
+  _applyProfile();
+  closeProfileModal();
+  showToast((nickname||'배연주')+'님의 프로필이 저장됐어요 🌿');
+}
+
 function updateMyPage(){
   // 좋아요 카운트 & 행
   document.getElementById('liked-count').textContent=liked.size;
@@ -6411,6 +6515,8 @@ function updateMyPage(){
         }).join('')}
       </div>
     </div>`).join('');
+  // 프로필 동기화
+  _applyProfile();
 }
 </script>
 </body>
