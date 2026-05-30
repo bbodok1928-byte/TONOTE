@@ -5471,8 +5471,15 @@ function submitReview(pid){
   if(inp)inp.value=0;
   document.querySelectorAll('.rstar[data-pid="'+pid+'"]').forEach(el=>el.classList.remove('on'));
   renderReviews(pid);
+  /* scrollIntoView는 document 전체를 스크롤시키는 버그 → det-body만 직접 스크롤 */
+  const body=document.getElementById('det-body');
   const list=document.getElementById('review-list-'+pid);
-  if(list)list.scrollIntoView({behavior:'smooth',block:'start'});
+  if(body&&list){
+    const bodyRect=body.getBoundingClientRect();
+    const listRect=list.getBoundingClientRect();
+    const target=body.scrollTop+(listRect.top-bodyRect.top)-8;
+    body.scrollTo({top:Math.max(0,target),behavior:'smooth'});
+  }
 }
 function toggleDetailLike(){
   const id=currentDetailId;if(!id)return;
