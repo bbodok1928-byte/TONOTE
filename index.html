@@ -966,6 +966,7 @@ input,textarea{font-family:inherit;outline:none}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 <div class="app">
@@ -5805,11 +5806,16 @@ function closeDeliverySheet(){
 
 /* 주소 검색 더미 (실제 연동 시 Kakao 주소 API 교체) */
 function _fillSampleZip(){
-  const zip=document.getElementById('d-zip');
-  const addr=document.getElementById('d-addr');
-  const hint=['부산 해운대구 센텀6로 21','부산 부산진구 가야대로 772','부산 중구 광복로 64-1'];
-  if(zip&&!zip.value){zip.value='48058';}
-  if(addr&&!addr.value){addr.value=hint[Math.floor(Math.random()*hint.length)];}
+  new daum.Postcode({
+    oncomplete:function(data){
+      const zip=document.getElementById('d-zip');
+      const addr=document.getElementById('d-addr');
+      const detail=document.getElementById('d-addr2');
+      if(zip)zip.value=data.zonecode;
+      if(addr)addr.value=data.roadAddress||data.jibunAddress;
+      if(detail){detail.value='';detail.focus();}
+    }
+  }).open();
 }
 
 /* ── Step 3: 최종 제출 ── */
