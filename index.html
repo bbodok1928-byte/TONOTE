@@ -4594,8 +4594,15 @@ function closeDetail(){
 }
 
 function scrollToDetReviews(id){
+  const body=document.getElementById('det-body');
   const anchor=document.getElementById('det-review-anchor-'+id);
-  if(anchor) anchor.scrollIntoView({behavior:'smooth',block:'start'});
+  if(!body||!anchor)return;
+  /* scrollIntoView는 document 전체를 스크롤시켜 다른 overlay가 노출되는 버그 발생 →
+     det-body 컨테이너만 직접 스크롤 */
+  const bodyRect=body.getBoundingClientRect();
+  const anchorRect=anchor.getBoundingClientRect();
+  const target=body.scrollTop+(anchorRect.top-bodyRect.top)-12;
+  body.scrollTo({top:Math.max(0,target),behavior:'smooth'});
 }
 
 /* ══════════════════════════════════════════
