@@ -319,6 +319,44 @@ input,textarea{font-family:inherit;outline:none}
 .profile-save-btn{display:block;width:calc(100% - 40px);margin:20px 20px 28px;background:var(--primary);color:#fff;font-size:15px;font-weight:800;padding:16px;border:none;border-radius:16px;cursor:pointer;letter-spacing:.03em;transition:opacity .2s}
 .profile-save-btn:active{opacity:.85}
 
+/* ── 향 취향 진단 오버레이 ── */
+#overlay-scent-test{position:absolute;inset:0;z-index:230;background:rgba(20,16,12,.72);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity .35s}
+#overlay-scent-test.open{opacity:1;pointer-events:all}
+.scent-card{width:100%;max-width:380px;max-height:88vh;background:var(--s1);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;transform:translateY(28px) scale(.96);transition:transform .38s cubic-bezier(.4,0,.2,1);box-shadow:0 24px 64px rgba(0,0,0,.22)}
+#overlay-scent-test.open .scent-card{transform:none}
+.scent-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0}
+.scent-hd-ttl{font-size:13px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase}
+.scent-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--t3);padding:4px;line-height:1}
+/* 진행 게이지 */
+.scent-progress-wrap{padding:14px 20px 0}
+.scent-progress-bar{height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
+.scent-progress-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--primary));border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1);width:0%}
+.scent-step-lbl{font-size:10px;color:var(--t3);margin-top:6px;letter-spacing:.04em}
+/* 문항 슬라이드 */
+.scent-body{flex:1;overflow:hidden;position:relative;min-height:320px}
+.scent-slide{position:absolute;inset:0;padding:20px 20px 0;display:flex;flex-direction:column;opacity:0;transform:translateX(48px);transition:opacity .32s ease,transform .32s ease;pointer-events:none}
+.scent-slide.active{opacity:1;transform:none;pointer-events:all}
+.scent-slide.exit{opacity:0;transform:translateX(-48px)}
+.scent-q{font-family:var(--serif);font-size:17px;color:var(--t1);line-height:1.55;margin-bottom:18px;font-style:italic}
+/* 선택지 버튼 */
+.scent-opts{display:flex;flex-direction:column;gap:9px}
+.scent-opt{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1.5px solid var(--bd);border-radius:14px;cursor:pointer;background:var(--s2);transition:border-color .18s,background .18s;text-align:left}
+.scent-opt:hover{border-color:var(--primary);background:var(--primary-soft)}
+.scent-opt.selected{border-color:var(--primary);background:var(--primary-soft)}
+.scent-opt-icon{font-size:22px;flex-shrink:0;width:30px;text-align:center}
+.scent-opt-txt{font-size:13px;color:var(--t1);line-height:1.4;font-weight:500}
+/* 하단 버튼 */
+.scent-foot{padding:16px 20px 24px;flex-shrink:0}
+.scent-next-btn{width:100%;padding:15px;background:var(--primary);color:#fff;font-size:15px;font-weight:800;border:none;border-radius:14px;cursor:pointer;transition:opacity .2s;letter-spacing:.03em}
+.scent-next-btn:disabled{opacity:.38;cursor:not-allowed}
+.scent-next-btn:not(:disabled):active{opacity:.85}
+/* 결과 화면 */
+.scent-result-slide{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;text-align:center;gap:10px}
+.scent-result-emoji{font-size:52px;margin-bottom:4px;animation:bounceIn .5s ease}
+.scent-result-badge{display:inline-block;background:var(--primary-soft);color:var(--primary);font-size:11px;font-weight:800;padding:5px 14px;border-radius:50px;letter-spacing:.06em;margin-bottom:6px}
+.scent-result-ttl{font-family:var(--serif);font-size:20px;color:var(--t1);font-style:italic;line-height:1.4}
+.scent-result-desc{font-size:12px;color:var(--t3);line-height:1.7;margin-top:2px}
+
 /* ── DETAIL OVERLAY ──────────────────────── */
 #overlay-detail{
   position:absolute;inset:0;z-index:100;
@@ -1250,12 +1288,12 @@ input,textarea{font-family:inherit;outline:none}
         <div class="my-stat"><p class="my-stat-num">5</p><p class="my-stat-lbl">리뷰</p></div>
       </div>
       <div class="persona-card">
-        <div class="persona-icon">🌿</div>
+        <div class="persona-icon" id="persona-icon-el">🌿</div>
         <div style="flex:1">
-          <p class="persona-ttl">그린 우드 드리머</p>
-          <p class="persona-desc">촉촉한 숲, 비 온 뒤 흙냄새를 좋아하는 유형</p>
+          <p class="persona-ttl" id="persona-ttl-el">그린 우드 드리머</p>
+          <p class="persona-desc" id="persona-desc-el">촉촉한 숲, 비 온 뒤 흙냄새를 좋아하는 유형</p>
         </div>
-        <button class="persona-action" onclick="switchTab('ai')">다시 진단</button>
+        <button class="persona-action" onclick="openScentTest()">다시 진단</button>
       </div>
       <div class="sec">
         <div class="sec-head"><div><p class="sec-ttl">좋아요한 향수</p></div></div>
@@ -1667,6 +1705,69 @@ input,textarea{font-family:inherit;outline:none}
       <input class="profile-input" id="p-sig" type="text" maxlength="50" placeholder="예: 르라보 상탈 33" autocomplete="off">
     </div>
     <button class="profile-save-btn" onclick="saveProfile()">저장하기</button>
+  </div>
+</div>
+
+<!-- ════ SCENT TEST OVERLAY ════ -->
+<div id="overlay-scent-test">
+  <div class="scent-card">
+    <div class="scent-hd">
+      <span class="scent-hd-ttl">향 취향 진단</span>
+      <button class="scent-close" onclick="closeScentTest()">✕</button>
+    </div>
+    <div class="scent-progress-wrap">
+      <div class="scent-progress-bar"><div class="scent-progress-fill" id="scent-fill"></div></div>
+      <p class="scent-step-lbl" id="scent-step-lbl">1 / 3</p>
+    </div>
+    <div class="scent-body" id="scent-body">
+
+      <!-- Q1 -->
+      <div class="scent-slide active" id="scent-slide-0">
+        <p class="scent-q">"당신이 가장 온전한 휴식을<br>느끼는 공간은?"</p>
+        <div class="scent-opts">
+          <div class="scent-opt" onclick="selectOpt(0,'A',this)"><span class="scent-opt-icon">🌧️</span><span class="scent-opt-txt">비 온 뒤 촉촉한 숲속</span></div>
+          <div class="scent-opt" onclick="selectOpt(0,'B',this)"><span class="scent-opt-icon">🌊</span><span class="scent-opt-txt">햇살이 내리쬐는 지중해 해변</span></div>
+          <div class="scent-opt" onclick="selectOpt(0,'C',this)"><span class="scent-opt-icon">🌸</span><span class="scent-opt-txt">만개한 꽃들로 가득한 정원</span></div>
+          <div class="scent-opt" onclick="selectOpt(0,'D',this)"><span class="scent-opt-icon">🛏️</span><span class="scent-opt-txt">포근한 비누 향이 나는 침대 위</span></div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="scent-slide" id="scent-slide-1">
+        <p class="scent-q">"오늘 당신의 기분을<br>대변하는 색감은?"</p>
+        <div class="scent-opts">
+          <div class="scent-opt" onclick="selectOpt(1,'A',this)"><span class="scent-opt-icon">🌿</span><span class="scent-opt-txt">딥 그린 / 브라운</span></div>
+          <div class="scent-opt" onclick="selectOpt(1,'B',this)"><span class="scent-opt-icon">☀️</span><span class="scent-opt-txt">스카이 블루 / 옐로우</span></div>
+          <div class="scent-opt" onclick="selectOpt(1,'C',this)"><span class="scent-opt-icon">🩷</span><span class="scent-opt-txt">파스텔 핑크 / 로즈</span></div>
+          <div class="scent-opt" onclick="selectOpt(1,'D',this)"><span class="scent-opt-icon">🤍</span><span class="scent-opt-txt">소프트 화이트 / 아이보리</span></div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="scent-slide" id="scent-slide-2">
+        <p class="scent-q">"선호하는 향의 질감(텍스처)은?"</p>
+        <div class="scent-opts">
+          <div class="scent-opt" onclick="selectOpt(2,'A',this)"><span class="scent-opt-icon">🪨</span><span class="scent-opt-txt">묵직하고 쌉싸름한 흙내음</span></div>
+          <div class="scent-opt" onclick="selectOpt(2,'B',this)"><span class="scent-opt-icon">🍋</span><span class="scent-opt-txt">상큼하고 청량한 과즙</span></div>
+          <div class="scent-opt" onclick="selectOpt(2,'C',this)"><span class="scent-opt-icon">💐</span><span class="scent-opt-txt">우아하고 풍성한 생화</span></div>
+          <div class="scent-opt" onclick="selectOpt(2,'D',this)"><span class="scent-opt-icon">🧴</span><span class="scent-opt-txt">부드럽고 은은한 살냄새</span></div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="scent-slide" id="scent-slide-result">
+        <div class="scent-result-slide">
+          <div class="scent-result-emoji" id="scent-res-emoji">🌿</div>
+          <div class="scent-result-badge" id="scent-res-badge">분석 중…</div>
+          <p class="scent-result-ttl" id="scent-res-ttl"></p>
+          <p class="scent-result-desc" id="scent-res-desc"></p>
+        </div>
+      </div>
+
+    </div><!-- /#scent-body -->
+    <div class="scent-foot">
+      <button class="scent-next-btn" id="scent-next-btn" disabled onclick="scentNext()">다음으로</button>
+    </div>
   </div>
 </div>
 
@@ -4364,6 +4465,7 @@ function initAll(){
   try{initCatChips();}catch(e){console.error('[initCatChips]',e);}
   try{document.getElementById('liked-count').textContent=liked.size;}catch(e){}
   try{updateMyPage();}catch(e){}
+  try{_loadAndApplyScentResult();}catch(e){}
   try{_updateSettingsBadge();}catch(e){}
   try{_updateSettingsSummary();}catch(e){}
 }
@@ -6425,6 +6527,140 @@ function appendMsg(type,text){
 
 /* ── MY ── */
 /* ══════════════════════════════════════════
+   향 취향 진단 (Scent Test)
+═══════════════════════════════════════════ */
+const LS_SCENT='tonote_scent_result';
+const SCENT_TYPES={
+  A:{ttl:'그린 우드 드리머',desc:'촉촉한 숲, 비 온 뒤 흙냄새를 좋아하는 유형',emoji:'🌿',badge:'우디 · 그린'},
+  B:{ttl:'시트러스 브리즈 워커',desc:'싱그러운 레몬과 지중해 바람을 닮은 유형',emoji:'🍋',badge:'시트러스 · 아쿠아틱'},
+  C:{ttl:'블루밍 가든 에디터',desc:'풍성한 생화와 화려한 정원의 무드를 사랑하는 유형',emoji:'🌸',badge:'플로럴 · 프루티'},
+  D:{ttl:'코튼 클라우드 체이서',desc:'포근하고 깨끗한 비누 잔향에 안정을 느끼는 유형',emoji:'🤍',badge:'머스크 · 파우더리'},
+};
+const SCENT_Q_COUNT=3;
+let _scentStep=0;
+let _scentAnswers=[];   // ['A','B','C'] 등
+
+function openScentTest(){
+  _scentStep=0;
+  _scentAnswers=[];
+  /* 슬라이드 초기화 */
+  document.querySelectorAll('.scent-slide').forEach((el,i)=>{
+    el.classList.remove('active','exit');
+    if(i===0)el.classList.add('active');
+    el.querySelectorAll('.scent-opt').forEach(o=>o.classList.remove('selected'));
+  });
+  _scentUpdateProgress();
+  const btn=document.getElementById('scent-next-btn');
+  if(btn){btn.disabled=true;btn.textContent='다음으로';}
+  document.getElementById('overlay-scent-test').classList.add('open');
+}
+
+function closeScentTest(){
+  document.getElementById('overlay-scent-test').classList.remove('open');
+}
+
+function selectOpt(step,type,el){
+  if(step!==_scentStep)return;
+  /* 이 문항 내 선택 해제 후 새 선택 */
+  const slide=document.getElementById('scent-slide-'+step);
+  if(!slide)return;
+  slide.querySelectorAll('.scent-opt').forEach(o=>o.classList.remove('selected'));
+  /* el: 클릭된 .scent-opt 요소 — closest로 안전하게 */
+  const target=(el instanceof Element)?el:el?.closest?.('.scent-opt');
+  if(target)target.classList.add('selected');
+  _scentAnswers[step]=type;
+  const btn=document.getElementById('scent-next-btn');
+  if(btn)btn.disabled=false;
+}
+
+function scentNext(){
+  /* 결과 슬라이드에서 누르면 저장 후 닫기 */
+  if(_scentStep>=SCENT_Q_COUNT){
+    _saveScentResult();
+    closeScentTest();
+    return;
+  }
+  if(!_scentAnswers[_scentStep])return;
+
+  const cur=document.getElementById('scent-slide-'+_scentStep);
+  const next=_scentStep+1<SCENT_Q_COUNT
+    ?document.getElementById('scent-slide-'+(_scentStep+1))
+    :document.getElementById('scent-slide-result');
+
+  /* 슬라이드 전환 */
+  cur.classList.add('exit');
+  setTimeout(()=>{cur.classList.remove('active','exit');},330);
+
+  _scentStep++;
+  _scentUpdateProgress();
+
+  /* 다음 문항이 결과 슬라이드면 결과 렌더 먼저 */
+  if(_scentStep===SCENT_Q_COUNT){
+    _renderScentResult();
+    const btn=document.getElementById('scent-next-btn');
+    if(btn){btn.disabled=false;btn.textContent='결과 확인하기';}
+  } else {
+    const btn=document.getElementById('scent-next-btn');
+    if(btn){
+      btn.disabled=!_scentAnswers[_scentStep];
+      btn.textContent='다음으로';
+    }
+  }
+
+  setTimeout(()=>{if(next)next.classList.add('active');},80);
+}
+
+function _scentUpdateProgress(){
+  const fill=document.getElementById('scent-fill');
+  const lbl=document.getElementById('scent-step-lbl');
+  const pct=Math.min(_scentStep,SCENT_Q_COUNT)/SCENT_Q_COUNT*100;
+  if(fill)fill.style.width=pct+'%';
+  if(lbl){
+    lbl.textContent=_scentStep<SCENT_Q_COUNT
+      ?(_scentStep+1)+' / '+SCENT_Q_COUNT
+      :'완료';
+  }
+}
+
+function _calcScentType(){
+  const cnt={A:0,B:0,C:0,D:0};
+  _scentAnswers.forEach(a=>{if(a)cnt[a]++;});
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function _renderScentResult(){
+  const type=_calcScentType();
+  const data=SCENT_TYPES[type];
+  document.getElementById('scent-res-emoji').textContent=data.emoji;
+  document.getElementById('scent-res-badge').textContent=data.badge;
+  document.getElementById('scent-res-ttl').textContent=data.ttl;
+  document.getElementById('scent-res-desc').textContent=data.desc;
+}
+
+function _saveScentResult(){
+  const type=_calcScentType();
+  localStorage.setItem(LS_SCENT,type);
+  _applyScentResult(type);
+  showToast('취향 유형이 업데이트됐어요 '+SCENT_TYPES[type].emoji);
+}
+
+function _applyScentResult(type){
+  if(!type||!SCENT_TYPES[type])return;
+  const data=SCENT_TYPES[type];
+  const ttlEl=document.getElementById('persona-ttl-el');
+  const descEl=document.getElementById('persona-desc-el');
+  const iconEl=document.getElementById('persona-icon-el');
+  if(ttlEl)ttlEl.textContent=data.ttl;
+  if(descEl)descEl.textContent=data.desc;
+  if(iconEl)iconEl.textContent=data.emoji;
+}
+
+function _loadAndApplyScentResult(){
+  const saved=localStorage.getItem(LS_SCENT);
+  if(saved&&SCENT_TYPES[saved])_applyScentResult(saved);
+}
+
+/* ══════════════════════════════════════════
    프로필 편집 모달
 ═══════════════════════════════════════════ */
 const LS_PROFILE='tonote_profile';
@@ -6517,6 +6753,8 @@ function updateMyPage(){
     </div>`).join('');
   // 프로필 동기화
   _applyProfile();
+  // 취향 진단 결과 동기화
+  _loadAndApplyScentResult();
 }
 </script>
 </body>
