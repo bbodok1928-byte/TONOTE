@@ -389,6 +389,8 @@ input,textarea{font-family:inherit;outline:none}
 .det-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
 .det-price{font-family:var(--serif);font-size:20px;color:var(--t1)}
 .det-rating{font-size:11px;color:var(--t3);letter-spacing:.02em}
+.det-review-link{color:var(--t3);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;transition:color .15s;white-space:nowrap}
+.det-review-link:hover{color:var(--primary)}
 .det-story{position:relative;margin-bottom:22px;padding:20px 20px 18px 24px;
   background:var(--primary-soft);border-radius:16px;border-left:3px solid var(--primary);overflow:hidden}
 .det-story::before{content:'\201C';font-family:Georgia,serif;font-size:60px;line-height:1;
@@ -4527,7 +4529,7 @@ function openDetail(id){
     <p class="det-name">${p.name}</p>
     <div class="det-price-row">
       <span class="det-price">₩${p.price.toLocaleString()}</span>
-      <span class="det-rating" id="det-dyn-rating-${id}">${starStr} ${p.rating} <span style="color:var(--t3)">(${p.reviews.toLocaleString()})</span></span>
+      <span class="det-rating" id="det-dyn-rating-${id}">${starStr} ${p.rating} <span class="det-review-link" onclick="scrollToDetReviews(${id})">(후기 ${p.reviews.toLocaleString()}개)</span></span>
     </div>
     <div class="det-tags" style="margin-bottom:20px">
       ${p.tags.map(t=>`<span class="tpill">${t}</span>`).join('')}
@@ -4563,7 +4565,7 @@ function openDetail(id){
     </div>
 
     <div class="det-divider" style="margin-top:8px"></div>
-    <span class="det-section-label">사용자 후기</span>
+    <span class="det-section-label" id="det-review-anchor-${id}">사용자 후기</span>
 
     <div class="review-write-box">
       <input type="hidden" id="rsel-${id}" value="0">
@@ -4589,6 +4591,11 @@ function openDetail(id){
 
 function closeDetail(){
   document.getElementById('overlay-detail').classList.remove('open');
+}
+
+function scrollToDetReviews(id){
+  const anchor=document.getElementById('det-review-anchor-'+id);
+  if(anchor) anchor.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 /* ══════════════════════════════════════════
@@ -5422,7 +5429,7 @@ function renderReviews(pid){
   if(dynEl&&all.length>0){
     const avg=(all.reduce((s,r)=>s+r.star,0)/all.length).toFixed(1);
     const stars=Math.round(parseFloat(avg));
-    dynEl.innerHTML=`${'★'.repeat(stars)}${'☆'.repeat(5-stars)} <b>${avg}</b> <span style="color:var(--t3)">(후기 ${all.length}개)</span>`;
+    dynEl.innerHTML=`${'★'.repeat(stars)}${'☆'.repeat(5-stars)} <b>${avg}</b> <span class="det-review-link" onclick="scrollToDetReviews(${pid})">(후기 ${all.length}개)</span>`;
   }
 
   if(all.length===0){
