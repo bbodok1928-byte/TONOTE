@@ -579,6 +579,45 @@ input,textarea{font-family:inherit;outline:none}
 .sample-cta:active{transform:scale(.98)}
 .sample-cancel{width:100%;padding:10px;color:var(--t3);font-size:13px;cursor:pointer;margin-top:4px;border:none;background:none}
 
+/* ── 샘플 배송지 입력 레이어 (overlay-sample 위) ── */
+#sample-delivery-layer{position:absolute;inset:0;background:rgba(30,24,20,.32);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .3s;z-index:10}
+#sample-delivery-layer.open{opacity:1;pointer-events:all}
+.delivery-sheet{background:var(--s1);border-radius:24px 24px 0 0;width:100%;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);transition:transform .42s cubic-bezier(.4,0,.2,1)}
+#sample-delivery-layer.open .delivery-sheet{transform:none}
+.delivery-sheet-hd{padding:22px 20px 14px;flex-shrink:0;border-bottom:1px solid var(--bd)}
+.delivery-form-body{overflow-y:auto;flex:1;min-height:0;padding:18px 20px 0;scrollbar-width:none}
+.delivery-form-body::-webkit-scrollbar{display:none}
+.dfield{margin-bottom:15px}
+.dlabel{font-size:10.5px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:block}
+.dinput{width:100%;box-sizing:border-box;background:var(--s2);border:1.5px solid var(--bd);border-radius:12px;padding:11px 14px;font-size:13.5px;font-family:var(--sans);color:var(--t1);outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none}
+.dinput:focus{border-color:rgba(176,116,102,.55);background:var(--bg)}
+.dinput::placeholder{color:var(--t3)}
+.dinput-row{display:flex;gap:8px;align-items:stretch}
+.dinput-row .dinput{flex:1}
+.dzip-btn{flex-shrink:0;padding:11px 15px;background:var(--primary);color:#fff;border:none;border-radius:12px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.02em}
+.dreq-select{width:100%;box-sizing:border-box;background:var(--s2);border:1.5px solid var(--bd);border-radius:12px;padding:11px 14px;font-size:13.5px;font-family:var(--sans);color:var(--t2);-webkit-appearance:none;appearance:none;outline:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23B07466' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.delivery-summary-box{background:var(--s2);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.delivery-summary-ttl{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:7px}
+.delivery-summary-item{font-size:12px;color:var(--t2);line-height:1.8;display:flex;align-items:center;gap:6px}
+.delivery-sheet-ft{padding:12px 20px calc(22px + env(safe-area-inset-bottom,0));flex-shrink:0}
+.delivery-cta{width:100%;padding:14px;border-radius:14px;background:var(--primary);color:#fff;font-size:14px;font-weight:700;letter-spacing:.03em;cursor:pointer;border:none;transition:transform .15s;box-shadow:0 4px 16px rgba(176,116,102,.3)}
+.delivery-cta:active{transform:scale(.98)}
+.delivery-back{width:100%;padding:10px;color:var(--t3);font-size:13px;cursor:pointer;margin-top:4px;border:none;background:none}
+
+/* ── 샘플 주문 완료 모달 ── */
+#sample-complete-modal{position:absolute;inset:0;z-index:210;background:rgba(30,24,20,.45);display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity .3s}
+#sample-complete-modal.open{opacity:1;pointer-events:all}
+.complete-card{background:var(--s1);border-radius:24px;padding:32px 24px 26px;width:100%;max-width:360px;text-align:center;transform:scale(.94) translateY(10px);transition:transform .36s cubic-bezier(.4,0,.2,1);box-shadow:0 12px 40px rgba(30,24,20,.18)}
+#sample-complete-modal.open .complete-card{transform:none}
+.complete-icon{font-size:52px;display:block;margin-bottom:14px;animation:bounceIn .5s .2s cubic-bezier(.4,0,.2,1) both}
+@keyframes bounceIn{0%{transform:scale(.6)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
+.complete-title{font-family:var(--serif);font-size:17px;color:var(--t1);line-height:1.55;margin-bottom:6px}
+.complete-sub{font-size:11.5px;color:var(--t3);line-height:1.7;margin-bottom:18px}
+.complete-perf-list{background:var(--s2);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:left}
+.complete-perf-ttl{font-size:9.5px;font-weight:700;color:var(--t3);letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px}
+.complete-perf-item{font-size:12.5px;color:var(--t2);line-height:1.85;display:flex;align-items:center;gap:8px}
+.complete-close-btn{width:100%;padding:13px;border-radius:14px;background:var(--primary);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.03em;box-shadow:0 4px 14px rgba(176,116,102,.28)}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ── SETTINGS OVERLAY ───────────────────── */
@@ -1504,9 +1543,79 @@ input,textarea{font-family:inherit;outline:none}
     <div id="sample-items"></div>
     <div class="sample-sheet-footer">
       <p class="sample-notice">무료 배송 · 3~5일 이내 도착 · 결제는 수령 후</p>
-      <button class="sample-cta" onclick="confirmSample()">신청 완료</button>
+      <button class="sample-cta" id="sample-cta-btn" onclick="openDeliverySheet()">항목을 선택해주세요</button>
       <button class="sample-cancel" onclick="closeSample()">취소</button>
     </div>
+
+    <!-- ── Step 2: 배송지 입력 레이어 ── -->
+    <div id="sample-delivery-layer" onclick="if(event.target===this)closeDeliverySheet()">
+      <div class="delivery-sheet">
+        <div class="delivery-sheet-hd">
+          <div class="sheet-handle"></div>
+          <p class="sheet-ttl" style="font-size:18px;margin-bottom:4px">🏠 배송 정보 입력</p>
+          <p style="font-size:11.5px;color:var(--t3);line-height:1.6">입력하신 주소로 시향 키트를 보내드려요</p>
+        </div>
+        <div class="delivery-form-body" id="delivery-form-body">
+          <!-- 선택 향수 요약 -->
+          <div class="delivery-summary-box" id="delivery-perf-summary"></div>
+          <!-- 폼 필드 -->
+          <div class="dfield">
+            <label class="dlabel" for="d-name">받는 분 성함</label>
+            <input class="dinput" id="d-name" type="text" placeholder="홍길동" autocomplete="off">
+          </div>
+          <div class="dfield">
+            <label class="dlabel" for="d-phone">휴대폰 번호</label>
+            <input class="dinput" id="d-phone" type="tel" placeholder="010-0000-0000" autocomplete="off"
+                   oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(\d{3})(\d{4})(\d{4})/,'$1-$2-$3').substring(0,13)">
+          </div>
+          <div class="dfield">
+            <label class="dlabel">우편번호</label>
+            <div class="dinput-row">
+              <input class="dinput" id="d-zip" type="text" placeholder="12345" maxlength="6" autocomplete="off"
+                     oninput="this.value=this.value.replace(/\D/g,'')">
+              <button class="dzip-btn" onclick="_fillSampleZip()">주소 검색</button>
+            </div>
+          </div>
+          <div class="dfield">
+            <label class="dlabel" for="d-addr">주소</label>
+            <input class="dinput" id="d-addr" type="text" placeholder="시/도, 시/군/구, 읍/면/동" autocomplete="off">
+          </div>
+          <div class="dfield">
+            <label class="dlabel" for="d-addr2">상세 주소</label>
+            <input class="dinput" id="d-addr2" type="text" placeholder="아파트, 동/호수, 건물명 등" autocomplete="off">
+          </div>
+          <div class="dfield" style="margin-bottom:24px">
+            <label class="dlabel" for="d-req">배송 요청 사항 <span style="font-weight:400;text-transform:none;font-size:10px">(선택)</span></label>
+            <select class="dreq-select" id="d-req">
+              <option value="">요청 사항을 선택해주세요</option>
+              <option value="문 앞에 놓아주세요">문 앞에 놓아주세요</option>
+              <option value="경비실에 맡겨주세요">경비실에 맡겨주세요</option>
+              <option value="벨은 누르지 말아주세요">벨은 누르지 말아주세요</option>
+              <option value="파손 주의 부탁드려요">파손 주의 부탁드려요</option>
+              <option value="부재 시 연락 주세요">부재 시 연락 주세요</option>
+            </select>
+          </div>
+        </div>
+        <div class="delivery-sheet-ft">
+          <p class="sample-notice">소중한 개인정보는 배송 완료 후 즉시 파기됩니다</p>
+          <button class="delivery-cta" onclick="submitSampleOrder()">🌸 시향 키트 무료 신청하기</button>
+          <button class="delivery-back" onclick="closeDeliverySheet()">← 향수 선택으로 돌아가기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 3: 주문 완료 모달 ── -->
+<div id="sample-complete-modal">
+  <div class="complete-card">
+    <span class="complete-icon">🎁</span>
+    <p class="complete-title" id="complete-title">배연주님의 공간으로<br>향기가 출발할 준비를 마쳤어요!</p>
+    <p class="complete-sub">무료 배송 · 3~5일 이내 도착<br>배송 시작 시 알림으로 알려드려요</p>
+    <div class="complete-perf-list" id="complete-perf-list">
+      <p class="complete-perf-ttl">신청 시향 키트</p>
+    </div>
+    <button class="complete-close-btn" onclick="closeSampleComplete()">확인</button>
   </div>
 </div>
 
@@ -5648,11 +5757,12 @@ function openSample(focusId){
 }
 
 function _updateSampleCTA(){
-  const btn=document.querySelector('.sample-cta');
+  const btn=document.getElementById('sample-cta-btn');
   if(!btn)return;
   const n=selectedSamples.size;
-  btn.textContent=n>0?`신청 완료 (${n}개 선택)`:'항목을 선택해주세요';
+  btn.textContent=n>0?`배송지 입력하기 (${n}개 선택)`:'향수를 선택해주세요';
   btn.style.opacity=n>0?'1':'0.5';
+  btn.style.cursor=n>0?'pointer':'not-allowed';
 }
 
 function toggleSample(id,el){
@@ -5669,25 +5779,84 @@ function toggleSample(id,el){
   _updateSampleCTA();
 }
 
-function closeSample(){document.getElementById('overlay-sample').classList.remove('open');}
+function closeSample(){
+  closeDeliverySheet();
+  document.getElementById('overlay-sample').classList.remove('open');
+}
 
-function confirmSample(){
-  if(selectedSamples.size===0){showToast('최소 1개 이상 선택해주세요');return;}
+/* ── Step 2: 배송지 레이어 open/close ── */
+function openDeliverySheet(){
+  if(selectedSamples.size===0){showToast('향수를 먼저 선택해주세요');return;}
+  /* 선택 향수 요약 렌더 */
   const selected=PERFUMES.filter(p=>selectedSamples.has(p.id));
-  // localStorage에 주문 저장
+  const summaryEl=document.getElementById('delivery-perf-summary');
+  if(summaryEl){
+    summaryEl.innerHTML=`<p class="delivery-summary-ttl">신청할 시향 키트 (${selected.length}종)</p>`
+      +selected.map(p=>`<p class="delivery-summary-item"><span style="font-size:16px">${p.emoji}</span>${p.brand} ${p.name} <span style="color:var(--t3);font-size:11px">₩${p.samplePrice.toLocaleString()}</span></p>`).join('');
+  }
+  document.getElementById('sample-delivery-layer').classList.add('open');
+  /* 첫 번째 입력 필드 포커스 */
+  setTimeout(()=>{const el=document.getElementById('d-name');if(el)el.focus();},450);
+}
+
+function closeDeliverySheet(){
+  document.getElementById('sample-delivery-layer')?.classList.remove('open');
+}
+
+/* 주소 검색 더미 (실제 연동 시 Kakao 주소 API 교체) */
+function _fillSampleZip(){
+  const zip=document.getElementById('d-zip');
+  const addr=document.getElementById('d-addr');
+  const hint=['부산 해운대구 센텀6로 21','부산 부산진구 가야대로 772','부산 중구 광복로 64-1'];
+  if(zip&&!zip.value){zip.value='48058';}
+  if(addr&&!addr.value){addr.value=hint[Math.floor(Math.random()*hint.length)];}
+}
+
+/* ── Step 3: 최종 제출 ── */
+function submitSampleOrder(){
+  const name=(document.getElementById('d-name')?.value||'').trim();
+  const phone=(document.getElementById('d-phone')?.value||'').trim();
+  const zip=(document.getElementById('d-zip')?.value||'').trim();
+  const addr=(document.getElementById('d-addr')?.value||'').trim();
+  const addr2=(document.getElementById('d-addr2')?.value||'').trim();
+  if(!name){document.getElementById('d-name')?.focus();showToast('받는 분 성함을 입력해주세요');return;}
+  if(!phone||phone.length<12){document.getElementById('d-phone')?.focus();showToast('휴대폰 번호를 정확히 입력해주세요');return;}
+  if(!zip){document.getElementById('d-zip')?.focus();showToast('우편번호를 입력해주세요');return;}
+  if(!addr){document.getElementById('d-addr')?.focus();showToast('주소를 입력해주세요');return;}
+  if(!addr2){document.getElementById('d-addr2')?.focus();showToast('상세 주소를 입력해주세요');return;}
+
+  const selected=PERFUMES.filter(p=>selectedSamples.has(p.id));
+  /* localStorage 주문 저장 */
   const orders=_loadOrders();
   orders.unshift({
     id:Date.now(),
     date:new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'}),
     perfumes:selected.map(p=>({id:p.id,name:p.name,brand:p.brand,emoji:p.emoji,bg:p.bg})),
-    status:'배송 준비 중'
+    status:'배송 준비 중',
+    addr:`(${zip}) ${addr} ${addr2}`.trim(),
+    receiver:name
   });
   try{localStorage.setItem(LS_ORDERS,JSON.stringify(orders));}catch(e){}
-  closeSample();
+
+  /* 완료 모달 구성 */
+  const titleEl=document.getElementById('complete-title');
+  if(titleEl)titleEl.innerHTML=`${name}님의 공간으로<br>향기가 출발할 준비를 마쳤어요!`;
+  const listEl=document.getElementById('complete-perf-list');
+  if(listEl){
+    listEl.innerHTML=`<p class="complete-perf-ttl">신청 시향 키트 ${selected.length}종</p>`
+      +selected.map(p=>`<p class="complete-perf-item"><span style="font-size:18px">${p.emoji}</span><span><b style="font-size:11.5px;color:var(--primary);letter-spacing:.05em">${p.brand}</b><br>${p.name}</span></p>`).join('');
+  }
+  /* 오버레이 닫기 → 완료 모달 열기 */
+  document.getElementById('overlay-sample').classList.remove('open');
+  document.getElementById('sample-delivery-layer')?.classList.remove('open');
   setTimeout(()=>{
-    showToast('✅ 신청 완료! 3~5일 내 도착 예정이에요 📦');
+    document.getElementById('sample-complete-modal').classList.add('open');
     updateMyPage();
-  },350);
+  },300);
+}
+
+function closeSampleComplete(){
+  document.getElementById('sample-complete-modal').classList.remove('open');
 }
 
 /* ── SPACES ── */
