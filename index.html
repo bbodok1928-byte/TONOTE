@@ -272,13 +272,16 @@ input,textarea{font-family:inherit;outline:none}
 .sb-pop{background:var(--primary-soft);color:var(--primary);border:1px solid rgba(176,116,102,.25)}
 
 /* ── COMMUNITY ──────────────────────────────── */
-#screen-community{display:none}
-#screen-community.active{display:block;overflow-y:scroll;-webkit-overflow-scrolling:touch}
+/* 커뮤니티: .screen 기본 스크롤 완전 차단 후 내부 스크롤러로 위임 */
+#screen-community{display:none;overflow:hidden!important}
+#screen-community.active{display:block}
+.comm-scroller{position:absolute;inset:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(var(--nav) + 32px);scrollbar-width:none}
+.comm-scroller::-webkit-scrollbar{display:none}
 .comm-hero{padding:22px 20px 14px}
 .comm-hero-ttl{font-family:var(--serif);font-size:22px;color:var(--t1);font-style:italic;margin-bottom:4px}
 .comm-hero-sub{font-size:12px;color:var(--t3);line-height:1.6}
 .comm-write-box{margin:0 20px 20px;background:var(--s1);border:1.5px solid var(--bd);border-radius:18px;padding:14px 14px 10px;box-shadow:var(--shadow)}
-.comm-textarea{width:100%;box-sizing:border-box;background:transparent;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--t1);line-height:1.65;resize:none;min-height:72px;max-height:160px;overflow:hidden;touch-action:pan-x}
+.comm-textarea{width:100%;box-sizing:border-box;background:transparent;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--t1);line-height:1.65;resize:none;min-height:72px;max-height:160px;overflow:hidden;touch-action:manipulation}
 .comm-textarea::placeholder{color:var(--t3)}
 .comm-write-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
 .comm-char-count{font-size:11px;color:var(--t3)}
@@ -315,7 +318,7 @@ input,textarea{font-family:inherit;outline:none}
 .comm-comment-time{font-size:10px;color:var(--t3);margin-top:2px}
 /* 댓글 입력 */
 .comm-comment-input-row{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
-.comm-comment-input{flex:1;background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--t1);font-family:inherit;outline:none;resize:none;min-height:34px;max-height:80px;line-height:1.5;transition:border-color .2s;overflow:hidden;touch-action:pan-x}
+.comm-comment-input{flex:1;background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--t1);font-family:inherit;outline:none;resize:none;min-height:34px;max-height:80px;line-height:1.5;transition:border-color .2s;overflow:hidden;touch-action:manipulation}
 .comm-comment-input:focus{border-color:var(--primary)}
 .comm-comment-input::placeholder{color:var(--t3)}
 .comm-comment-send{flex-shrink:0;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;height:34px;transition:opacity .2s;white-space:nowrap}
@@ -1376,26 +1379,27 @@ input,textarea{font-family:inherit;outline:none}
 
     <!-- ── COMMUNITY SCREEN ── -->
     <div class="screen" id="screen-community">
-      <div class="top-bar"><span class="bar-logo">커뮤니티</span></div>
-      <div class="comm-hero">
-        <p class="comm-hero-ttl">향기로운 이야기</p>
-        <p class="comm-hero-sub">TONOTE 향수 피플들의 오늘 향 이야기 ✦</p>
-      </div>
-      <!-- 글쓰기 영역 -->
-      <div class="comm-write-box">
-        <textarea class="comm-textarea" id="comm-input" maxlength="300" placeholder="오늘 어떤 향을 뿌리셨나요? 편하게 나눠주세요 🌿" oninput="onCommInput(this)" autocomplete="off"></textarea>
-        <div class="comm-write-foot">
-          <span class="comm-char-count" id="comm-char">0 / 300</span>
-          <button class="comm-submit-btn" id="comm-submit-btn" disabled onclick="submitPost()">공유하기</button>
+      <div class="comm-scroller">
+        <div class="top-bar"><span class="bar-logo">커뮤니티</span></div>
+        <div class="comm-hero">
+          <p class="comm-hero-ttl">향기로운 이야기</p>
+          <p class="comm-hero-sub">TONOTE 향수 피플들의 오늘 향 이야기 ✦</p>
         </div>
+        <!-- 글쓰기 영역 -->
+        <div class="comm-write-box">
+          <textarea class="comm-textarea" id="comm-input" maxlength="300" placeholder="오늘 어떤 향을 뿌리셨나요? 편하게 나눠주세요 🌿" oninput="onCommInput(this)" autocomplete="off"></textarea>
+          <div class="comm-write-foot">
+            <span class="comm-char-count" id="comm-char">0 / 300</span>
+            <button class="comm-submit-btn" id="comm-submit-btn" disabled onclick="submitPost()">공유하기</button>
+          </div>
+        </div>
+        <!-- 피드 -->
+        <div class="comm-feed-hd">
+          <span class="comm-feed-ttl">실시간 피드</span>
+          <span class="comm-post-count" id="comm-post-count">0개의 이야기</span>
+        </div>
+        <div class="comm-feed" id="comm-feed"></div>
       </div>
-      <!-- 피드 -->
-      <div class="comm-feed-hd">
-        <span class="comm-feed-ttl">실시간 피드</span>
-        <span class="comm-post-count" id="comm-post-count">0개의 이야기</span>
-      </div>
-      <div class="comm-feed" id="comm-feed"></div>
-      <div style="height:24px"></div>
     </div>
 
   </div>
@@ -6661,29 +6665,41 @@ const COMM_ANONS=[
 ];
 const COMM_DEFAULT=[
   {id:'d1',anon:COMM_ANONS[0],text:'오늘 부산 날씨 비 오는데 다들 뭐 뿌리셨나요? 저는 상탈 꺼냈어요 🌧️',ts:Date.now()-1000*60*38,likes:14,likedByMe:false,comments:[
-    {id:'dc1',anon:COMM_ANONS[4],text:'저도요! 비 오는 날엔 역시 우디 계열이죠 ☁️',ts:Date.now()-1000*60*22},
-    {id:'dc2',anon:COMM_ANONS[8],text:'상탈33 진짜 레전드 향수죠.. 저는 바이레도 집시워터 꺼냈어요',ts:Date.now()-1000*60*15},
+    {id:'dc1',anon:COMM_ANONS[4],text:'저도요 ㅠㅠ 비 오는 날이랑 우디 계열이 찰떡이죠 ☁️ 같이 상탈 팀!',ts:Date.now()-1000*60*28},
+    {id:'dc2',anon:COMM_ANONS[8],text:'상탈33 진짜 레전드 향수죠.. 저는 바이레도 집시워터 꺼냈어요. 비 냄새랑 섞이니까 또 다른 느낌이에요',ts:Date.now()-1000*60*18},
+    {id:'dc3',anon:COMM_ANONS[6],text:'비 오는 날 상탈은 진짜 조합 맞다ㅋㅋ 저는 눈치 없이 시트러스 뿌렸다가 하루 종일 어색했어요 😂',ts:Date.now()-1000*60*9},
   ]},
   {id:'d2',anon:COMM_ANONS[3],text:'조말론 우드세이지는 진짜 살냄새 끝판왕인 듯.. 남녀 호불호도 안 갈려요.',ts:Date.now()-1000*60*97,likes:31,likedByMe:false,comments:[
-    {id:'dc3',anon:COMM_ANONS[2],text:'맞아요 뿌리고 나서 왜 이렇게 나한테서 좋은 냄새가 나지 싶었는데 그거였어요 ㅋㅋ',ts:Date.now()-1000*60*80},
+    {id:'dc4',anon:COMM_ANONS[2],text:'맞아요 ㅋㅋ 뿌리고 나서 왜 나한테서 이렇게 좋은 냄새 나지?? 싶었는데 그거였어요',ts:Date.now()-1000*60*85},
+    {id:'dc5',anon:COMM_ANONS[9],text:'지속력만 조금 더 길었으면 완벽했을 텐데.. 저는 블랙베리 앤 베이 더 오래 가는 것 같더라고요',ts:Date.now()-1000*60*71},
+    {id:'dc6',anon:COMM_ANONS[5],text:'우드세이지 저도 찐팬이에요 🌿 여름에 더 잘 어울리는 것 같은데 요즘도 잘 어울리네요',ts:Date.now()-1000*60*52},
   ]},
-  {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false,comments:[]},
+  {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false,comments:[
+    {id:'dc7',anon:COMM_ANONS[7],text:'그 향 저 얼마 전에 샀는데 진짜 돈 아깝지 않았어요! 잔향 넘 좋아서 뿌리고 하루 종일 맡게 됨 ㅋㅋ',ts:Date.now()-1000*60*160},
+    {id:'dc8',anon:COMM_ANONS[3],text:'살세요!! 후회 없어요 플레르 드 뽀 클래식 중 클래식이잖아요 🌸',ts:Date.now()-1000*60*141},
+  ]},
 ];
 
 /* 열린 댓글 섹션 ID 추적 (메모리 상태, 새로고침 시 초기화) */
 const _openCommentIds=new Set();
 
+const COMM_VER='v3'; // 버전 올리면 localStorage 자동 리셋
 function _loadPosts(){
   try{
+    if(localStorage.getItem('tonote_comm_ver')!==COMM_VER){
+      /* 버전 불일치 → 기본 데이터로 리셋 */
+      throw new Error('stale');
+    }
     const saved=JSON.parse(localStorage.getItem(LS_COMM)||'null');
     if(Array.isArray(saved)){
-      /* 구버전 데이터에 comments 필드 없으면 보정 */
       saved.forEach(p=>{if(!Array.isArray(p.comments))p.comments=[];});
       return saved;
     }
   }catch(e){}
-  localStorage.setItem(LS_COMM,JSON.stringify(COMM_DEFAULT));
-  return JSON.parse(JSON.stringify(COMM_DEFAULT));
+  localStorage.setItem('tonote_comm_ver',COMM_VER);
+  const fresh=JSON.parse(JSON.stringify(COMM_DEFAULT));
+  localStorage.setItem(LS_COMM,JSON.stringify(fresh));
+  return fresh;
 }
 function _savePosts(posts){
   localStorage.setItem(LS_COMM,JSON.stringify(posts));
