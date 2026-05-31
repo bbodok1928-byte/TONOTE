@@ -6936,15 +6936,15 @@ function _doPostLike(pid){
 function _doToggleCmts(pid){
   _openCommentIds.has(pid)?_openCommentIds.delete(pid):_openCommentIds.add(pid);
   const isOpen=_openCommentIds.has(pid);
-  const feed=document.getElementById('comm-feed');
-  const cmts=feed?.querySelector(`[data-cmts-pid="${pid}"]`);
-  const btn=feed?.querySelector(`[data-ca="toggle-cmts"][data-pid="${pid}"]`);
+  /* getElementById로 카드 직접 획득 — data-* 속성 매칭 우회 */
+  const card=document.getElementById('comm-card-'+pid);
+  if(!card)return;
+  const cmts=card.querySelector('.comm-comments');
+  const btn=card.querySelector('.comm-reply-btn');
   if(cmts)cmts.classList.toggle('open',isOpen);
   if(btn)btn.classList.toggle('open',isOpen);
   if(isOpen){
-    setTimeout(()=>{
-      feed?.querySelector(`[data-ca-input="cmt"][data-pid="${pid}"]`)?.focus();
-    },180);
+    setTimeout(()=>{card.querySelector('.comm-comment-input')?.focus();},180);
   }
 }
 
@@ -6957,9 +6957,9 @@ function _doCmtLike(pid,cid){
   cmt.likedByMe=!cmt.likedByMe;
   cmt.likes=Math.max(0,(cmt.likes||0)+(cmt.likedByMe?1:-1));
   _savePosts(posts);
-  /* 댓글 좋아요도 버튼만 교체 */
-  const feed=document.getElementById('comm-feed');
-  const btn=feed?.querySelector(`[data-ca="cmt-like"][data-pid="${pid}"][data-cid="${cid}"]`);
+  /* 댓글 좋아요도 버튼만 교체 — 카드 ID로 직접 획득 */
+  const card=document.getElementById('comm-card-'+pid);
+  const btn=card?.querySelector(`[data-ca="cmt-like"][data-cid="${cid}"]`);
   if(btn){
     btn.className='comm-cmt-like'+(cmt.likedByMe?' liked':'');
     btn.innerHTML=`${cmt.likedByMe?'❤️':'🤍'} ${cmt.likes}`;
@@ -6970,15 +6970,15 @@ function _doToggleReply(pid,cid){
   const key=pid+'__'+cid;
   _openReplyInputIds.has(key)?_openReplyInputIds.delete(key):_openReplyInputIds.add(key);
   const isOpen=_openReplyInputIds.has(key);
-  const feed=document.getElementById('comm-feed');
-  /* reply-input-wrap은 해당 cmt 좋아요 버튼과 같은 comment-bubble 안에 있음 */
-  const rbtn=feed?.querySelector(`[data-ca="toggle-reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+  /* 카드 ID로 직접 획득 후 cid로만 탐색 */
+  const card=document.getElementById('comm-card-'+pid);
+  const rbtn=card?.querySelector(`[data-ca="toggle-reply"][data-cid="${cid}"]`);
   const wrap=rbtn?.closest('.comm-comment-bubble')?.querySelector('.comm-reply-input-wrap');
   if(wrap)wrap.classList.toggle('open',isOpen);
   if(rbtn)rbtn.classList.toggle('open',isOpen);
   if(isOpen){
     setTimeout(()=>{
-      feed?.querySelector(`[data-ca-input="reply"][data-pid="${pid}"][data-cid="${cid}"]`)?.focus();
+      card?.querySelector(`[data-ca-input="reply"][data-cid="${cid}"]`)?.focus();
     },150);
   }
 }
@@ -6998,8 +6998,9 @@ function _doSubCmt(pid){
   post.comments.push(newCmt);
   _savePosts(posts);
 
-  /* ── 재렌더 없이 해당 카드 댓글 영역에만 삽입 ── */
-  const cmtSection=feed.querySelector(`[data-cmts-pid="${pid}"]`);
+  /* ── 재렌더 없이 해당 카드 댓글 영역에만 삽입 (카드 ID 직접 획득) ── */
+  const card2=document.getElementById('comm-card-'+pid);
+  const cmtSection=card2?.querySelector('.comm-comments');
   const inputRow=cmtSection?.querySelector('.comm-comment-input-row');
   if(cmtSection&&inputRow){
     const div=document.createElement('div');
@@ -7022,13 +7023,13 @@ function _doSubCmt(pid){
     cmtSection.insertBefore(div,inputRow);
   }
 
-  /* 댓글 수 뱃지 수술적 업데이트 */
-  const toggleBtn=feed.querySelector(`[data-ca="toggle-cmts"][data-pid="${pid}"]`);
+  /* 댓글 수 뱃지 수술적 업데이트 (카드 ID 직접 획득) */
+  const toggleBtn=card2?.querySelector('.comm-reply-btn');
   if(toggleBtn)toggleBtn.innerHTML=`<span>💬</span><span>댓글 ${post.comments.length}개</span>`;
 
   /* 입력창 초기화 */
   inp.value='';inp.style.height='auto';
-  const sbtn=feed.querySelector(`[data-ca="sub-cmt"][data-pid="${pid}"]`);
+  const sbtn=card2?.querySelector('[data-ca="sub-cmt"]');
   if(sbtn)sbtn.disabled=true;
 
   _openCommentIds.add(pid);
@@ -7036,8 +7037,9 @@ function _doSubCmt(pid){
 }
 
 function _doSubReply(pid,cid){
-  const feed=document.getElementById('comm-feed');
-  const inp=feed?.querySelector(`[data-ca-input="reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+  /* 카드 ID로 직접 획득 */
+  const card=document.getElementById('comm-card-'+pid);
+  const inp=card?.querySelector(`[data-ca-input="reply"][data-cid="${cid}"]`);
   if(!inp)return;
   const text=inp.value.trim();
   if(!text)return;
@@ -7053,7 +7055,7 @@ function _doSubReply(pid,cid){
   _savePosts(posts);
 
   /* ── 재렌더 없이 해당 댓글 bubble 안에만 삽입 ── */
-  const replyBtn=feed.querySelector(`[data-ca="toggle-reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+  const replyBtn=card?.querySelector(`[data-ca="toggle-reply"][data-cid="${cid}"]`);
   const bubble=replyBtn?.closest('.comm-comment-bubble');
   if(bubble){
     let repliesDiv=bubble.querySelector('.comm-replies');
