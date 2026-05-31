@@ -272,10 +272,10 @@ input,textarea{font-family:inherit;outline:none}
 .sb-pop{background:var(--primary-soft);color:var(--primary);border:1px solid rgba(176,116,102,.25)}
 
 /* ── COMMUNITY ──────────────────────────────── */
-/* 커뮤니티: .screen 기본 스크롤 완전 차단 후 내부 스크롤러로 위임 */
+/* 커뮤니티 — 완전 독립 스크롤 컨테이너 */
 #screen-community{display:none;overflow:hidden!important}
 #screen-community.active{display:block}
-.comm-scroller{position:absolute;inset:0;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(var(--nav) + 32px);scrollbar-width:none}
+.comm-scroller{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:100px;scrollbar-width:none;will-change:scroll-position}
 .comm-scroller::-webkit-scrollbar{display:none}
 .comm-hero{padding:22px 20px 14px}
 .comm-hero-ttl{font-family:var(--serif);font-size:22px;color:var(--t1);font-style:italic;margin-bottom:4px}
@@ -6736,7 +6736,8 @@ const COMM_DEFAULT=[
 
 /* 열린 댓글·답글 입력 섹션 ID 추적 (메모리 상태) */
 const _openCommentIds=new Set();
-const _openReplyInputIds=new Set(); /* "pid__cid" 형태 */
+const _openReplyInputIds=new Set();
+let _commDelegated=false; /* 이벤트 위임 1회만 등록 */
 
 const COMM_VER='v4';
 function _loadPosts(){
@@ -6770,6 +6771,43 @@ function _commTimeAgo(ts){
 }
 function _esc(s){return s.replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+/* ── 커뮤니티 이벤트 위임 (1회 등록, re-render 후에도 유효) ── */
+function _initCommDelegation(){
+  if(_commDelegated)return;
+  _commDelegated=true;
+  const feed=document.getElementById('comm-feed');
+  if(!feed)return;
+
+  /* 클릭 위임 */
+  feed.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-ca]');
+    if(!btn)return;
+    const a=btn.dataset.ca, pid=btn.dataset.pid, cid=btn.dataset.cid;
+    if(a==='post-like')    _doPostLike(pid);
+    else if(a==='toggle-cmts') _doToggleCmts(pid);
+    else if(a==='cmt-like')    _doCmtLike(pid,cid);
+    else if(a==='toggle-reply')_doToggleReply(pid,cid);
+    else if(a==='sub-cmt')     _doSubCmt(pid);
+    else if(a==='sub-reply')   _doSubReply(pid,cid);
+  });
+
+  /* 입력 위임 */
+  feed.addEventListener('input',e=>{
+    const ta=e.target;
+    if(ta.dataset.caInput==='cmt'){
+      const pid=ta.dataset.pid;
+      const sbtn=feed.querySelector(`[data-ca="sub-cmt"][data-pid="${pid}"]`);
+      if(sbtn)sbtn.disabled=ta.value.trim().length===0;
+      ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,80)+'px';
+    }else if(ta.dataset.caInput==='reply'){
+      const pid=ta.dataset.pid,cid=ta.dataset.cid;
+      const sbtn=feed.querySelector(`[data-ca="sub-reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+      if(sbtn)sbtn.disabled=ta.value.trim().length===0;
+      ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,72)+'px';
+    }
+  });
+}
+
 function _renderComments(p){
   const isOpen=_openCommentIds.has(p.id);
   const comments=p.comments||[];
@@ -6786,43 +6824,56 @@ function _renderComments(p){
         </div>
       </div>`).join('');
     return`
-      <div class="comm-comment-item" id="cmt-${p.id}-${c.id}">
+      <div class="comm-comment-item">
         <div class="comm-comment-avatar">${c.anon.icon}</div>
         <div class="comm-comment-bubble">
           <p class="comm-comment-name">${c.anon.name}</p>
           <p class="comm-comment-txt">${_esc(c.text)}</p>
           <p class="comm-comment-time">${_commTimeAgo(c.ts)}</p>
           <div class="comm-cmt-actions">
-            <button class="comm-cmt-like${c.likedByMe?' liked':''}" onclick="toggleCmtLike('${p.id}','${c.id}')">
+            <button class="comm-cmt-like${c.likedByMe?' liked':''}"
+              data-ca="cmt-like" data-pid="${p.id}" data-cid="${c.id}">
               ${c.likedByMe?'❤️':'🤍'} ${c.likes}
             </button>
-            <button class="comm-cmt-reply-btn${replyInputOpen?' open':''}" onclick="toggleReplyInput('${p.id}','${c.id}')">답글 달기</button>
+            <button class="comm-cmt-reply-btn${replyInputOpen?' open':''}"
+              data-ca="toggle-reply" data-pid="${p.id}" data-cid="${c.id}">답글 달기</button>
           </div>
           ${(c.replies||[]).length>0?`<div class="comm-replies">${repliesHtml}</div>`:''}
-          <div class="comm-reply-input-wrap${replyInputOpen?' open':''}" id="reply-wrap-${p.id}-${c.id}">
-            <textarea class="comm-reply-input" id="reply-inp-${p.id}-${c.id}" rows="1"
+          <div class="comm-reply-input-wrap${replyInputOpen?' open':''}">
+            <textarea class="comm-reply-input" rows="1"
               placeholder="답글을 남겨주세요…" maxlength="150"
-              oninput="onReplyInput(this,'${p.id}','${c.id}')" autocomplete="off"></textarea>
-            <button class="comm-reply-send" id="reply-send-${p.id}-${c.id}" disabled
-              onclick="submitReply('${p.id}','${c.id}')">등록</button>
+              data-ca-input="reply" data-pid="${p.id}" data-cid="${c.id}"
+              autocomplete="off" touch-action="manipulation"></textarea>
+            <button class="comm-reply-send" disabled
+              data-ca="sub-reply" data-pid="${p.id}" data-cid="${c.id}">등록</button>
           </div>
         </div>
       </div>`;
   }).join('');
   return`
-    <div class="comm-comments${isOpen?' open':''}" id="comm-cmts-${p.id}">
+    <div class="comm-comments${isOpen?' open':''}" data-cmts-pid="${p.id}">
       ${commentsHtml}
       <div class="comm-comment-input-row">
-        <textarea class="comm-comment-input" id="cmt-input-${p.id}" rows="1"
+        <textarea class="comm-comment-input" rows="1"
           placeholder="댓글을 남겨주세요…" maxlength="150"
-          oninput="onCmtInput(this,'${p.id}')" autocomplete="off"></textarea>
-        <button class="comm-comment-send" id="cmt-send-${p.id}" disabled
-          onclick="submitComment('${p.id}')">등록</button>
+          data-ca-input="cmt" data-pid="${p.id}"
+          autocomplete="off" touch-action="manipulation"></textarea>
+        <button class="comm-comment-send" disabled
+          data-ca="sub-cmt" data-pid="${p.id}">등록</button>
       </div>
     </div>`;
 }
 
+function _commScrollPos(){
+  return document.querySelector('.comm-scroller')?.scrollTop||0;
+}
+function _commRestoreScroll(pos){
+  const s=document.querySelector('.comm-scroller');
+  if(s)s.scrollTop=pos;
+}
+
 function renderCommunity(){
+  const scrollPos=_commScrollPos();
   const posts=_loadPosts();
   const feed=document.getElementById('comm-feed');
   const cnt=document.getElementById('comm-post-count');
@@ -6843,18 +6894,21 @@ function renderCommunity(){
       </div>
       <div class="comm-card-body">${_esc(p.text)}</div>
       <div class="comm-card-foot">
-        <button class="comm-like-btn${p.likedByMe?' liked':''}" onclick="toggleCommLike('${p.id}')">
+        <button class="comm-like-btn${p.likedByMe?' liked':''}"
+          data-ca="post-like" data-pid="${p.id}">
           <span class="like-ic">${p.likedByMe?'❤️':'🤍'}</span>
           <span>${p.likes}</span>
         </button>
-        <button class="comm-reply-btn${isOpen?' open':''}" onclick="toggleCommSection('${p.id}')">
-          <span>💬</span>
-          <span>댓글 ${cLen}개</span>
+        <button class="comm-reply-btn${isOpen?' open':''}"
+          data-ca="toggle-cmts" data-pid="${p.id}">
+          <span>💬</span><span>댓글 ${cLen}개</span>
         </button>
       </div>
       ${_renderComments(p)}
     </div>`;
   }).join('');
+  _initCommDelegation();
+  requestAnimationFrame(()=>_commRestoreScroll(scrollPos));
 }
 
 function onCommInput(el){
@@ -6864,43 +6918,40 @@ function onCommInput(el){
   if(cnt)cnt.textContent=val.length+' / 300';
   if(btn)btn.disabled=val.trim().length===0;
 }
-function onCmtInput(el,pid){
-  const btn=document.getElementById('cmt-send-'+pid);
-  if(btn)btn.disabled=el.value.trim().length===0;
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,80)+'px';
-}
-function onReplyInput(el,pid,cid){
-  const btn=document.getElementById('reply-send-'+pid+'-'+cid);
-  if(btn)btn.disabled=el.value.trim().length===0;
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,72)+'px';
+
+/* ── 커뮤니티 액션 핸들러 ── */
+function _doPostLike(pid){
+  const posts=_loadPosts();
+  const post=posts.find(p=>p.id===pid);
+  if(!post)return;
+  post.likedByMe=!post.likedByMe;
+  post.likes=Math.max(0,post.likes+(post.likedByMe?1:-1));
+  _savePosts(posts);
+  /* 좋아요는 버튼만 교체 (스크롤 유지) */
+  const card=document.getElementById('comm-card-'+pid);
+  const btn=card?.querySelector('[data-ca="post-like"]');
+  if(btn){
+    btn.className='comm-like-btn'+(post.likedByMe?' liked':'');
+    btn.innerHTML=`<span class="like-ic">${post.likedByMe?'❤️':'🤍'}</span><span>${post.likes}</span>`;
+  }
 }
 
-function toggleCommSection(pid){
+function _doToggleCmts(pid){
   _openCommentIds.has(pid)?_openCommentIds.delete(pid):_openCommentIds.add(pid);
-  const cmts=document.getElementById('comm-cmts-'+pid);
-  const btn=document.getElementById('comm-card-'+pid)?.querySelector('.comm-reply-btn');
-  if(cmts)cmts.classList.toggle('open',_openCommentIds.has(pid));
-  if(btn)btn.classList.toggle('open',_openCommentIds.has(pid));
-  if(_openCommentIds.has(pid)){
-    setTimeout(()=>{document.getElementById('cmt-input-'+pid)?.focus();},200);
+  const isOpen=_openCommentIds.has(pid);
+  const feed=document.getElementById('comm-feed');
+  const cmts=feed?.querySelector(`[data-cmts-pid="${pid}"]`);
+  const btn=feed?.querySelector(`[data-ca="toggle-cmts"][data-pid="${pid}"]`);
+  if(cmts)cmts.classList.toggle('open',isOpen);
+  if(btn)btn.classList.toggle('open',isOpen);
+  if(isOpen){
+    setTimeout(()=>{
+      feed?.querySelector(`[data-ca-input="cmt"][data-pid="${pid}"]`)?.focus();
+    },180);
   }
 }
 
-function toggleReplyInput(pid,cid){
-  const key=pid+'__'+cid;
-  _openReplyInputIds.has(key)?_openReplyInputIds.delete(key):_openReplyInputIds.add(key);
-  const wrap=document.getElementById('reply-wrap-'+pid+'-'+cid);
-  const btn=document.getElementById('cmt-'+pid+'-'+cid)?.querySelector('.comm-cmt-reply-btn');
-  if(wrap)wrap.classList.toggle('open',_openReplyInputIds.has(key));
-  if(btn)btn.classList.toggle('open',_openReplyInputIds.has(key));
-  if(_openReplyInputIds.has(key)){
-    setTimeout(()=>{document.getElementById('reply-inp-'+pid+'-'+cid)?.focus();},150);
-  }
-}
-
-function toggleCmtLike(pid,cid){
+function _doCmtLike(pid,cid){
   const posts=_loadPosts();
   const post=posts.find(p=>p.id===pid);
   if(!post)return;
@@ -6909,31 +6960,35 @@ function toggleCmtLike(pid,cid){
   cmt.likedByMe=!cmt.likedByMe;
   cmt.likes=Math.max(0,(cmt.likes||0)+(cmt.likedByMe?1:-1));
   _savePosts(posts);
-  renderCommunity();
+  /* 댓글 좋아요도 버튼만 교체 */
+  const feed=document.getElementById('comm-feed');
+  const btn=feed?.querySelector(`[data-ca="cmt-like"][data-pid="${pid}"][data-cid="${cid}"]`);
+  if(btn){
+    btn.className='comm-cmt-like'+(cmt.likedByMe?' liked':'');
+    btn.innerHTML=`${cmt.likedByMe?'❤️':'🤍'} ${cmt.likes}`;
+  }
 }
 
-function submitReply(pid,cid){
-  const inp=document.getElementById('reply-inp-'+pid+'-'+cid);
-  if(!inp)return;
-  const text=inp.value.trim();
-  if(!text)return;
-  const posts=_loadPosts();
-  const post=posts.find(p=>p.id===pid);
-  if(!post)return;
-  const cmt=post.comments.find(c=>c.id===cid);
-  if(!cmt)return;
-  if(!Array.isArray(cmt.replies))cmt.replies=[];
-  cmt.replies.push({id:'r'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now()});
-  _savePosts(posts);
-  _openCommentIds.add(pid);
+function _doToggleReply(pid,cid){
   const key=pid+'__'+cid;
-  _openReplyInputIds.delete(key);
-  renderCommunity();
-  showToast('답글이 등록됐어요 💬');
+  _openReplyInputIds.has(key)?_openReplyInputIds.delete(key):_openReplyInputIds.add(key);
+  const isOpen=_openReplyInputIds.has(key);
+  const feed=document.getElementById('comm-feed');
+  /* reply-input-wrap은 해당 cmt 좋아요 버튼과 같은 comment-bubble 안에 있음 */
+  const rbtn=feed?.querySelector(`[data-ca="toggle-reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+  const wrap=rbtn?.closest('.comm-comment-bubble')?.querySelector('.comm-reply-input-wrap');
+  if(wrap)wrap.classList.toggle('open',isOpen);
+  if(rbtn)rbtn.classList.toggle('open',isOpen);
+  if(isOpen){
+    setTimeout(()=>{
+      feed?.querySelector(`[data-ca-input="reply"][data-pid="${pid}"][data-cid="${cid}"]`)?.focus();
+    },150);
+  }
 }
 
-function submitComment(pid){
-  const inp=document.getElementById('cmt-input-'+pid);
+function _doSubCmt(pid){
+  const feed=document.getElementById('comm-feed');
+  const inp=feed?.querySelector(`[data-ca-input="cmt"][data-pid="${pid}"]`);
   if(!inp)return;
   const text=inp.value.trim();
   if(!text)return;
@@ -6948,14 +7003,33 @@ function submitComment(pid){
   showToast('댓글이 등록됐어요 💬');
 }
 
+function _doSubReply(pid,cid){
+  const feed=document.getElementById('comm-feed');
+  const inp=feed?.querySelector(`[data-ca-input="reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text)return;
+  const posts=_loadPosts();
+  const post=posts.find(p=>p.id===pid);
+  if(!post)return;
+  const cmt=post.comments.find(c=>c.id===cid);
+  if(!cmt)return;
+  if(!Array.isArray(cmt.replies))cmt.replies=[];
+  cmt.replies.push({id:'r'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now()});
+  _savePosts(posts);
+  _openCommentIds.add(pid);
+  _openReplyInputIds.delete(pid+'__'+cid);
+  renderCommunity();
+  showToast('답글이 등록됐어요 💬');
+}
+
 function submitPost(){
   const input=document.getElementById('comm-input');
   if(!input)return;
   const text=input.value.trim();
   if(!text){showToast('내용을 입력해주세요');return;}
   const posts=_loadPosts();
-  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
-  posts.unshift({id:'u'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,comments:[]});
+  posts.unshift({id:'u'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now(),likes:0,likedByMe:false,comments:[]});
   _savePosts(posts);
   input.value='';
   const cnt=document.getElementById('comm-char');
@@ -6966,15 +7040,11 @@ function submitPost(){
   showToast('이야기가 공유됐어요 🌿');
 }
 
-function toggleCommLike(id){
-  const posts=_loadPosts();
-  const post=posts.find(p=>p.id===id);
-  if(!post)return;
-  post.likedByMe=!post.likedByMe;
-  post.likes=Math.max(0,post.likes+(post.likedByMe?1:-1));
-  _savePosts(posts);
-  renderCommunity();
-}
+/* 하위 호환 — 외부에서 직접 호출되는 경우 없음, 안전 래퍼만 유지 */
+function toggleCommLike(id){_doPostLike(id);}
+function toggleCommSection(pid){_doToggleCmts(pid);}
+function toggleCmtLike(pid,cid){_doCmtLike(pid,cid);}
+function toggleReplyInput(pid,cid){_doToggleReply(pid,cid);}
 
 /* ══════════════════════════════════════════
    향 취향 진단 (Scent Test)
