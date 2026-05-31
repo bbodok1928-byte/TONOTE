@@ -74,7 +74,7 @@ input,textarea{font-family:inherit;outline:none}
 
 /* ── BOTTOM NAV ───────────────────────────── */
 .bnav{height:var(--nav);background:rgba(251,248,244,.97);backdrop-filter:blur(20px);border-top:1px solid var(--bd);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0)}
-.bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--t3);font-size:10px;font-weight:500;cursor:pointer;transition:color .2s;padding-top:6px}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--t3);font-size:9px;font-weight:500;cursor:pointer;transition:color .2s;padding-top:6px}
 .bni.on{color:var(--primary)}
 .bni-ic{font-size:20px;line-height:1}
 .bni-bar{width:20px;height:2px;border-radius:2px;background:var(--primary);margin-top:1px;opacity:0;transition:opacity .2s}
@@ -270,6 +270,35 @@ input,textarea{font-family:inherit;outline:none}
 .sb-open{background:rgba(100,190,120,.1);color:#4EA86E;border:1px solid rgba(100,190,120,.25)}
 .sb-closed{background:rgba(200,80,80,.07);color:#C05050;border:1px solid rgba(200,80,80,.2)}
 .sb-pop{background:var(--primary-soft);color:var(--primary);border:1px solid rgba(176,116,102,.25)}
+
+/* ── COMMUNITY ──────────────────────────────── */
+.comm-hero{padding:22px 20px 14px}
+.comm-hero-ttl{font-family:var(--serif);font-size:22px;color:var(--t1);font-style:italic;margin-bottom:4px}
+.comm-hero-sub{font-size:12px;color:var(--t3);line-height:1.6}
+.comm-write-box{margin:0 20px 20px;background:var(--s1);border:1.5px solid var(--bd);border-radius:18px;padding:14px 14px 10px;box-shadow:var(--shadow)}
+.comm-textarea{width:100%;box-sizing:border-box;background:transparent;border:none;outline:none;font-family:inherit;font-size:14px;color:var(--t1);line-height:1.65;resize:none;min-height:72px;max-height:160px}
+.comm-textarea::placeholder{color:var(--t3)}
+.comm-write-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
+.comm-char-count{font-size:11px;color:var(--t3)}
+.comm-submit-btn{background:var(--primary);color:#fff;font-size:12px;font-weight:800;padding:8px 18px;border:none;border-radius:50px;cursor:pointer;transition:opacity .2s;letter-spacing:.03em}
+.comm-submit-btn:disabled{opacity:.38;cursor:not-allowed}
+.comm-submit-btn:not(:disabled):active{opacity:.8}
+.comm-feed-hd{display:flex;align-items:center;justify-content:space-between;padding:0 20px 10px}
+.comm-feed-ttl{font-size:13px;font-weight:700;color:var(--t1)}
+.comm-post-count{font-size:11px;color:var(--t3)}
+.comm-feed{padding:0 20px}
+.comm-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px 16px 12px;margin-bottom:11px;box-shadow:var(--shadow)}
+.comm-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.comm-anon-avatar{width:32px;height:32px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.comm-anon-name{font-size:12px;font-weight:700;color:var(--t2)}
+.comm-time{font-size:11px;color:var(--t3);margin-left:auto}
+.comm-card-body{font-size:13px;color:var(--t1);line-height:1.7;word-break:break-word;white-space:pre-wrap}
+.comm-card-foot{display:flex;align-items:center;gap:14px;margin-top:10px;padding-top:8px;border-top:1px solid var(--bd)}
+.comm-like-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t3);cursor:pointer;background:none;border:none;padding:0;transition:color .18s}
+.comm-like-btn.liked{color:#E07B7B}
+.comm-like-btn .like-ic{font-size:15px;transition:transform .18s}
+.comm-like-btn.liked .like-ic{transform:scale(1.25)}
+.comm-empty{text-align:center;padding:40px 0;font-size:13px;color:var(--t3);font-family:var(--serif);font-style:italic}
 
 /* ── MY PAGE ──────────────────────────────── */
 .my-profile{padding:20px 20px 24px;display:flex;align-items:center;gap:16px}
@@ -1323,6 +1352,30 @@ input,textarea{font-family:inherit;outline:none}
       </div>
     </div>
 
+    <!-- ── COMMUNITY SCREEN ── -->
+    <div class="screen" id="screen-community">
+      <div class="top-bar"><span class="bar-logo">커뮤니티</span></div>
+      <div class="comm-hero">
+        <p class="comm-hero-ttl">향기로운 이야기</p>
+        <p class="comm-hero-sub">TONOTE 향수 피플들의 오늘 향 이야기 ✦</p>
+      </div>
+      <!-- 글쓰기 영역 -->
+      <div class="comm-write-box">
+        <textarea class="comm-textarea" id="comm-input" maxlength="300" placeholder="오늘 어떤 향을 뿌리셨나요? 편하게 나눠주세요 🌿" oninput="onCommInput(this)" autocomplete="off"></textarea>
+        <div class="comm-write-foot">
+          <span class="comm-char-count" id="comm-char">0 / 300</span>
+          <button class="comm-submit-btn" id="comm-submit-btn" disabled onclick="submitPost()">공유하기</button>
+        </div>
+      </div>
+      <!-- 피드 -->
+      <div class="comm-feed-hd">
+        <span class="comm-feed-ttl">실시간 피드</span>
+        <span class="comm-post-count" id="comm-post-count">0개의 이야기</span>
+      </div>
+      <div class="comm-feed" id="comm-feed"></div>
+      <div style="height:24px"></div>
+    </div>
+
   </div>
 
   <!-- ── BOTTOM NAV ── -->
@@ -1331,6 +1384,7 @@ input,textarea{font-family:inherit;outline:none}
     <div class="bni" onclick="switchTab('explore')"><span class="bni-ic">🔍</span><span>탐색</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('ai')"><span class="bni-ic">✨</span><span>AI</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('spaces')"><span class="bni-ic">📍</span><span>시향 공간</span><div class="bni-bar"></div></div>
+    <div class="bni" onclick="switchTab('community')"><span class="bni-ic">💬</span><span>커뮤니티</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('my')"><span class="bni-ic">👤</span><span>마이</span><div class="bni-bar"></div></div>
   </nav>
 </div>
@@ -4505,6 +4559,7 @@ function initAll(){
   try{document.getElementById('liked-count').textContent=liked.size;}catch(e){}
   try{updateMyPage();}catch(e){}
   try{_loadAndApplyScentResult();}catch(e){}
+  try{renderCommunity();}catch(e){}
   try{_updateSettingsBadge();}catch(e){}
   try{_updateSettingsSummary();}catch(e){}
 }
@@ -4513,8 +4568,9 @@ function switchTab(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById('screen-'+tab).classList.add('active');
-  document.querySelectorAll('.bni')[['home','explore','ai','spaces','my'].indexOf(tab)]?.classList.add('on');
+  document.querySelectorAll('.bni')[['home','explore','ai','spaces','community','my'].indexOf(tab)]?.classList.add('on');
   if(tab==='my')updateMyPage();
+  if(tab==='community')renderCommunity();
   if(tab==='spaces')setTimeout(()=>initMap(),80); // 탭 전환 후 DOM 확보
 }
 
@@ -6565,6 +6621,119 @@ function appendMsg(type,text){
 }
 
 /* ── MY ── */
+/* ══════════════════════════════════════════
+   커뮤니티 피드
+═══════════════════════════════════════════ */
+const LS_COMM='tonote_comm_posts';
+const COMM_ANONS=[
+  {icon:'🌿',name:'향수 입문자'},
+  {icon:'🍋',name:'시트러스 홀릭'},
+  {icon:'🌸',name:'플로럴 에디터'},
+  {icon:'🪨',name:'우디 드리머'},
+  {icon:'🤍',name:'머스크 체이서'},
+  {icon:'🌊',name:'아쿠아틱 러버'},
+  {icon:'🖤',name:'다크 미니멀리스트'},
+  {icon:'🌹',name:'로즈 애호가'},
+  {icon:'🍬',name:'구르망 덕후'},
+  {icon:'✨',name:'향수 수집가'},
+];
+const COMM_DEFAULT=[
+  {id:'d1',anon:COMM_ANONS[0],text:'오늘 부산 날씨 비 오는데 다들 뭐 뿌리셨나요? 저는 상탈 꺼냈어요 🌧️',ts:Date.now()-1000*60*38,likes:14,likedByMe:false},
+  {id:'d2',anon:COMM_ANONS[3],text:'조말론 우드세이지는 진짜 살냄새 끝판왕인 듯.. 남녀 호불호도 안 갈려요.',ts:Date.now()-1000*60*97,likes:31,likedByMe:false},
+  {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false},
+];
+
+function _loadPosts(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(LS_COMM)||'null');
+    if(Array.isArray(saved))return saved;
+  }catch(e){}
+  /* 초기 데이터셋 저장 후 반환 */
+  localStorage.setItem(LS_COMM,JSON.stringify(COMM_DEFAULT));
+  return JSON.parse(JSON.stringify(COMM_DEFAULT));
+}
+function _savePosts(posts){
+  localStorage.setItem(LS_COMM,JSON.stringify(posts));
+}
+function _commTimeAgo(ts){
+  const diff=Math.floor((Date.now()-ts)/1000);
+  if(diff<60)return '방금 전';
+  if(diff<3600)return Math.floor(diff/60)+'분 전';
+  if(diff<86400)return Math.floor(diff/3600)+'시간 전';
+  return Math.floor(diff/86400)+'일 전';
+}
+
+function renderCommunity(){
+  const posts=_loadPosts();
+  const feed=document.getElementById('comm-feed');
+  const cnt=document.getElementById('comm-post-count');
+  if(!feed)return;
+  if(cnt)cnt.textContent=posts.length+'개의 이야기';
+  if(posts.length===0){
+    feed.innerHTML='<p class="comm-empty">아직 첫 이야기를 기다리고 있어요 🌿</p>';
+    return;
+  }
+  feed.innerHTML=posts.map(p=>`
+    <div class="comm-card" id="comm-card-${p.id}">
+      <div class="comm-card-top">
+        <div class="comm-anon-avatar">${p.anon.icon}</div>
+        <span class="comm-anon-name">${p.anon.name}</span>
+        <span class="comm-time">${_commTimeAgo(p.ts)}</span>
+      </div>
+      <div class="comm-card-body">${p.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="comm-card-foot">
+        <button class="comm-like-btn${p.likedByMe?' liked':''}" onclick="toggleCommLike('${p.id}')">
+          <span class="like-ic">${p.likedByMe?'❤️':'🤍'}</span>
+          <span>${p.likes}</span>
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+function onCommInput(el){
+  const val=el.value;
+  const cnt=document.getElementById('comm-char');
+  const btn=document.getElementById('comm-submit-btn');
+  if(cnt)cnt.textContent=val.length+' / 300';
+  if(btn)btn.disabled=val.trim().length===0;
+}
+
+function submitPost(){
+  const input=document.getElementById('comm-input');
+  if(!input)return;
+  const text=input.value.trim();
+  if(!text){showToast('내용을 입력해주세요');return;}
+  const posts=_loadPosts();
+  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
+  const newPost={
+    id:'u'+Date.now(),
+    anon,
+    text,
+    ts:Date.now(),
+    likes:0,
+    likedByMe:false,
+  };
+  posts.unshift(newPost);
+  _savePosts(posts);
+  input.value='';
+  const cnt=document.getElementById('comm-char');
+  const btn=document.getElementById('comm-submit-btn');
+  if(cnt)cnt.textContent='0 / 300';
+  if(btn)btn.disabled=true;
+  renderCommunity();
+  showToast('이야기가 공유됐어요 🌿');
+}
+
+function toggleCommLike(id){
+  const posts=_loadPosts();
+  const post=posts.find(p=>p.id===id);
+  if(!post)return;
+  post.likedByMe=!post.likedByMe;
+  post.likes=Math.max(0,post.likes+(post.likedByMe?1:-1));
+  _savePosts(posts);
+  renderCommunity();
+}
+
 /* ══════════════════════════════════════════
    향 취향 진단 (Scent Test)
 ═══════════════════════════════════════════ */
