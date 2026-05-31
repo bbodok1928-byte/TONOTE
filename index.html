@@ -6685,20 +6685,6 @@ const COMM_ANONS=[
   {icon:'✨',name:'향수 수집가'},
 ];
 const COMM_DEFAULT=[
-  {id:'d1',anon:COMM_ANONS[0],text:'오늘 부산 날씨 비 오는데 다들 뭐 뿌리셨나요? 저는 상탈 꺼냈어요 🌧️',ts:Date.now()-1000*60*38,likes:14,likedByMe:false,comments:[
-    {id:'dc1',anon:COMM_ANONS[4],text:'저도요 ㅠㅠ 비 오는 날이랑 우디 계열이 찰떡이죠 ☁️ 같이 상탈 팀!',ts:Date.now()-1000*60*28,likes:4,likedByMe:false,replies:[
-      {id:'dr1',anon:COMM_ANONS[6],text:'상탈 팀 +1 🙋',ts:Date.now()-1000*60*20},
-    ]},
-    {id:'dc2',anon:COMM_ANONS[8],text:'상탈33 진짜 레전드 향수죠.. 저는 바이레도 집시워터 꺼냈어요. 비 냄새랑 섞이니까 또 다른 느낌이에요',ts:Date.now()-1000*60*18,likes:6,likedByMe:false,replies:[]},
-    {id:'dc3',anon:COMM_ANONS[6],text:'비 오는 날 상탈은 진짜 조합 맞다ㅋㅋ 저는 눈치 없이 시트러스 뿌렸다가 하루 종일 어색했어요 😂',ts:Date.now()-1000*60*9,likes:2,likedByMe:false,replies:[]},
-  ]},
-  {id:'d2',anon:COMM_ANONS[3],text:'조말론 우드세이지는 진짜 살냄새 끝판왕인 듯.. 남녀 호불호도 안 갈려요.',ts:Date.now()-1000*60*97,likes:31,likedByMe:false,comments:[
-    {id:'dc4',anon:COMM_ANONS[2],text:'맞아요 ㅋㅋ 뿌리고 나서 왜 나한테서 이렇게 좋은 냄새 나지?? 싶었는데 그거였어요',ts:Date.now()-1000*60*85,likes:11,likedByMe:false,replies:[
-      {id:'dr2',anon:COMM_ANONS[9],text:'저도 완전 공감ㅋㅋ 가족들이 무슨 향이냐고 계속 물어봤어요',ts:Date.now()-1000*60*78},
-    ]},
-    {id:'dc5',anon:COMM_ANONS[9],text:'지속력만 조금 더 길었으면 완벽했을 텐데.. 블랙베리 앤 베이 더 오래 가는 것 같더라고요',ts:Date.now()-1000*60*71,likes:7,likedByMe:false,replies:[]},
-    {id:'dc6',anon:COMM_ANONS[5],text:'우드세이지 저도 찐팬이에요 🌿 여름에도 잘 어울리는 것 같아서 사계절 향수로 쓰고 있어요',ts:Date.now()-1000*60*52,likes:3,likedByMe:false,replies:[]},
-  ]},
   {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false,comments:[
     {id:'dc7',anon:COMM_ANONS[7],text:'그 향 얼마 전에 샀는데 진짜 돈 아깝지 않아요! 잔향 너무 좋아서 뿌리고 하루 종일 맡게 됨 ㅋㅋ',ts:Date.now()-1000*60*160,likes:5,likedByMe:false,replies:[
       {id:'dr3',anon:COMM_ANONS[0],text:'저도 샀어요!! 후회 제로입니다',ts:Date.now()-1000*60*148},
@@ -6737,7 +6723,7 @@ const _openCommentIds=new Set();
 const _openReplyInputIds=new Set();
 let _commDelegated=false; /* 사용 안 함 — 하위 호환용 */
 
-const COMM_VER='v6';
+const COMM_VER='v7';
 function _loadPosts(){
   try{
     if(localStorage.getItem('tonote_comm_ver')!==COMM_VER) throw new Error('stale');
