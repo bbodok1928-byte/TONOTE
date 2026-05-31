@@ -324,6 +324,29 @@ input,textarea{font-family:inherit;outline:none}
 .comm-comment-send{flex-shrink:0;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;height:34px;transition:opacity .2s;white-space:nowrap}
 .comm-comment-send:disabled{opacity:.35;cursor:not-allowed}
 .comm-comment-send:not(:disabled):active{opacity:.8}
+/* 댓글 좋아요 & 답글 버튼 */
+.comm-cmt-actions{display:flex;align-items:center;gap:10px;margin-top:5px}
+.comm-cmt-like{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;transition:color .15s}
+.comm-cmt-like.liked{color:#E07B7B}
+.comm-cmt-reply-btn{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;transition:color .15s}
+.comm-cmt-reply-btn:hover,.comm-cmt-reply-btn.open{color:var(--primary)}
+/* 대댓글 영역 */
+.comm-replies{margin-top:8px;padding-left:14px;border-left:2px solid var(--bd);display:flex;flex-direction:column;gap:8px}
+.comm-reply-item{display:flex;gap:7px}
+.comm-reply-avatar{width:20px;height:20px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.comm-reply-bubble{flex:1;min-width:0}
+.comm-reply-name{font-size:10px;font-weight:700;color:var(--t2);margin-bottom:1px}
+.comm-reply-txt{font-size:11px;color:var(--t1);line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.comm-reply-time{font-size:10px;color:var(--t3);margin-top:1px}
+/* 대댓글 입력 */
+.comm-reply-input-wrap{margin-top:8px;padding-left:14px;display:none}
+.comm-reply-input-wrap.open{display:flex;gap:7px;align-items:flex-end}
+.comm-reply-input{flex:1;background:var(--s2);border:1.5px solid var(--bd);border-radius:8px;padding:7px 9px;font-size:11px;color:var(--t1);font-family:inherit;outline:none;resize:none;min-height:30px;max-height:72px;line-height:1.5;transition:border-color .2s;overflow:hidden;touch-action:manipulation}
+.comm-reply-input:focus{border-color:var(--primary)}
+.comm-reply-input::placeholder{color:var(--t3)}
+.comm-reply-send{flex-shrink:0;background:var(--primary);color:#fff;font-size:10px;font-weight:800;padding:7px 11px;border:none;border-radius:8px;cursor:pointer;height:30px;transition:opacity .2s;white-space:nowrap}
+.comm-reply-send:disabled{opacity:.35;cursor:not-allowed}
+.comm-reply-send:not(:disabled):active{opacity:.8}
 
 /* ── MY PAGE ──────────────────────────────── */
 .my-profile{padding:20px 20px 24px;display:flex;align-items:center;gap:16px}
@@ -6665,34 +6688,70 @@ const COMM_ANONS=[
 ];
 const COMM_DEFAULT=[
   {id:'d1',anon:COMM_ANONS[0],text:'오늘 부산 날씨 비 오는데 다들 뭐 뿌리셨나요? 저는 상탈 꺼냈어요 🌧️',ts:Date.now()-1000*60*38,likes:14,likedByMe:false,comments:[
-    {id:'dc1',anon:COMM_ANONS[4],text:'저도요 ㅠㅠ 비 오는 날이랑 우디 계열이 찰떡이죠 ☁️ 같이 상탈 팀!',ts:Date.now()-1000*60*28},
-    {id:'dc2',anon:COMM_ANONS[8],text:'상탈33 진짜 레전드 향수죠.. 저는 바이레도 집시워터 꺼냈어요. 비 냄새랑 섞이니까 또 다른 느낌이에요',ts:Date.now()-1000*60*18},
-    {id:'dc3',anon:COMM_ANONS[6],text:'비 오는 날 상탈은 진짜 조합 맞다ㅋㅋ 저는 눈치 없이 시트러스 뿌렸다가 하루 종일 어색했어요 😂',ts:Date.now()-1000*60*9},
+    {id:'dc1',anon:COMM_ANONS[4],text:'저도요 ㅠㅠ 비 오는 날이랑 우디 계열이 찰떡이죠 ☁️ 같이 상탈 팀!',ts:Date.now()-1000*60*28,likes:4,likedByMe:false,replies:[
+      {id:'dr1',anon:COMM_ANONS[6],text:'상탈 팀 +1 🙋',ts:Date.now()-1000*60*20},
+    ]},
+    {id:'dc2',anon:COMM_ANONS[8],text:'상탈33 진짜 레전드 향수죠.. 저는 바이레도 집시워터 꺼냈어요. 비 냄새랑 섞이니까 또 다른 느낌이에요',ts:Date.now()-1000*60*18,likes:6,likedByMe:false,replies:[]},
+    {id:'dc3',anon:COMM_ANONS[6],text:'비 오는 날 상탈은 진짜 조합 맞다ㅋㅋ 저는 눈치 없이 시트러스 뿌렸다가 하루 종일 어색했어요 😂',ts:Date.now()-1000*60*9,likes:2,likedByMe:false,replies:[]},
   ]},
   {id:'d2',anon:COMM_ANONS[3],text:'조말론 우드세이지는 진짜 살냄새 끝판왕인 듯.. 남녀 호불호도 안 갈려요.',ts:Date.now()-1000*60*97,likes:31,likedByMe:false,comments:[
-    {id:'dc4',anon:COMM_ANONS[2],text:'맞아요 ㅋㅋ 뿌리고 나서 왜 나한테서 이렇게 좋은 냄새 나지?? 싶었는데 그거였어요',ts:Date.now()-1000*60*85},
-    {id:'dc5',anon:COMM_ANONS[9],text:'지속력만 조금 더 길었으면 완벽했을 텐데.. 저는 블랙베리 앤 베이 더 오래 가는 것 같더라고요',ts:Date.now()-1000*60*71},
-    {id:'dc6',anon:COMM_ANONS[5],text:'우드세이지 저도 찐팬이에요 🌿 여름에 더 잘 어울리는 것 같은데 요즘도 잘 어울리네요',ts:Date.now()-1000*60*52},
+    {id:'dc4',anon:COMM_ANONS[2],text:'맞아요 ㅋㅋ 뿌리고 나서 왜 나한테서 이렇게 좋은 냄새 나지?? 싶었는데 그거였어요',ts:Date.now()-1000*60*85,likes:11,likedByMe:false,replies:[
+      {id:'dr2',anon:COMM_ANONS[9],text:'저도 완전 공감ㅋㅋ 가족들이 무슨 향이냐고 계속 물어봤어요',ts:Date.now()-1000*60*78},
+    ]},
+    {id:'dc5',anon:COMM_ANONS[9],text:'지속력만 조금 더 길었으면 완벽했을 텐데.. 블랙베리 앤 베이 더 오래 가는 것 같더라고요',ts:Date.now()-1000*60*71,likes:7,likedByMe:false,replies:[]},
+    {id:'dc6',anon:COMM_ANONS[5],text:'우드세이지 저도 찐팬이에요 🌿 여름에도 잘 어울리는 것 같아서 사계절 향수로 쓰고 있어요',ts:Date.now()-1000*60*52,likes:3,likedByMe:false,replies:[]},
   ]},
   {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false,comments:[
-    {id:'dc7',anon:COMM_ANONS[7],text:'그 향 저 얼마 전에 샀는데 진짜 돈 아깝지 않았어요! 잔향 넘 좋아서 뿌리고 하루 종일 맡게 됨 ㅋㅋ',ts:Date.now()-1000*60*160},
-    {id:'dc8',anon:COMM_ANONS[3],text:'살세요!! 후회 없어요 플레르 드 뽀 클래식 중 클래식이잖아요 🌸',ts:Date.now()-1000*60*141},
+    {id:'dc7',anon:COMM_ANONS[7],text:'그 향 얼마 전에 샀는데 진짜 돈 아깝지 않아요! 잔향 너무 좋아서 뿌리고 하루 종일 맡게 됨 ㅋㅋ',ts:Date.now()-1000*60*160,likes:5,likedByMe:false,replies:[
+      {id:'dr3',anon:COMM_ANONS[0],text:'저도 샀어요!! 후회 제로입니다',ts:Date.now()-1000*60*148},
+    ]},
+    {id:'dc8',anon:COMM_ANONS[3],text:'살세요!! 후회 없어요 플레르 드 뽀 클래식 중 클래식이잖아요 🌸',ts:Date.now()-1000*60*141,likes:8,likedByMe:false,replies:[]},
+  ]},
+  {id:'d4',anon:COMM_ANONS[9],text:'논픽션 상탈크림이랑 르라보 상탈33 레이어링 해보신 분? 겹치려나..',ts:Date.now()-1000*60*240,likes:22,likedByMe:false,comments:[
+    {id:'dc9',anon:COMM_ANONS[0],text:'해봤는데 생각보다 잘 어울려요! 상탈크림이 좀 더 크리미하게 잡아줘서 33이 더 부드러워지는 느낌',ts:Date.now()-1000*60*230,likes:9,likedByMe:false,replies:[
+      {id:'dr4',anon:COMM_ANONS[9],text:'오 진짜요?? 도전해볼게요!',ts:Date.now()-1000*60*222},
+    ]},
+    {id:'dc10',anon:COMM_ANONS[5],text:'저는 논픽션 선크림이랑 상탈33 레이어링 했는데 완전 취향저격이었어요 🌿',ts:Date.now()-1000*60*215,likes:6,likedByMe:false,replies:[]},
+  ]},
+  {id:'d5',anon:COMM_ANONS[2],text:'오늘 백화점 투어하면서 딥티크 오르페온 시향했는데 완전히 잔향 살냄새 깡패네요.',ts:Date.now()-1000*60*310,likes:17,likedByMe:false,comments:[
+    {id:'dc11',anon:COMM_ANONS[8],text:'오르페온 저 진짜 좋아하는 향인데ㅠㅠ 첫향이 좀 강하게 느껴지는 분들도 있더라고요',ts:Date.now()-1000*60*295,likes:4,likedByMe:false,replies:[]},
+    {id:'dc12',anon:COMM_ANONS[4],text:'살냄새 덕후로서 추천각이에요 저도 오늘 바로 사고 싶어졌어요 ㅋㅋ',ts:Date.now()-1000*60*280,likes:3,likedByMe:false,replies:[]},
+  ]},
+  {id:'d6',anon:COMM_ANONS[7],text:'여름 다가오니까 시트러스 계열 향수만 손이 가요. 아쿠아 디 파르마 미르토 최고 🍊',ts:Date.now()-1000*60*430,likes:28,likedByMe:false,comments:[
+    {id:'dc13',anon:COMM_ANONS[1],text:'미르토 진짜 여름 향수계 국룰이죠 ㅠㅠ 뿌리고 나면 갑자기 이탈리아 해변에 있는 기분',ts:Date.now()-1000*60*420,likes:12,likedByMe:false,replies:[
+      {id:'dr5',anon:COMM_ANONS[7],text:'맞아요ㅋㅋ 그 느낌이 너무 좋아서 매년 여름마다 꺼내요',ts:Date.now()-1000*60*405},
+    ]},
+    {id:'dc14',anon:COMM_ANONS[6],text:'저는 졸리 루즈 레몬 추천드려요! 미르토보다 좀 더 쌉싸름한 느낌',ts:Date.now()-1000*60*400,likes:5,likedByMe:false,replies:[]},
+    {id:'dc15',anon:COMM_ANONS[3],text:'시트러스 계열은 지속력이 아쉬워서 바디로션이랑 레이어링 하면 훨씬 오래 가더라고요!',ts:Date.now()-1000*60*385,likes:8,likedByMe:false,replies:[]},
+  ]},
+  {id:'d7',anon:COMM_ANONS[5],text:'과하지 않고 은은한 섬유유연제 향 나는 니치 향수 브랜드 추천 좀 해주세요!',ts:Date.now()-1000*60*580,likes:35,likedByMe:false,comments:[
+    {id:'dc16',anon:COMM_ANONS[2],text:'메종 마르지엘라 레플리카 런드리 데이!! 정말 세탁소에서 막 꺼낸 옷 냄새임',ts:Date.now()-1000*60*565,likes:18,likedByMe:false,replies:[
+      {id:'dr6',anon:COMM_ANONS[5],text:'오 런드리데이 제가 딱 찾던 거네요 감사해요 🙏',ts:Date.now()-1000*60*552},
+      {id:'dr7',anon:COMM_ANONS[0],text:'런드리데이 진짜 무조건 추천! 저도 세탁 끝난 이불에서 나는 그 향 느낌이라 아침마다 뿌려요',ts:Date.now()-1000*60*540},
+    ]},
+    {id:'dc17',anon:COMM_ANONS[9],text:'조말론 코튼 블라썸도 부드럽고 깨끗한 향이에요 🤍 섬유유연제 계열 좋아하시면 취향저격일 거예요',ts:Date.now()-1000*60*550,likes:10,likedByMe:false,replies:[]},
+    {id:'dc18',anon:COMM_ANONS[4],text:'아틀리에 코롱 블랑쉬 오라도 추천드려요. 비누 + 약간 파우더리한 느낌인데 완전 착한 향이에요',ts:Date.now()-1000*60*535,likes:7,likedByMe:false,replies:[]},
   ]},
 ];
 
-/* 열린 댓글 섹션 ID 추적 (메모리 상태, 새로고침 시 초기화) */
+/* 열린 댓글·답글 입력 섹션 ID 추적 (메모리 상태) */
 const _openCommentIds=new Set();
+const _openReplyInputIds=new Set(); /* "pid__cid" 형태 */
 
-const COMM_VER='v3'; // 버전 올리면 localStorage 자동 리셋
+const COMM_VER='v4';
 function _loadPosts(){
   try{
-    if(localStorage.getItem('tonote_comm_ver')!==COMM_VER){
-      /* 버전 불일치 → 기본 데이터로 리셋 */
-      throw new Error('stale');
-    }
+    if(localStorage.getItem('tonote_comm_ver')!==COMM_VER) throw new Error('stale');
     const saved=JSON.parse(localStorage.getItem(LS_COMM)||'null');
     if(Array.isArray(saved)){
-      saved.forEach(p=>{if(!Array.isArray(p.comments))p.comments=[];});
+      saved.forEach(p=>{
+        if(!Array.isArray(p.comments))p.comments=[];
+        p.comments.forEach(c=>{
+          if(typeof c.likes!=='number')c.likes=0;
+          if(typeof c.likedByMe!=='boolean')c.likedByMe=false;
+          if(!Array.isArray(c.replies))c.replies=[];
+        });
+      });
       return saved;
     }
   }catch(e){}
@@ -6701,9 +6760,7 @@ function _loadPosts(){
   localStorage.setItem(LS_COMM,JSON.stringify(fresh));
   return fresh;
 }
-function _savePosts(posts){
-  localStorage.setItem(LS_COMM,JSON.stringify(posts));
-}
+function _savePosts(posts){localStorage.setItem(LS_COMM,JSON.stringify(posts));}
 function _commTimeAgo(ts){
   const diff=Math.floor((Date.now()-ts)/1000);
   if(diff<60)return '방금 전';
@@ -6711,20 +6768,48 @@ function _commTimeAgo(ts){
   if(diff<86400)return Math.floor(diff/3600)+'시간 전';
   return Math.floor(diff/86400)+'일 전';
 }
+function _esc(s){return s.replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function _renderComments(p){
   const isOpen=_openCommentIds.has(p.id);
-  const cLen=(p.comments||[]).length;
-  const commentsHtml=(p.comments||[]).map(c=>`
-    <div class="comm-comment-item">
-      <div class="comm-comment-avatar">${c.anon.icon}</div>
-      <div class="comm-comment-bubble">
-        <p class="comm-comment-name">${c.anon.name}</p>
-        <p class="comm-comment-txt">${c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
-        <p class="comm-comment-time">${_commTimeAgo(c.ts)}</p>
-      </div>
-    </div>`).join('');
-  return `
+  const comments=p.comments||[];
+  const commentsHtml=comments.map(c=>{
+    const replyKey=p.id+'__'+c.id;
+    const replyInputOpen=_openReplyInputIds.has(replyKey);
+    const repliesHtml=(c.replies||[]).map(r=>`
+      <div class="comm-reply-item">
+        <div class="comm-reply-avatar">${r.anon.icon}</div>
+        <div class="comm-reply-bubble">
+          <p class="comm-reply-name">${r.anon.name}</p>
+          <p class="comm-reply-txt">${_esc(r.text)}</p>
+          <p class="comm-reply-time">${_commTimeAgo(r.ts)}</p>
+        </div>
+      </div>`).join('');
+    return`
+      <div class="comm-comment-item" id="cmt-${p.id}-${c.id}">
+        <div class="comm-comment-avatar">${c.anon.icon}</div>
+        <div class="comm-comment-bubble">
+          <p class="comm-comment-name">${c.anon.name}</p>
+          <p class="comm-comment-txt">${_esc(c.text)}</p>
+          <p class="comm-comment-time">${_commTimeAgo(c.ts)}</p>
+          <div class="comm-cmt-actions">
+            <button class="comm-cmt-like${c.likedByMe?' liked':''}" onclick="toggleCmtLike('${p.id}','${c.id}')">
+              ${c.likedByMe?'❤️':'🤍'} ${c.likes}
+            </button>
+            <button class="comm-cmt-reply-btn${replyInputOpen?' open':''}" onclick="toggleReplyInput('${p.id}','${c.id}')">답글 달기</button>
+          </div>
+          ${(c.replies||[]).length>0?`<div class="comm-replies">${repliesHtml}</div>`:''}
+          <div class="comm-reply-input-wrap${replyInputOpen?' open':''}" id="reply-wrap-${p.id}-${c.id}">
+            <textarea class="comm-reply-input" id="reply-inp-${p.id}-${c.id}" rows="1"
+              placeholder="답글을 남겨주세요…" maxlength="150"
+              oninput="onReplyInput(this,'${p.id}','${c.id}')" autocomplete="off"></textarea>
+            <button class="comm-reply-send" id="reply-send-${p.id}-${c.id}" disabled
+              onclick="submitReply('${p.id}','${c.id}')">등록</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  return`
     <div class="comm-comments${isOpen?' open':''}" id="comm-cmts-${p.id}">
       ${commentsHtml}
       <div class="comm-comment-input-row">
@@ -6756,7 +6841,7 @@ function renderCommunity(){
         <span class="comm-anon-name">${p.anon.name}</span>
         <span class="comm-time">${_commTimeAgo(p.ts)}</span>
       </div>
-      <div class="comm-card-body">${p.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="comm-card-body">${_esc(p.text)}</div>
       <div class="comm-card-foot">
         <button class="comm-like-btn${p.likedByMe?' liked':''}" onclick="toggleCommLike('${p.id}')">
           <span class="like-ic">${p.likedByMe?'❤️':'🤍'}</span>
@@ -6779,33 +6864,72 @@ function onCommInput(el){
   if(cnt)cnt.textContent=val.length+' / 300';
   if(btn)btn.disabled=val.trim().length===0;
 }
-
 function onCmtInput(el,pid){
   const btn=document.getElementById('cmt-send-'+pid);
   if(btn)btn.disabled=el.value.trim().length===0;
-  /* 높이 자동 확장 */
   el.style.height='auto';
   el.style.height=Math.min(el.scrollHeight,80)+'px';
 }
+function onReplyInput(el,pid,cid){
+  const btn=document.getElementById('reply-send-'+pid+'-'+cid);
+  if(btn)btn.disabled=el.value.trim().length===0;
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,72)+'px';
+}
 
 function toggleCommSection(pid){
-  if(_openCommentIds.has(pid)){
-    _openCommentIds.delete(pid);
-  }else{
-    _openCommentIds.add(pid);
-  }
-  /* 전체 재렌더 대신 해당 카드만 토글 */
+  _openCommentIds.has(pid)?_openCommentIds.delete(pid):_openCommentIds.add(pid);
   const cmts=document.getElementById('comm-cmts-'+pid);
-  const btn=cmts?.closest('.comm-card')?.querySelector('.comm-reply-btn');
+  const btn=document.getElementById('comm-card-'+pid)?.querySelector('.comm-reply-btn');
   if(cmts)cmts.classList.toggle('open',_openCommentIds.has(pid));
   if(btn)btn.classList.toggle('open',_openCommentIds.has(pid));
-  /* 열렸으면 입력창 포커스 */
   if(_openCommentIds.has(pid)){
-    setTimeout(()=>{
-      const inp=document.getElementById('cmt-input-'+pid);
-      if(inp)inp.focus();
-    },200);
+    setTimeout(()=>{document.getElementById('cmt-input-'+pid)?.focus();},200);
   }
+}
+
+function toggleReplyInput(pid,cid){
+  const key=pid+'__'+cid;
+  _openReplyInputIds.has(key)?_openReplyInputIds.delete(key):_openReplyInputIds.add(key);
+  const wrap=document.getElementById('reply-wrap-'+pid+'-'+cid);
+  const btn=document.getElementById('cmt-'+pid+'-'+cid)?.querySelector('.comm-cmt-reply-btn');
+  if(wrap)wrap.classList.toggle('open',_openReplyInputIds.has(key));
+  if(btn)btn.classList.toggle('open',_openReplyInputIds.has(key));
+  if(_openReplyInputIds.has(key)){
+    setTimeout(()=>{document.getElementById('reply-inp-'+pid+'-'+cid)?.focus();},150);
+  }
+}
+
+function toggleCmtLike(pid,cid){
+  const posts=_loadPosts();
+  const post=posts.find(p=>p.id===pid);
+  if(!post)return;
+  const cmt=post.comments.find(c=>c.id===cid);
+  if(!cmt)return;
+  cmt.likedByMe=!cmt.likedByMe;
+  cmt.likes=Math.max(0,(cmt.likes||0)+(cmt.likedByMe?1:-1));
+  _savePosts(posts);
+  renderCommunity();
+}
+
+function submitReply(pid,cid){
+  const inp=document.getElementById('reply-inp-'+pid+'-'+cid);
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text)return;
+  const posts=_loadPosts();
+  const post=posts.find(p=>p.id===pid);
+  if(!post)return;
+  const cmt=post.comments.find(c=>c.id===cid);
+  if(!cmt)return;
+  if(!Array.isArray(cmt.replies))cmt.replies=[];
+  cmt.replies.push({id:'r'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now()});
+  _savePosts(posts);
+  _openCommentIds.add(pid);
+  const key=pid+'__'+cid;
+  _openReplyInputIds.delete(key);
+  renderCommunity();
+  showToast('답글이 등록됐어요 💬');
 }
 
 function submitComment(pid){
@@ -6817,8 +6941,7 @@ function submitComment(pid){
   const post=posts.find(p=>p.id===pid);
   if(!post)return;
   if(!Array.isArray(post.comments))post.comments=[];
-  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
-  post.comments.push({id:'c'+Date.now(),anon,text,ts:Date.now()});
+  post.comments.push({id:'c'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now(),likes:0,likedByMe:false,replies:[]});
   _savePosts(posts);
   _openCommentIds.add(pid);
   renderCommunity();
@@ -6832,16 +6955,7 @@ function submitPost(){
   if(!text){showToast('내용을 입력해주세요');return;}
   const posts=_loadPosts();
   const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
-  const newPost={
-    id:'u'+Date.now(),
-    anon,
-    text,
-    ts:Date.now(),
-    likes:0,
-    likedByMe:false,
-    comments:[],
-  };
-  posts.unshift(newPost);
+  posts.unshift({id:'u'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,comments:[]});
   _savePosts(posts);
   input.value='';
   const cnt=document.getElementById('comm-char');
