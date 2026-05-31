@@ -301,6 +301,26 @@ input,textarea{font-family:inherit;outline:none}
 .comm-like-btn .like-ic{font-size:15px;transition:transform .18s}
 .comm-like-btn.liked .like-ic{transform:scale(1.25)}
 .comm-empty{text-align:center;padding:40px 0;font-size:13px;color:var(--t3);font-family:var(--serif);font-style:italic}
+.comm-reply-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t3);cursor:pointer;background:none;border:none;padding:0;transition:color .18s}
+.comm-reply-btn:hover{color:var(--primary)}
+.comm-reply-btn.open{color:var(--primary)}
+/* 댓글 영역 */
+.comm-comments{margin-top:12px;padding-top:10px;border-top:1px solid var(--bd);display:none}
+.comm-comments.open{display:block}
+.comm-comment-item{display:flex;gap:8px;margin-bottom:10px}
+.comm-comment-avatar{width:24px;height:24px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px}
+.comm-comment-bubble{flex:1;min-width:0}
+.comm-comment-name{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:2px}
+.comm-comment-txt{font-size:12px;color:var(--t1);line-height:1.6;word-break:break-word;white-space:pre-wrap}
+.comm-comment-time{font-size:10px;color:var(--t3);margin-top:2px}
+/* 댓글 입력 */
+.comm-comment-input-row{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
+.comm-comment-input{flex:1;background:var(--s2);border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--t1);font-family:inherit;outline:none;resize:none;min-height:34px;max-height:80px;line-height:1.5;transition:border-color .2s}
+.comm-comment-input:focus{border-color:var(--primary)}
+.comm-comment-input::placeholder{color:var(--t3)}
+.comm-comment-send{flex-shrink:0;background:var(--primary);color:#fff;font-size:11px;font-weight:800;padding:8px 12px;border:none;border-radius:10px;cursor:pointer;height:34px;transition:opacity .2s;white-space:nowrap}
+.comm-comment-send:disabled{opacity:.35;cursor:not-allowed}
+.comm-comment-send:not(:disabled):active{opacity:.8}
 
 /* ── MY PAGE ──────────────────────────────── */
 .my-profile{padding:20px 20px 24px;display:flex;align-items:center;gap:16px}
@@ -6640,17 +6660,28 @@ const COMM_ANONS=[
   {icon:'✨',name:'향수 수집가'},
 ];
 const COMM_DEFAULT=[
-  {id:'d1',anon:COMM_ANONS[0],text:'오늘 부산 날씨 비 오는데 다들 뭐 뿌리셨나요? 저는 상탈 꺼냈어요 🌧️',ts:Date.now()-1000*60*38,likes:14,likedByMe:false},
-  {id:'d2',anon:COMM_ANONS[3],text:'조말론 우드세이지는 진짜 살냄새 끝판왕인 듯.. 남녀 호불호도 안 갈려요.',ts:Date.now()-1000*60*97,likes:31,likedByMe:false},
-  {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false},
+  {id:'d1',anon:COMM_ANONS[0],text:'오늘 부산 날씨 비 오는데 다들 뭐 뿌리셨나요? 저는 상탈 꺼냈어요 🌧️',ts:Date.now()-1000*60*38,likes:14,likedByMe:false,comments:[
+    {id:'dc1',anon:COMM_ANONS[4],text:'저도요! 비 오는 날엔 역시 우디 계열이죠 ☁️',ts:Date.now()-1000*60*22},
+    {id:'dc2',anon:COMM_ANONS[8],text:'상탈33 진짜 레전드 향수죠.. 저는 바이레도 집시워터 꺼냈어요',ts:Date.now()-1000*60*15},
+  ]},
+  {id:'d2',anon:COMM_ANONS[3],text:'조말론 우드세이지는 진짜 살냄새 끝판왕인 듯.. 남녀 호불호도 안 갈려요.',ts:Date.now()-1000*60*97,likes:31,likedByMe:false,comments:[
+    {id:'dc3',anon:COMM_ANONS[2],text:'맞아요 뿌리고 나서 왜 이렇게 나한테서 좋은 냄새가 나지 싶었는데 그거였어요 ㅋㅋ',ts:Date.now()-1000*60*80},
+  ]},
+  {id:'d3',anon:COMM_ANONS[1],text:'딥티크 플레르 드 뽀 첫향은 쨍한데 잔향 미쳤네요 ㅠㅠ 살까 말까 고민 중..',ts:Date.now()-1000*60*182,likes:9,likedByMe:false,comments:[]},
 ];
+
+/* 열린 댓글 섹션 ID 추적 (메모리 상태, 새로고침 시 초기화) */
+const _openCommentIds=new Set();
 
 function _loadPosts(){
   try{
     const saved=JSON.parse(localStorage.getItem(LS_COMM)||'null');
-    if(Array.isArray(saved))return saved;
+    if(Array.isArray(saved)){
+      /* 구버전 데이터에 comments 필드 없으면 보정 */
+      saved.forEach(p=>{if(!Array.isArray(p.comments))p.comments=[];});
+      return saved;
+    }
   }catch(e){}
-  /* 초기 데이터셋 저장 후 반환 */
   localStorage.setItem(LS_COMM,JSON.stringify(COMM_DEFAULT));
   return JSON.parse(JSON.stringify(COMM_DEFAULT));
 }
@@ -6665,6 +6696,31 @@ function _commTimeAgo(ts){
   return Math.floor(diff/86400)+'일 전';
 }
 
+function _renderComments(p){
+  const isOpen=_openCommentIds.has(p.id);
+  const cLen=(p.comments||[]).length;
+  const commentsHtml=(p.comments||[]).map(c=>`
+    <div class="comm-comment-item">
+      <div class="comm-comment-avatar">${c.anon.icon}</div>
+      <div class="comm-comment-bubble">
+        <p class="comm-comment-name">${c.anon.name}</p>
+        <p class="comm-comment-txt">${c.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+        <p class="comm-comment-time">${_commTimeAgo(c.ts)}</p>
+      </div>
+    </div>`).join('');
+  return `
+    <div class="comm-comments${isOpen?' open':''}" id="comm-cmts-${p.id}">
+      ${commentsHtml}
+      <div class="comm-comment-input-row">
+        <textarea class="comm-comment-input" id="cmt-input-${p.id}" rows="1"
+          placeholder="댓글을 남겨주세요…" maxlength="150"
+          oninput="onCmtInput(this,'${p.id}')" autocomplete="off"></textarea>
+        <button class="comm-comment-send" id="cmt-send-${p.id}" disabled
+          onclick="submitComment('${p.id}')">등록</button>
+      </div>
+    </div>`;
+}
+
 function renderCommunity(){
   const posts=_loadPosts();
   const feed=document.getElementById('comm-feed');
@@ -6675,8 +6731,10 @@ function renderCommunity(){
     feed.innerHTML='<p class="comm-empty">아직 첫 이야기를 기다리고 있어요 🌿</p>';
     return;
   }
-  feed.innerHTML=posts.map(p=>`
-    <div class="comm-card" id="comm-card-${p.id}">
+  feed.innerHTML=posts.map(p=>{
+    const cLen=(p.comments||[]).length;
+    const isOpen=_openCommentIds.has(p.id);
+    return`<div class="comm-card" id="comm-card-${p.id}">
       <div class="comm-card-top">
         <div class="comm-anon-avatar">${p.anon.icon}</div>
         <span class="comm-anon-name">${p.anon.name}</span>
@@ -6688,8 +6746,14 @@ function renderCommunity(){
           <span class="like-ic">${p.likedByMe?'❤️':'🤍'}</span>
           <span>${p.likes}</span>
         </button>
+        <button class="comm-reply-btn${isOpen?' open':''}" onclick="toggleCommSection('${p.id}')">
+          <span>💬</span>
+          <span>댓글 ${cLen}개</span>
+        </button>
       </div>
-    </div>`).join('');
+      ${_renderComments(p)}
+    </div>`;
+  }).join('');
 }
 
 function onCommInput(el){
@@ -6698,6 +6762,51 @@ function onCommInput(el){
   const btn=document.getElementById('comm-submit-btn');
   if(cnt)cnt.textContent=val.length+' / 300';
   if(btn)btn.disabled=val.trim().length===0;
+}
+
+function onCmtInput(el,pid){
+  const btn=document.getElementById('cmt-send-'+pid);
+  if(btn)btn.disabled=el.value.trim().length===0;
+  /* 높이 자동 확장 */
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,80)+'px';
+}
+
+function toggleCommSection(pid){
+  if(_openCommentIds.has(pid)){
+    _openCommentIds.delete(pid);
+  }else{
+    _openCommentIds.add(pid);
+  }
+  /* 전체 재렌더 대신 해당 카드만 토글 */
+  const cmts=document.getElementById('comm-cmts-'+pid);
+  const btn=cmts?.closest('.comm-card')?.querySelector('.comm-reply-btn');
+  if(cmts)cmts.classList.toggle('open',_openCommentIds.has(pid));
+  if(btn)btn.classList.toggle('open',_openCommentIds.has(pid));
+  /* 열렸으면 입력창 포커스 */
+  if(_openCommentIds.has(pid)){
+    setTimeout(()=>{
+      const inp=document.getElementById('cmt-input-'+pid);
+      if(inp)inp.focus();
+    },200);
+  }
+}
+
+function submitComment(pid){
+  const inp=document.getElementById('cmt-input-'+pid);
+  if(!inp)return;
+  const text=inp.value.trim();
+  if(!text)return;
+  const posts=_loadPosts();
+  const post=posts.find(p=>p.id===pid);
+  if(!post)return;
+  if(!Array.isArray(post.comments))post.comments=[];
+  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
+  post.comments.push({id:'c'+Date.now(),anon,text,ts:Date.now()});
+  _savePosts(posts);
+  _openCommentIds.add(pid);
+  renderCommunity();
+  showToast('댓글이 등록됐어요 💬');
 }
 
 function submitPost(){
@@ -6714,6 +6823,7 @@ function submitPost(){
     ts:Date.now(),
     likes:0,
     likedByMe:false,
+    comments:[],
   };
   posts.unshift(newPost);
   _savePosts(posts);
