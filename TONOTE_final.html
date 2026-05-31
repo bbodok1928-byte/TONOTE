@@ -6737,23 +6737,32 @@ const _openCommentIds=new Set();
 const _openReplyInputIds=new Set();
 let _commDelegated=false; /* 사용 안 함 — 하위 호환용 */
 
-const COMM_VER='v5';
+const COMM_VER='v6';
 function _loadPosts(){
   try{
     if(localStorage.getItem('tonote_comm_ver')!==COMM_VER) throw new Error('stale');
     const saved=JSON.parse(localStorage.getItem(LS_COMM)||'null');
-    if(Array.isArray(saved)){
+    if(Array.isArray(saved)&&saved.length>0){
+      /* anon 필드 누락 등 구버전 구조이면 통째로 리셋 */
+      const broken=saved.some(p=>!p.id||!p.anon||!p.anon.icon||!p.anon.name);
+      if(broken) throw new Error('broken');
       saved.forEach(p=>{
         if(!Array.isArray(p.comments))p.comments=[];
+        if(typeof p.likes!=='number')p.likes=0;
+        if(typeof p.likedByMe!=='boolean')p.likedByMe=false;
         p.comments.forEach(c=>{
+          if(!c.anon||!c.anon.icon)c.anon=COMM_ANONS[0];
           if(typeof c.likes!=='number')c.likes=0;
           if(typeof c.likedByMe!=='boolean')c.likedByMe=false;
           if(!Array.isArray(c.replies))c.replies=[];
+          c.replies.forEach(r=>{if(!r.anon||!r.anon.icon)r.anon=COMM_ANONS[0];});
         });
       });
       return saved;
     }
   }catch(e){}
+  /* 구버전 키 전부 삭제 후 깨끗하게 적재 */
+  ['tonote_feeds','tonote_comm','tonote_comm_posts','tonote_comm_ver'].forEach(k=>localStorage.removeItem(k));
   localStorage.setItem('tonote_comm_ver',COMM_VER);
   const fresh=JSON.parse(JSON.stringify(COMM_DEFAULT));
   localStorage.setItem(LS_COMM,JSON.stringify(fresh));
@@ -6790,6 +6799,7 @@ function _onReplyInput(ta,pid,cid){
 }
 
 function _renderComments(p){
+  try{
   const isOpen=_openCommentIds.has(p.id);
   const comments=p.comments||[];
   const commentsHtml=comments.map(c=>{
@@ -6845,6 +6855,12 @@ function _renderComments(p){
           onclick="_doSubCmt('${p.id}')">등록</button>
       </div>
     </div>`;
+  }catch(e){return`<div class="comm-comments" data-cmts-pid="${p.id}">
+    <div class="comm-comment-input-row">
+      <textarea class="comm-comment-input" rows="1" placeholder="댓글을 남겨주세요…"
+        data-pid="${p.id}" oninput="_onCmtInput(this,'${p.id}')" autocomplete="off"></textarea>
+      <button class="comm-comment-send" disabled onclick="_doSubCmt('${p.id}')">등록</button>
+    </div></div>`;}
 }
 
 function _commScrollPos(){
@@ -6855,32 +6871,24 @@ function _commRestoreScroll(pos){
   if(s)s.scrollTop=pos;
 }
 
-function renderCommunity(){
-  const scrollPos=_commScrollPos();
-  const posts=_loadPosts();
-  const feed=document.getElementById('comm-feed');
-  const cnt=document.getElementById('comm-post-count');
-  if(!feed)return;
-  if(cnt)cnt.textContent=posts.length+'개의 이야기';
-  if(posts.length===0){
-    feed.innerHTML='<p class="comm-empty">아직 첫 이야기를 기다리고 있어요 🌿</p>';
-    return;
-  }
-  feed.innerHTML=posts.map(p=>{
+function _renderCard(p){
+  try{
     const cLen=(p.comments||[]).length;
     const isOpen=_openCommentIds.has(p.id);
+    const icon=p.anon?.icon||'🌿';
+    const name=p.anon?.name||'향수 입문자';
     return`<div class="comm-card" id="comm-card-${p.id}">
       <div class="comm-card-top">
-        <div class="comm-anon-avatar">${p.anon.icon}</div>
-        <span class="comm-anon-name">${p.anon.name}</span>
+        <div class="comm-anon-avatar">${icon}</div>
+        <span class="comm-anon-name">${name}</span>
         <span class="comm-time">${_commTimeAgo(p.ts)}</span>
       </div>
-      <div class="comm-card-body">${_esc(p.text)}</div>
+      <div class="comm-card-body">${_esc(p.text||'')}</div>
       <div class="comm-card-foot">
         <button class="comm-like-btn${p.likedByMe?' liked':''}"
           onclick="_doPostLike('${p.id}')">
           <span class="like-ic">${p.likedByMe?'❤️':'🤍'}</span>
-          <span>${p.likes}</span>
+          <span>${p.likes||0}</span>
         </button>
         <button class="comm-reply-btn${isOpen?' open':''}"
           onclick="_doToggleCmts('${p.id}')">
@@ -6889,7 +6897,24 @@ function renderCommunity(){
       </div>
       ${_renderComments(p)}
     </div>`;
-  }).join('');
+  }catch(e){return'';}
+}
+
+function renderCommunity(){
+  const scrollPos=_commScrollPos();
+  let posts;
+  try{posts=_loadPosts();}catch(e){
+    posts=JSON.parse(JSON.stringify(COMM_DEFAULT));
+  }
+  const feed=document.getElementById('comm-feed');
+  const cnt=document.getElementById('comm-post-count');
+  if(!feed)return;
+  if(cnt)cnt.textContent=posts.length+'개의 이야기';
+  if(!posts.length){
+    feed.innerHTML='<p class="comm-empty">아직 첫 이야기를 기다리고 있어요 🌿</p>';
+    return;
+  }
+  feed.innerHTML=posts.map(p=>_renderCard(p)).join('');
   _initCommDelegation();
   requestAnimationFrame(()=>_commRestoreScroll(scrollPos));
 }
