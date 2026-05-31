@@ -6771,38 +6771,22 @@ function _esc(s){return s.replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ── 커뮤니티 이벤트 위임 (1회 등록, re-render 후에도 유효) ── */
 function _initCommDelegation(){
-  const feed=document.getElementById('comm-feed');
-  if(!feed)return;
+  /* 이벤트 위임 완전 제거 — 모든 버튼은 inline onclick으로 직접 연결 */
+}
 
-  /* onclick 프로퍼티 직접 대입 — 매 렌더마다 항상 최신 핸들러로 덮어씀
-     (addEventListener 중복 누적 or 타이밍 미스 문제 원천 차단) */
-  feed.onclick=function(e){
-    const btn=e.target.closest('[data-ca]');
-    if(!btn)return;
-    e.stopPropagation();
-    const a=btn.dataset.ca, pid=btn.dataset.pid, cid=btn.dataset.cid;
-    if(a==='post-like')      _doPostLike(pid);
-    else if(a==='toggle-cmts')  _doToggleCmts(pid);
-    else if(a==='cmt-like')     _doCmtLike(pid,cid);
-    else if(a==='toggle-reply') _doToggleReply(pid,cid);
-    else if(a==='sub-cmt')      _doSubCmt(pid);
-    else if(a==='sub-reply')    _doSubReply(pid,cid);
-  };
-
-  feed.oninput=function(e){
-    const ta=e.target;
-    if(ta.dataset.caInput==='cmt'){
-      const pid=ta.dataset.pid;
-      const sbtn=feed.querySelector(`[data-ca="sub-cmt"][data-pid="${pid}"]`);
-      if(sbtn)sbtn.disabled=ta.value.trim().length===0;
-      ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,80)+'px';
-    }else if(ta.dataset.caInput==='reply'){
-      const pid=ta.dataset.pid,cid=ta.dataset.cid;
-      const sbtn=feed.querySelector(`[data-ca="sub-reply"][data-pid="${pid}"][data-cid="${cid}"]`);
-      if(sbtn)sbtn.disabled=ta.value.trim().length===0;
-      ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,72)+'px';
-    }
-  };
+/* 댓글 textarea 입력 핸들러 */
+function _onCmtInput(ta,pid){
+  const card=document.getElementById('comm-card-'+pid);
+  const sbtn=card?.querySelector('.comm-comment-send');
+  if(sbtn)sbtn.disabled=ta.value.trim().length===0;
+  ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,80)+'px';
+}
+/* 답글 textarea 입력 핸들러 */
+function _onReplyInput(ta,pid,cid){
+  const card=document.getElementById('comm-card-'+pid);
+  const sbtn=card?.querySelector(`.comm-reply-send[data-cid="${cid}"]`);
+  if(sbtn)sbtn.disabled=ta.value.trim().length===0;
+  ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,72)+'px';
 }
 
 function _renderComments(p){
@@ -6829,20 +6813,21 @@ function _renderComments(p){
           <p class="comm-comment-time">${_commTimeAgo(c.ts)}</p>
           <div class="comm-cmt-actions">
             <button class="comm-cmt-like${c.likedByMe?' liked':''}"
-              data-ca="cmt-like" data-pid="${p.id}" data-cid="${c.id}">
+              data-cid="${c.id}" onclick="_doCmtLike('${p.id}','${c.id}')">
               ${c.likedByMe?'❤️':'🤍'} ${c.likes}
             </button>
             <button class="comm-cmt-reply-btn${replyInputOpen?' open':''}"
-              data-ca="toggle-reply" data-pid="${p.id}" data-cid="${c.id}">답글 달기</button>
+              data-cid="${c.id}" onclick="_doToggleReply('${p.id}','${c.id}')">답글 달기</button>
           </div>
           ${(c.replies||[]).length>0?`<div class="comm-replies">${repliesHtml}</div>`:''}
           <div class="comm-reply-input-wrap${replyInputOpen?' open':''}">
             <textarea class="comm-reply-input" rows="1"
               placeholder="답글을 남겨주세요…" maxlength="150"
-              data-ca-input="reply" data-pid="${p.id}" data-cid="${c.id}"
-              autocomplete="off" touch-action="manipulation"></textarea>
+              data-cid="${c.id}" data-pid="${p.id}"
+              oninput="_onReplyInput(this,'${p.id}','${c.id}')"
+              autocomplete="off"></textarea>
             <button class="comm-reply-send" disabled
-              data-ca="sub-reply" data-pid="${p.id}" data-cid="${c.id}">등록</button>
+              data-cid="${c.id}" onclick="_doSubReply('${p.id}','${c.id}')">등록</button>
           </div>
         </div>
       </div>`;
@@ -6853,10 +6838,11 @@ function _renderComments(p){
       <div class="comm-comment-input-row">
         <textarea class="comm-comment-input" rows="1"
           placeholder="댓글을 남겨주세요…" maxlength="150"
-          data-ca-input="cmt" data-pid="${p.id}"
-          autocomplete="off" touch-action="manipulation"></textarea>
+          data-pid="${p.id}"
+          oninput="_onCmtInput(this,'${p.id}')"
+          autocomplete="off"></textarea>
         <button class="comm-comment-send" disabled
-          data-ca="sub-cmt" data-pid="${p.id}">등록</button>
+          onclick="_doSubCmt('${p.id}')">등록</button>
       </div>
     </div>`;
 }
@@ -6892,12 +6878,12 @@ function renderCommunity(){
       <div class="comm-card-body">${_esc(p.text)}</div>
       <div class="comm-card-foot">
         <button class="comm-like-btn${p.likedByMe?' liked':''}"
-          data-ca="post-like" data-pid="${p.id}">
+          onclick="_doPostLike('${p.id}')">
           <span class="like-ic">${p.likedByMe?'❤️':'🤍'}</span>
           <span>${p.likes}</span>
         </button>
         <button class="comm-reply-btn${isOpen?' open':''}"
-          data-ca="toggle-cmts" data-pid="${p.id}">
+          onclick="_doToggleCmts('${p.id}')">
           <span>💬</span><span>댓글 ${cLen}개</span>
         </button>
       </div>
@@ -6926,7 +6912,7 @@ function _doPostLike(pid){
   _savePosts(posts);
   /* 좋아요는 버튼만 교체 (스크롤 유지) */
   const card=document.getElementById('comm-card-'+pid);
-  const btn=card?.querySelector('[data-ca="post-like"]');
+  const btn=card?.querySelector('.comm-like-btn');
   if(btn){
     btn.className='comm-like-btn'+(post.likedByMe?' liked':'');
     btn.innerHTML=`<span class="like-ic">${post.likedByMe?'❤️':'🤍'}</span><span>${post.likes}</span>`;
@@ -6959,7 +6945,7 @@ function _doCmtLike(pid,cid){
   _savePosts(posts);
   /* 댓글 좋아요도 버튼만 교체 — 카드 ID로 직접 획득 */
   const card=document.getElementById('comm-card-'+pid);
-  const btn=card?.querySelector(`[data-ca="cmt-like"][data-cid="${cid}"]`);
+  const btn=card?.querySelector(`.comm-cmt-like[data-cid="${cid}"]`);
   if(btn){
     btn.className='comm-cmt-like'+(cmt.likedByMe?' liked':'');
     btn.innerHTML=`${cmt.likedByMe?'❤️':'🤍'} ${cmt.likes}`;
@@ -6972,7 +6958,7 @@ function _doToggleReply(pid,cid){
   const isOpen=_openReplyInputIds.has(key);
   /* 카드 ID로 직접 획득 후 cid로만 탐색 */
   const card=document.getElementById('comm-card-'+pid);
-  const rbtn=card?.querySelector(`[data-ca="toggle-reply"][data-cid="${cid}"]`);
+  const rbtn=card?.querySelector(`.comm-cmt-reply-btn[data-cid="${cid}"]`);
   const wrap=rbtn?.closest('.comm-comment-bubble')?.querySelector('.comm-reply-input-wrap');
   if(wrap)wrap.classList.toggle('open',isOpen);
   if(rbtn)rbtn.classList.toggle('open',isOpen);
@@ -6984,8 +6970,8 @@ function _doToggleReply(pid,cid){
 }
 
 function _doSubCmt(pid){
-  const feed=document.getElementById('comm-feed');
-  const inp=feed?.querySelector(`[data-ca-input="cmt"][data-pid="${pid}"]`);
+  const card2=document.getElementById('comm-card-'+pid);
+  const inp=card2?.querySelector('.comm-comment-input');
   if(!inp)return;
   const text=inp.value.trim();
   if(!text)return;
@@ -6998,9 +6984,8 @@ function _doSubCmt(pid){
   post.comments.push(newCmt);
   _savePosts(posts);
 
-  /* ── 재렌더 없이 해당 카드 댓글 영역에만 삽입 (카드 ID 직접 획득) ── */
-  const card2=document.getElementById('comm-card-'+pid);
-  const cmtSection=card2?.querySelector('.comm-comments');
+  /* ── 재렌더 없이 해당 카드 댓글 영역에만 삽입 ── */
+  const cmtSection=card2.querySelector('.comm-comments');
   const inputRow=cmtSection?.querySelector('.comm-comment-input-row');
   if(cmtSection&&inputRow){
     const div=document.createElement('div');
@@ -7011,25 +6996,28 @@ function _doSubCmt(pid){
         <p class="comm-comment-txt">${_esc(text)}</p>
         <p class="comm-comment-time">방금 전</p>
         <div class="comm-cmt-actions">
-          <button class="comm-cmt-like" data-ca="cmt-like" data-pid="${pid}" data-cid="${newCmt.id}">🤍 0</button>
-          <button class="comm-cmt-reply-btn" data-ca="toggle-reply" data-pid="${pid}" data-cid="${newCmt.id}">답글 달기</button>
+          <button class="comm-cmt-like" data-cid="${newCmt.id}"
+            onclick="_doCmtLike('${pid}','${newCmt.id}')">🤍 0</button>
+          <button class="comm-cmt-reply-btn" data-cid="${newCmt.id}"
+            onclick="_doToggleReply('${pid}','${newCmt.id}')">답글 달기</button>
         </div>
         <div class="comm-reply-input-wrap">
           <textarea class="comm-reply-input" rows="1" placeholder="답글을 남겨주세요…" maxlength="150"
-            data-ca-input="reply" data-pid="${pid}" data-cid="${newCmt.id}" autocomplete="off"></textarea>
-          <button class="comm-reply-send" disabled data-ca="sub-reply" data-pid="${pid}" data-cid="${newCmt.id}">등록</button>
+            data-pid="${pid}" data-cid="${newCmt.id}"
+            oninput="_onReplyInput(this,'${pid}','${newCmt.id}')"
+            autocomplete="off"></textarea>
+          <button class="comm-reply-send" disabled data-cid="${newCmt.id}"
+            onclick="_doSubReply('${pid}','${newCmt.id}')">등록</button>
         </div>
       </div>`;
     cmtSection.insertBefore(div,inputRow);
   }
 
-  /* 댓글 수 뱃지 수술적 업데이트 (카드 ID 직접 획득) */
-  const toggleBtn=card2?.querySelector('.comm-reply-btn');
+  /* 댓글 수 뱃지·입력창 수술적 업데이트 */
+  const toggleBtn=card2.querySelector('.comm-reply-btn');
   if(toggleBtn)toggleBtn.innerHTML=`<span>💬</span><span>댓글 ${post.comments.length}개</span>`;
-
-  /* 입력창 초기화 */
   inp.value='';inp.style.height='auto';
-  const sbtn=card2?.querySelector('[data-ca="sub-cmt"]');
+  const sbtn=card2.querySelector('.comm-comment-send');
   if(sbtn)sbtn.disabled=true;
 
   _openCommentIds.add(pid);
@@ -7039,7 +7027,7 @@ function _doSubCmt(pid){
 function _doSubReply(pid,cid){
   /* 카드 ID로 직접 획득 */
   const card=document.getElementById('comm-card-'+pid);
-  const inp=card?.querySelector(`[data-ca-input="reply"][data-cid="${cid}"]`);
+  const inp=card?.querySelector(`.comm-reply-input[data-cid="${cid}"]`);
   if(!inp)return;
   const text=inp.value.trim();
   if(!text)return;
@@ -7055,7 +7043,7 @@ function _doSubReply(pid,cid){
   _savePosts(posts);
 
   /* ── 재렌더 없이 해당 댓글 bubble 안에만 삽입 ── */
-  const replyBtn=card?.querySelector(`[data-ca="toggle-reply"][data-cid="${cid}"]`);
+  const replyBtn=card?.querySelector(`.comm-cmt-reply-btn[data-cid="${cid}"]`);
   const bubble=replyBtn?.closest('.comm-comment-bubble');
   if(bubble){
     let repliesDiv=bubble.querySelector('.comm-replies');
@@ -7111,21 +7099,22 @@ function submitPost(){
       </div>
       <div class="comm-card-body">${_esc(text)}</div>
       <div class="comm-card-foot">
-        <button class="comm-like-btn" data-ca="post-like" data-pid="${newPost.id}">
+        <button class="comm-like-btn" onclick="_doPostLike('${newPost.id}')">
           <span class="like-ic">🤍</span><span>0</span>
         </button>
-        <button class="comm-reply-btn" data-ca="toggle-cmts" data-pid="${newPost.id}">
+        <button class="comm-reply-btn" onclick="_doToggleCmts('${newPost.id}')">
           <span>💬</span><span>댓글 0개</span>
         </button>
       </div>
-      <div class="comm-comments" data-cmts-pid="${newPost.id}">
+      <div class="comm-comments">
         <div class="comm-comment-input-row">
           <textarea class="comm-comment-input" rows="1"
             placeholder="댓글을 남겨주세요…" maxlength="150"
-            data-ca-input="cmt" data-pid="${newPost.id}"
+            data-pid="${newPost.id}"
+            oninput="_onCmtInput(this,'${newPost.id}')"
             autocomplete="off"></textarea>
           <button class="comm-comment-send" disabled
-            data-ca="sub-cmt" data-pid="${newPost.id}">등록</button>
+            onclick="_doSubCmt('${newPost.id}')">등록</button>
         </div>
       </div>`;
     feed.prepend(card);
