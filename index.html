@@ -6994,10 +6994,45 @@ function _doSubCmt(pid){
   const post=posts.find(p=>p.id===pid);
   if(!post)return;
   if(!Array.isArray(post.comments))post.comments=[];
-  post.comments.push({id:'c'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now(),likes:0,likedByMe:false,replies:[]});
+  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
+  const newCmt={id:'c'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,replies:[]};
+  post.comments.push(newCmt);
   _savePosts(posts);
+
+  /* ── 재렌더 없이 해당 카드 댓글 영역에만 삽입 ── */
+  const cmtSection=feed.querySelector(`[data-cmts-pid="${pid}"]`);
+  const inputRow=cmtSection?.querySelector('.comm-comment-input-row');
+  if(cmtSection&&inputRow){
+    const div=document.createElement('div');
+    div.className='comm-comment-item';
+    div.innerHTML=`<div class="comm-comment-avatar">${anon.icon}</div>
+      <div class="comm-comment-bubble">
+        <p class="comm-comment-name">${anon.name}</p>
+        <p class="comm-comment-txt">${_esc(text)}</p>
+        <p class="comm-comment-time">방금 전</p>
+        <div class="comm-cmt-actions">
+          <button class="comm-cmt-like" data-ca="cmt-like" data-pid="${pid}" data-cid="${newCmt.id}">🤍 0</button>
+          <button class="comm-cmt-reply-btn" data-ca="toggle-reply" data-pid="${pid}" data-cid="${newCmt.id}">답글 달기</button>
+        </div>
+        <div class="comm-reply-input-wrap">
+          <textarea class="comm-reply-input" rows="1" placeholder="답글을 남겨주세요…" maxlength="150"
+            data-ca-input="reply" data-pid="${pid}" data-cid="${newCmt.id}" autocomplete="off"></textarea>
+          <button class="comm-reply-send" disabled data-ca="sub-reply" data-pid="${pid}" data-cid="${newCmt.id}">등록</button>
+        </div>
+      </div>`;
+    cmtSection.insertBefore(div,inputRow);
+  }
+
+  /* 댓글 수 뱃지 수술적 업데이트 */
+  const toggleBtn=feed.querySelector(`[data-ca="toggle-cmts"][data-pid="${pid}"]`);
+  if(toggleBtn)toggleBtn.innerHTML=`<span>💬</span><span>댓글 ${post.comments.length}개</span>`;
+
+  /* 입력창 초기화 */
+  inp.value='';inp.style.height='auto';
+  const sbtn=feed.querySelector(`[data-ca="sub-cmt"][data-pid="${pid}"]`);
+  if(sbtn)sbtn.disabled=true;
+
   _openCommentIds.add(pid);
-  renderCommunity();
   showToast('댓글이 등록됐어요 💬');
 }
 
@@ -7013,11 +7048,41 @@ function _doSubReply(pid,cid){
   const cmt=post.comments.find(c=>c.id===cid);
   if(!cmt)return;
   if(!Array.isArray(cmt.replies))cmt.replies=[];
-  cmt.replies.push({id:'r'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now()});
+  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
+  const newReply={id:'r'+Date.now(),anon,text,ts:Date.now()};
+  cmt.replies.push(newReply);
   _savePosts(posts);
+
+  /* ── 재렌더 없이 해당 댓글 bubble 안에만 삽입 ── */
+  const replyBtn=feed.querySelector(`[data-ca="toggle-reply"][data-pid="${pid}"][data-cid="${cid}"]`);
+  const bubble=replyBtn?.closest('.comm-comment-bubble');
+  if(bubble){
+    let repliesDiv=bubble.querySelector('.comm-replies');
+    if(!repliesDiv){
+      repliesDiv=document.createElement('div');
+      repliesDiv.className='comm-replies';
+      const inputWrap=bubble.querySelector('.comm-reply-input-wrap');
+      bubble.insertBefore(repliesDiv,inputWrap);
+    }
+    const replyEl=document.createElement('div');
+    replyEl.className='comm-reply-item';
+    replyEl.innerHTML=`<div class="comm-reply-avatar">${anon.icon}</div>
+      <div class="comm-reply-bubble">
+        <p class="comm-reply-name">${anon.name}</p>
+        <p class="comm-reply-txt">${_esc(text)}</p>
+        <p class="comm-reply-time">방금 전</p>
+      </div>`;
+    repliesDiv.appendChild(replyEl);
+  }
+
+  /* 답글 입력창 닫기 */
+  const key=pid+'__'+cid;
+  _openReplyInputIds.delete(key);
+  inp.closest('.comm-reply-input-wrap')?.classList.remove('open');
+  if(replyBtn)replyBtn.classList.remove('open');
+  inp.value='';inp.style.height='auto';
+
   _openCommentIds.add(pid);
-  _openReplyInputIds.delete(pid+'__'+cid);
-  renderCommunity();
   showToast('답글이 등록됐어요 💬');
 }
 
@@ -7027,14 +7092,55 @@ function submitPost(){
   const text=input.value.trim();
   if(!text){showToast('내용을 입력해주세요');return;}
   const posts=_loadPosts();
-  posts.unshift({id:'u'+Date.now(),anon:COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)],text,ts:Date.now(),likes:0,likedByMe:false,comments:[]});
+  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
+  const newPost={id:'u'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,comments:[]};
+  posts.unshift(newPost);
   _savePosts(posts);
+
+  /* ── 재렌더 없이 피드 최상단에 카드 1개만 삽입 ── */
+  const feed=document.getElementById('comm-feed');
+  if(feed){
+    const card=document.createElement('div');
+    card.className='comm-card';
+    card.id='comm-card-'+newPost.id;
+    card.innerHTML=`<div class="comm-card-top">
+        <div class="comm-anon-avatar">${anon.icon}</div>
+        <span class="comm-anon-name">${anon.name}</span>
+        <span class="comm-time">방금 전</span>
+      </div>
+      <div class="comm-card-body">${_esc(text)}</div>
+      <div class="comm-card-foot">
+        <button class="comm-like-btn" data-ca="post-like" data-pid="${newPost.id}">
+          <span class="like-ic">🤍</span><span>0</span>
+        </button>
+        <button class="comm-reply-btn" data-ca="toggle-cmts" data-pid="${newPost.id}">
+          <span>💬</span><span>댓글 0개</span>
+        </button>
+      </div>
+      <div class="comm-comments" data-cmts-pid="${newPost.id}">
+        <div class="comm-comment-input-row">
+          <textarea class="comm-comment-input" rows="1"
+            placeholder="댓글을 남겨주세요…" maxlength="150"
+            data-ca-input="cmt" data-pid="${newPost.id}"
+            autocomplete="off"></textarea>
+          <button class="comm-comment-send" disabled
+            data-ca="sub-cmt" data-pid="${newPost.id}">등록</button>
+        </div>
+      </div>`;
+    feed.prepend(card);
+  }
+
+  /* 게시글 수 뱃지 업데이트 */
+  const cnt=document.getElementById('comm-post-count');
+  if(cnt)cnt.textContent=posts.length+'개의 이야기';
+
+  /* 입력창 초기화 */
   input.value='';
-  const cnt=document.getElementById('comm-char');
+  const charEl=document.getElementById('comm-char');
   const btn=document.getElementById('comm-submit-btn');
-  if(cnt)cnt.textContent='0 / 300';
+  if(charEl)charEl.textContent='0 / 300';
   if(btn)btn.disabled=true;
-  renderCommunity();
+
   showToast('이야기가 공유됐어요 🌿');
 }
 
