@@ -1056,6 +1056,27 @@ input,textarea{font-family:inherit;outline:none}
 
 @media(min-width:420px){.app{box-shadow:0 0 60px rgba(150,100,70,.15)}}
 
+/* ── STORES OVERLAY MODAL ──────────────── */
+#overlay-stores{position:fixed;inset:0;z-index:800;display:none;align-items:flex-end;justify-content:center;background:rgba(30,24,20,.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#overlay-stores.open{display:flex}
+.ov-stores-panel{width:100%;max-width:420px;height:90svh;background:var(--bg);border-radius:24px 24px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:panelUp .38s cubic-bezier(.32,1,.28,1) both}
+@keyframes panelUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ov-stores-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.ov-stores-ttl{font-family:var(--sans);font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--t1)}
+.ov-stores-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--bd);background:var(--s1);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--t2);cursor:pointer;transition:all .2s}
+.ov-stores-close:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.ov-stores-body{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.ov-stores-body::-webkit-scrollbar{display:none}
+/* My tab — stores finder banner */
+.my-spaces-banner{margin:0 20px 24px;border-radius:18px;background:linear-gradient(135deg,#F5EDE5 0%,#EFE3D6 100%);border:1px solid rgba(176,116,102,.18);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .22s,transform .15s}
+.my-spaces-banner:active{transform:scale(.99)}
+.my-spaces-banner:hover{box-shadow:var(--shadow-m)}
+.my-spaces-banner-ic{font-size:30px;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(176,116,102,.22))}
+.my-spaces-banner-body{flex:1}
+.my-spaces-banner-ttl{font-size:14px;font-weight:800;color:var(--t1);margin-bottom:3px;letter-spacing:-.01em}
+.my-spaces-banner-sub{font-size:11px;color:var(--t2);line-height:1.5}
+.my-spaces-banner-arr{font-size:18px;color:var(--primary);flex-shrink:0}
+
 /* ── MAP (Leaflet) ──────────────────────── */
 .map-wrap{position:relative;height:230px;flex-shrink:0;background:#EDE8E0}
 #spaces-map{width:100%;height:100%}
@@ -1326,22 +1347,7 @@ input,textarea{font-family:inherit;outline:none}
       </div>
     </div>
 
-    <!-- ── SPACES ── -->
-    <div class="screen" id="screen-spaces">
-      <div class="top-bar"><span class="bar-logo">시향 공간</span></div>
-      <!-- 지도 영역 -->
-      <div class="map-wrap">
-        <div id="spaces-map"></div>
-        <div class="map-overlay-label" onclick="locateUser()" title="내 위치 기준 정렬">✦ &nbsp;내 주변 시향 공간</div>
-        <button class="map-locate-btn" id="locate-btn" onclick="locateUser()" title="내 위치로 이동">◎</button>
-      </div>
-      <!-- 매장 목록 -->
-      <div class="spaces-subhead">
-        <p class="eyebrow">매장 목록</p>
-        <p>직원 개입도를 꼭 확인하세요</p>
-      </div>
-      <div class="sec"><div id="spaces-list"></div></div>
-    </div>
+    <!-- ── SPACES (screen 제거됨 — overlay-stores 모달로 이동) ── -->
 
     <!-- ── MY ── -->
     <div class="screen" id="screen-my">
@@ -1378,6 +1384,15 @@ input,textarea{font-family:inherit;outline:none}
         <div class="sec-head"><div><p class="sec-ttl">시향 키트 신청 내역</p></div></div>
         <div id="orders-list"></div>
       </div>
+      <!-- 시향공간 찾기 배너 -->
+      <div class="my-spaces-banner" onclick="openStoreModal()">
+        <span class="my-spaces-banner-ic">📍</span>
+        <div class="my-spaces-banner-body">
+          <p class="my-spaces-banner-ttl">내 주변 시향공간 확인하기</p>
+          <p class="my-spaces-banner-sub">직원 개입도 낮은 매장만 엄선 · 거리순 자동 정렬</p>
+        </div>
+        <span class="my-spaces-banner-arr">›</span>
+      </div>
       <div class="my-menu" style="margin-bottom:24px">
         <div class="my-menu-item" onclick="openSample()">
           <div class="my-menu-left"><span class="my-menu-icon">📦</span><div><p class="my-menu-lbl">샘플 키트 신청</p><p class="my-menu-sub">최대 3개 · 집에서 눈치 없이</p></div></div>
@@ -1386,10 +1401,6 @@ input,textarea{font-family:inherit;outline:none}
         <div class="my-menu-item">
           <div class="my-menu-left"><span class="my-menu-icon">⚖️</span><div><p class="my-menu-lbl">비교 목록</p><p class="my-menu-sub" id="compare-count-lbl">비교 중인 향수 없음</p></div></div>
           <span class="my-menu-arrow" onclick="openCompare()">›</span>
-        </div>
-        <div class="my-menu-item">
-          <div class="my-menu-left"><span class="my-menu-icon">📍</span><div><p class="my-menu-lbl">방문한 시향 공간</p><p class="my-menu-sub">홍대 올리브영 외 1곳</p></div></div>
-          <span class="my-menu-arrow">›</span>
         </div>
         <div class="my-menu-item" onclick="openSettings()">
           <div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p><p class="my-menu-sub" id="settings-summary-lbl">AI 추천 · 카테고리 · 가격대</p></div></div>
@@ -1430,10 +1441,33 @@ input,textarea{font-family:inherit;outline:none}
     <div class="bni on" onclick="switchTab('home')"><span class="bni-ic">✦</span><span>홈</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('explore')"><span class="bni-ic">🔍</span><span>탐색</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('ai')"><span class="bni-ic">✨</span><span>AI</span><div class="bni-bar"></div></div>
-    <div class="bni" onclick="switchTab('spaces')"><span class="bni-ic">📍</span><span>시향 공간</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('community')"><span class="bni-ic">💬</span><span>커뮤니티</span><div class="bni-bar"></div></div>
     <div class="bni" onclick="switchTab('my')"><span class="bni-ic">👤</span><span>마이</span><div class="bni-bar"></div></div>
   </nav>
+</div>
+
+<!-- ════ STORES OVERLAY MODAL ════ -->
+<div id="overlay-stores" onclick="if(event.target===this)closeStoreModal()">
+  <div class="ov-stores-panel">
+    <div class="ov-stores-hd">
+      <span class="ov-stores-ttl">📍 내 주변 시향 공간</span>
+      <button class="ov-stores-close" onclick="closeStoreModal()">✕</button>
+    </div>
+    <div class="ov-stores-body">
+      <!-- 지도 영역 -->
+      <div class="map-wrap">
+        <div id="spaces-map"></div>
+        <div class="map-overlay-label" onclick="locateUser()" title="내 위치 기준 정렬">✦ &nbsp;내 주변 시향 공간</div>
+        <button class="map-locate-btn" id="locate-btn" onclick="locateUser()" title="내 위치로 이동">◎</button>
+      </div>
+      <!-- 매장 목록 -->
+      <div class="spaces-subhead">
+        <p class="eyebrow">매장 목록</p>
+        <p>직원 개입도를 꼭 확인하세요</p>
+      </div>
+      <div class="sec"><div id="spaces-list"></div></div>
+    </div>
+  </div>
 </div>
 
 <!-- ════ DETAIL OVERLAY ════ -->
@@ -4614,11 +4648,11 @@ function initAll(){
 function switchTab(tab){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
-  document.getElementById('screen-'+tab).classList.add('active');
-  document.querySelectorAll('.bni')[['home','explore','ai','spaces','community','my'].indexOf(tab)]?.classList.add('on');
+  const screen=document.getElementById('screen-'+tab);
+  if(screen)screen.classList.add('active');
+  document.querySelectorAll('.bni')[['home','explore','ai','community','my'].indexOf(tab)]?.classList.add('on');
   if(tab==='my')updateMyPage();
   if(tab==='community')renderCommunity();
-  if(tab==='spaces')setTimeout(()=>initMap(),80); // 탭 전환 후 DOM 확보
 }
 
 /* ── HOME ── */
@@ -6350,6 +6384,25 @@ function _highlightCard(id){
    ─ 에러 시 fallback = 홍대 중심(37.556, 126.923)
    ─ 지도·리스트 조작을 완전히 분리 → 어느 쪽 실패해도 나머지 보장
 ────────────────────────────────────────── */
+/* ── 시향공간 모달 열기/닫기 ── */
+let _storeModalInited=false;
+function openStoreModal(){
+  const ov=document.getElementById('overlay-stores');
+  if(!ov)return;
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
+  if(!_storeModalInited){
+    _storeModalInited=true;
+    setTimeout(()=>{initMap();locateUser();},120);
+  }
+}
+function closeStoreModal(){
+  const ov=document.getElementById('overlay-stores');
+  if(!ov)return;
+  ov.classList.remove('open');
+  document.body.style.overflow='';
+}
+
 function locateUser(){
   var FALLBACK_LAT=37.556, FALLBACK_LNG=126.923;
   var btn=document.getElementById('locate-btn');
