@@ -410,7 +410,8 @@ input,textarea{font-family:inherit;outline:none}
 /* 문항 슬라이드 */
 .scent-body{flex:1;overflow:hidden;position:relative;min-height:320px}
 .scent-slide{position:absolute;inset:0;padding:20px 20px 0;display:flex;flex-direction:column;opacity:0;transform:translateX(48px);transition:opacity .32s ease,transform .32s ease;pointer-events:none;overflow-y:auto}
-.scent-slide.active{opacity:1;transform:none;pointer-events:all}
+.scent-slide.active{opacity:1;transform:none}
+#overlay-scent-test.open .scent-slide.active{pointer-events:all}
 .scent-slide.exit{opacity:0;transform:translateX(-48px)}
 .scent-q{font-family:var(--serif);font-size:17px;color:var(--t1);line-height:1.55;margin-bottom:18px;font-style:italic}
 /* 선택지 버튼 */
