@@ -280,7 +280,7 @@ input,textarea{font-family:inherit;outline:none}
 .pdot.on{background:var(--primary);border-color:var(--primary)}
 .pressure-val{font-size:10px;font-weight:700}
 .pv-low{color:var(--sage)}.pv-med{color:var(--warm)}.pv-high{color:#C47A7A}
-.space-badge{flex-shrink:0;align-self:flex-start;font-size:10px;font-weight:700;padding:4px 10px;border-radius:50px;margin-top:2px}
+.space-badge{flex-shrink:0;font-size:10px;font-weight:700;padding:3px 9px;border-radius:50px;line-height:1.4;white-space:nowrap}
 .sb-open{background:rgba(100,190,120,.1);color:#4EA86E;border:1px solid rgba(100,190,120,.25)}
 .sb-closed{background:rgba(200,80,80,.07);color:#C05050;border:1px solid rgba(200,80,80,.2)}
 .sb-pop{background:var(--primary-soft);color:var(--primary);border:1px solid rgba(176,116,102,.25)}
@@ -1199,7 +1199,7 @@ input,textarea{font-family:inherit;outline:none}
 @keyframes locatePulse{0%,100%{transform:scale(1)}45%{transform:scale(1.22)}85%{transform:scale(.94)}}
 .map-locate-btn.pulsing{animation:locatePulse .55s ease-in-out}
 /* 거리 배지 */
-.dist-badge{font-size:9.5px;font-weight:700;color:var(--primary);background:var(--primary-soft);border:1px solid rgba(176,116,102,.18);border-radius:50px;padding:2px 8px;flex-shrink:0;align-self:flex-start;margin-top:1px;white-space:nowrap}
+.dist-badge{font-size:9.5px;font-weight:700;color:var(--primary);background:var(--primary-soft);border:1px solid rgba(176,116,102,.18);border-radius:50px;padding:3px 8px;flex-shrink:0;white-space:nowrap;line-height:1.4}
 .spaces-notice{background:#FEF9F3;border:1px solid rgba(176,116,102,.22);border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:12px;color:var(--t2);text-align:center;line-height:1.75;animation:fadeUp .35s ease both}
 /* 매장 카드 페이드인 */
 @keyframes scardIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
@@ -6413,8 +6413,8 @@ function renderSpaces(sortedList,distMap){
     return`<div class="space-card" id="scard-${s.id}" style="animation-delay:${i*.045}s" onclick="panToStore(${s.id})">
     <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
     <div class="space-info">
-      <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:2px">
-        <p class="space-name" style="flex:1;margin:0">${s.name}</p>${dist}
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">
+        <p class="space-name" style="flex:1;min-width:0;margin:0">${s.name}</p>${dist}<span class="space-badge ${st.cls}">${st.label}</span>
       </div>
       <p class="space-addr" style="font-size:9.5px;color:var(--primary);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px">${s.brand}</p>
       <p class="space-addr">📍 ${s.addr}</p>
@@ -6427,7 +6427,6 @@ function renderSpaces(sortedList,distMap){
       ${s.deadline?`<p style="font-size:10px;color:var(--warm);margin-top:5px;font-weight:700">⏰ ${s.deadline}</p>`:''}
       <a class="map-link-btn" href="${getMapUrl(s)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">🌐 실제 영업시간 확인하기</a>
     </div>
-    <span class="space-badge ${st.cls}">${st.label}</span>
   </div>`;
   }).join('');
   if(distMap){
