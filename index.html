@@ -6634,7 +6634,7 @@ function _highlightCard(id){
      ① 거리 계산 + 정렬  ② 리스트 렌더  ③ 지도 이동  ④ 버튼 복구
    ─ 에러 시 fallback = 부산 센텀시티역 (35.1689, 129.1321)
    ─ 지도·리스트 조작을 완전히 분리 → 어느 쪽 실패해도 나머지 보장
-   ─ alert() 절대 사용 않음 — 모든 에러는 showToast + fallback 처리
+   ─ alert() / showToast() 일절 없음 — 에러 시 완전 무음 센텀시티역 폴백
 ────────────────────────────────────────── */
 /* ══════════════════════════════════════════
    시향공간 모달 열기·닫기
@@ -6763,12 +6763,9 @@ function locateUser(){
   }
 
   /* ── ⑤ 에러/fallback 파이프라인 ── */
-  function _onError(errCode){
-    /* 권한 거부(1) · 위치 불가(2) · 타임아웃(3) 모두 alert 없이 조용히 처리 */
-    var msg=errCode===1
-      ?'📍 위치 권한이 거부되어 부산 센텀시티역 기준으로 시향 공간을 안내해 드립니다.'
-      :'📍 위치를 가져올 수 없어 부산 센텀시티역 기준으로 시향 공간을 안내해 드립니다.';
-    showToast(msg);
+  function _onError(){
+    /* 권한 거부·위치 불가·타임아웃·미지원 모두 완전 무음 처리 —
+       alert / showToast 일절 없이 센텀시티역 기본값으로 조용히 폴백 */
     _updateSpacesBanner(FALLBACK_LAT,FALLBACK_LNG);
     /* 리스트 즉시 갱신 */
     _renderList(FALLBACK_LAT,FALLBACK_LNG);
@@ -6783,21 +6780,21 @@ function locateUser(){
       navigator.geolocation.getCurrentPosition(
         function(pos){
           try{_onSuccess(pos.coords.latitude,pos.coords.longitude);}
-          catch(e){_onError(0);}
+          catch(e){_onError();}
         },
-        function(err){
-          /* PositionError: code 1=PERMISSION_DENIED, 2=UNAVAILABLE, 3=TIMEOUT */
-          try{_onError(err?err.code:0);}catch(e){_onError(0);}
+        function(){
+          /* PositionError — 코드 무관하게 무음 폴백 */
+          try{_onError();}catch(e){_onError();}
         },
         {timeout:7000,maximumAge:60000,enableHighAccuracy:false}
       );
     }else{
-      _onError(2);
+      _onError();
     }
   }catch(e){
     /* navigator.geolocation 자체가 없거나 예외 — 완전 방어 */
     console.warn('[TONOTE] geolocation unavailable:',e);
-    _onError(2);
+    _onError();
   }
 }
 
