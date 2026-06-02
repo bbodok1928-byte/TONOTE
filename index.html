@@ -461,6 +461,22 @@ input,textarea{font-family:inherit;outline:none}
 .my-menu-lbl{font-size:14px;color:var(--t1)}
 .my-menu-sub{font-size:11px;color:var(--t3);margin-top:1px}
 .my-menu-arrow{color:var(--t3);font-size:14px}
+/* ── 마이 탭 하단: 고객지원 + 계정 + 푸터 ── */
+.my-section-ttl{font-size:10px;font-weight:700;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;padding:0 20px;margin:28px 0 6px}
+.my-support-menu{margin:0 20px 4px}
+.my-support-item{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:opacity .15s}
+.my-support-item:last-child{border-bottom:none}
+.my-support-item:active{opacity:.65}
+.my-support-left{display:flex;align-items:center;gap:11px}
+.my-support-icon{font-size:16px;width:20px;text-align:center}
+.my-support-lbl{font-size:13.5px;color:var(--t1)}
+.my-account-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:28px 0 20px;padding:0 20px}
+.my-account-lnk{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;transition:color .15s}
+.my-account-lnk:hover{color:var(--t1)}
+.my-account-div{width:1px;height:10px;background:var(--bd)}
+.my-footer{padding:0 20px 36px;text-align:center}
+.my-footer-ver{font-size:10px;color:var(--t3);font-family:var(--serif);font-style:italic;letter-spacing:.04em;margin-bottom:4px}
+.my-footer-copy{font-size:9.5px;color:rgba(120,100,90,.4);letter-spacing:.02em}
 
 /* ── 마이 프로필 편집 ── */
 .my-name-row{display:flex;align-items:center;gap:7px;margin-bottom:3px}
@@ -1528,6 +1544,45 @@ input,textarea{font-family:inherit;outline:none}
           <div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p><p class="my-menu-sub" id="settings-summary-lbl">AI 추천 · 카테고리 · 가격대</p></div></div>
           <span class="my-menu-arrow" style="position:relative">›<span class="set-apply-badge" id="settings-badge"></span></span>
         </div>
+      </div>
+
+      <!-- ── 고객 지원 섹션 ── -->
+      <p class="my-section-ttl">고객 지원</p>
+      <div class="my-support-menu">
+        <div class="my-support-item" onclick="showToast('준비 중인 기능입니다 🌿')">
+          <div class="my-support-left">
+            <span class="my-support-icon">📢</span>
+            <p class="my-support-lbl">공지사항</p>
+          </div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+        <div class="my-support-item" onclick="showToast('준비 중인 기능입니다 🌿')">
+          <div class="my-support-left">
+            <span class="my-support-icon">❓</span>
+            <p class="my-support-lbl">자주 묻는 질문</p>
+          </div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+        <div class="my-support-item" onclick="showToast('준비 중인 기능입니다 🌿')">
+          <div class="my-support-left">
+            <span class="my-support-icon">✉️</span>
+            <p class="my-support-lbl">1:1 카운셀링 문의</p>
+          </div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+      </div>
+
+      <!-- ── 계정 관리 ── -->
+      <div class="my-account-row">
+        <button class="my-account-lnk" onclick="showToast('준비 중인 기능입니다 🌿')">로그아웃</button>
+        <div class="my-account-div"></div>
+        <button class="my-account-lnk" onclick="showToast('준비 중인 기능입니다 🌿')">회원 탈퇴</button>
+      </div>
+
+      <!-- ── 브랜드 푸터 ── -->
+      <div class="my-footer">
+        <p class="my-footer-ver">TONOTE Application v1.0.0</p>
+        <p class="my-footer-copy">© 2026 8조 TONOTE. All rights reserved.</p>
       </div>
     </div>
 
