@@ -6535,10 +6535,18 @@ function _highlightCard(id){
    locateUser: 두 트리거(overlay 라벨, ◎ 버튼) 공통 핸들러
    ─ 성공·실패 모두 동일한 4단계 파이프라인 보장
      ① 거리 계산 + 정렬  ② 리스트 렌더  ③ 지도 이동  ④ 버튼 복구
-   ─ 에러 시 fallback = 홍대 중심(37.556, 126.923)
+   ─ 에러 시 fallback = 부산 센텀시티역 (35.1689, 129.1321)
    ─ 지도·리스트 조작을 완전히 분리 → 어느 쪽 실패해도 나머지 보장
+   ─ alert() 절대 사용 않음 — 모든 에러는 showToast + fallback 처리
 ────────────────────────────────────────── */
-/* ── 시향공간 모달 열기/닫기 ── */
+/* ══════════════════════════════════════════
+   시향공간 모달 열기·닫기
+   ─ 폴백 기준점: 부산 센텀시티역 (35.1689, 129.1321)
+   ─ 모달 오픈 즉시 폴백 좌표로 리스트 선렌더 → 위치 획득 성공 시 갱신
+══════════════════════════════════════════ */
+/* 전역 기본 좌표 (부산 센텀시티역) */
+var _DEFAULT_LAT=35.1689, _DEFAULT_LNG=129.1321;
+
 let _storeModalInited=false;
 function openStoreModal(){
   const ov=document.getElementById('overlay-stores');
@@ -6547,7 +6555,27 @@ function openStoreModal(){
   document.body.style.overflow='hidden';
   if(!_storeModalInited){
     _storeModalInited=true;
-    setTimeout(()=>{initMap();locateUser();},120);
+    /* ① 모달 오픈 즉시: 저장된 위치 or 센텀시티 기본값으로 리스트 선렌더 */
+    (function _preRender(){
+      try{
+        var savedLat=parseFloat(localStorage.getItem('tonote_user_lat')||'');
+        var savedLng=parseFloat(localStorage.getItem('tonote_user_lng')||'');
+        var lat=isNaN(savedLat)?_DEFAULT_LAT:savedLat;
+        var lng=isNaN(savedLng)?_DEFAULT_LNG:savedLng;
+        var distMap={};
+        var sorted=STORES.map(function(s){
+          var d=_haversineDist(lat,lng,s.lat,s.lng);
+          distMap[s.id]=d;
+          return Object.assign({},s,{_dist:d});
+        }).sort(function(a,b){return a._dist-b._dist;});
+        renderSpaces(sorted,distMap);
+      }catch(e){console.warn('[TONOTE] preRender err:',e);}
+    })();
+    /* ② 120ms 뒤 지도 초기화 + GPS 획득 시도 */
+    setTimeout(function(){
+      try{initMap();}catch(e){}
+      try{locateUser();}catch(e){}
+    },120);
   }
 }
 function closeStoreModal(){
@@ -6560,8 +6588,10 @@ function closeStoreModal(){
 /* ── 마이 탭 시향공간 배너 맛보기 업데이트 ── */
 function _updateSpacesBanner(lat,lng){
   try{
-    var useLat=lat!==undefined?lat:parseFloat(localStorage.getItem('tonote_user_lat')||'37.556');
-    var useLng=lng!==undefined?lng:parseFloat(localStorage.getItem('tonote_user_lng')||'126.923');
+    var savedLat=parseFloat(localStorage.getItem('tonote_user_lat')||'');
+    var savedLng=parseFloat(localStorage.getItem('tonote_user_lng')||'');
+    var useLat=lat!==undefined?lat:(isNaN(savedLat)?_DEFAULT_LAT:savedLat);
+    var useLng=lng!==undefined?lng:(isNaN(savedLng)?_DEFAULT_LNG:savedLng);
     var nearest=null,minDist=Infinity;
     STORES.forEach(function(s){
       var d=_haversineDist(useLat,useLng,s.lat,s.lng);
@@ -6575,7 +6605,8 @@ function _updateSpacesBanner(lat,lng){
 }
 
 function locateUser(){
-  var FALLBACK_LAT=37.556, FALLBACK_LNG=126.923;
+  /* 폴백: 부산 센텀시티역 (35.1689, 129.1321) */
+  var FALLBACK_LAT=_DEFAULT_LAT, FALLBACK_LNG=_DEFAULT_LNG;
   var btn=document.getElementById('locate-btn');
 
   /* ── ① 버튼 로딩 상태 ── */
@@ -6635,9 +6666,12 @@ function locateUser(){
   }
 
   /* ── ⑤ 에러/fallback 파이프라인 ── */
-  function _onError(){
-    /* 토스트 */
-    showToast('실제 위치 정보를 가져올 수 없어 기본 위치(홍대 중심) 기준으로 시향 공간을 추천해 드립니다.');
+  function _onError(errCode){
+    /* 권한 거부(1) · 위치 불가(2) · 타임아웃(3) 모두 alert 없이 조용히 처리 */
+    var msg=errCode===1
+      ?'📍 위치 권한이 거부되어 부산 센텀시티역 기준으로 시향 공간을 안내해 드립니다.'
+      :'📍 위치를 가져올 수 없어 부산 센텀시티역 기준으로 시향 공간을 안내해 드립니다.';
+    showToast(msg);
     _updateSpacesBanner(FALLBACK_LAT,FALLBACK_LNG);
     /* 리스트 즉시 갱신 */
     _renderList(FALLBACK_LAT,FALLBACK_LNG);
@@ -6647,14 +6681,26 @@ function locateUser(){
   }
 
   /* ── ⑥ 분기 ── */
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      function(pos){_onSuccess(pos.coords.latitude,pos.coords.longitude);},
-      function(){_onError();},
-      {timeout:6000,maximumAge:30000,enableHighAccuracy:false}
-    );
-  }else{
-    _onError();
+  try{
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        function(pos){
+          try{_onSuccess(pos.coords.latitude,pos.coords.longitude);}
+          catch(e){_onError(0);}
+        },
+        function(err){
+          /* PositionError: code 1=PERMISSION_DENIED, 2=UNAVAILABLE, 3=TIMEOUT */
+          try{_onError(err?err.code:0);}catch(e){_onError(0);}
+        },
+        {timeout:7000,maximumAge:60000,enableHighAccuracy:false}
+      );
+    }else{
+      _onError(2);
+    }
+  }catch(e){
+    /* navigator.geolocation 자체가 없거나 예외 — 완전 방어 */
+    console.warn('[TONOTE] geolocation unavailable:',e);
+    _onError(2);
   }
 }
 
