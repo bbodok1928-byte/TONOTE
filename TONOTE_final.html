@@ -68,7 +68,7 @@ input,textarea{font-family:inherit;outline:none}
 #app-shell{position:absolute;inset:0;opacity:0;transform:translateY(20px);transition:opacity .9s ease,transform .9s ease;display:flex;flex-direction:column}
 #app-shell.visible{opacity:1;transform:none}
 .screens{flex:1;position:relative;overflow:hidden}
-.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:none;flex-direction:column;padding-bottom:var(--nav)}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:none;flex-direction:column;padding-bottom:20px}
 .screen::-webkit-scrollbar{display:none}
 .screen.active{display:flex}
 
@@ -87,7 +87,7 @@ input,textarea{font-family:inherit;outline:none}
 .ibt{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--s1);display:flex;align-items:center;justify-content:center;color:var(--t2);transition:all .2s;box-shadow:var(--shadow)}
 .ibt:hover{border-color:var(--primary);color:var(--primary)}
 
-.sec{padding:0 20px 28px}
+.sec{padding:0 20px 16px}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
 .sec-ttl{font-family:var(--serif);font-size:18px;font-weight:400;color:var(--t1);letter-spacing:.03em}
 .sec-sub{font-size:11px;color:var(--t3);margin-top:2px}
@@ -472,11 +472,11 @@ input,textarea{font-family:inherit;outline:none}
 .my-support-left{display:flex;align-items:center;gap:11px}
 .my-support-icon{font-size:16px;width:20px;text-align:center}
 .my-support-lbl{font-size:13.5px;color:var(--t1)}
-.my-account-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:28px 0 20px;padding:0 20px}
+.my-account-row{display:flex;align-items:center;justify-content:center;gap:16px;margin:22px 0 8px;padding:0 20px}
 .my-account-lnk{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;transition:color .15s}
 .my-account-lnk:hover{color:var(--t1)}
 .my-account-div{width:1px;height:10px;background:var(--bd)}
-.my-footer{padding:0 20px 36px;text-align:center}
+.my-footer{padding:0 20px 12px;text-align:center}
 .my-footer-ver{font-size:10px;color:var(--t3);font-family:var(--serif);font-style:italic;letter-spacing:.04em;margin-bottom:4px}
 .my-footer-copy{font-size:9.5px;color:rgba(120,100,90,.4);letter-spacing:.02em}
 
