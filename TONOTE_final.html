@@ -234,6 +234,20 @@ input,textarea{font-family:inherit;outline:none}
 .typing-dots span:nth-child(2){animation-delay:.15s}.typing-dots span:nth-child(3){animation-delay:.3s}
 .typing-lbl{font-size:11px;color:var(--t3);font-family:var(--serif);font-style:italic;letter-spacing:.02em}
 @keyframes bounce{0%,80%,100%{transform:translateY(0);background:var(--t3)}40%{transform:translateY(-6px);background:var(--primary)}}
+/* ── AI 감성 로딩 인디케이터 ── */
+.ai-loading-wrap{align-self:flex-start;max-width:88%;background:linear-gradient(135deg,var(--s1) 0%,#F5EDE5 100%);border:1px solid rgba(176,116,102,.2);border-radius:4px 18px 18px 18px;padding:14px 18px 16px;box-shadow:var(--shadow);animation:aiLoadIn .34s cubic-bezier(.4,0,.2,1);transition:opacity .42s ease,transform .38s ease}
+.ai-loading-wrap.ai-hiding{opacity:0;transform:translateY(6px)}
+.ai-loading-lbl{font-family:var(--serif);font-style:italic;font-size:12.5px;color:var(--t2);margin-bottom:12px;letter-spacing:.01em;line-height:1.6}
+.ai-shimmer-row{display:flex;flex-direction:column;gap:7px}
+.ai-shimmer{height:7px;border-radius:4px;background:linear-gradient(90deg,rgba(176,116,102,.12) 0%,rgba(176,116,102,.32) 40%,rgba(176,116,102,.12) 80%);background-size:250% 100%;animation:shimmerSlide 1.8s ease-in-out infinite}
+.ai-shimmer:nth-child(2){width:75%;animation-delay:.18s}
+.ai-shimmer:nth-child(3){width:54%;animation-delay:.36s}
+.ai-loading-dots{display:flex;gap:5px;align-items:center;margin-top:10px}
+.ai-loading-dots span{width:5px;height:5px;border-radius:50%;background:rgba(176,116,102,.5);animation:aiDotPulse 1.4s ease-in-out infinite}
+.ai-loading-dots span:nth-child(2){animation-delay:.2s}.ai-loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes shimmerSlide{0%{background-position:250% 0}100%{background-position:-250% 0}}
+@keyframes aiLoadIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes aiDotPulse{0%,80%,100%{opacity:.35;transform:scale(.85)}40%{opacity:1;transform:scale(1.15)}}
 /* 타이핑 효과 중 커서 깜빡임 */
 .typing-cursor::after{content:'▋';font-size:.85em;color:var(--primary);opacity:1;animation:cursorBlink .55s step-end infinite;margin-left:1px}
 @keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
@@ -1148,14 +1162,23 @@ input,textarea{font-family:inherit;outline:none}
 .ov-stores-body{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
 .ov-stores-body::-webkit-scrollbar{display:none}
 /* My tab — stores finder banner */
-.my-spaces-banner{margin:0 20px 24px;border-radius:18px;background:linear-gradient(135deg,#F5EDE5 0%,#EFE3D6 100%);border:1px solid rgba(176,116,102,.18);padding:18px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .22s,transform .15s}
+.my-spaces-banner{margin:0 20px 24px;border-radius:20px;background:linear-gradient(135deg,#FBF6F1 0%,#F3E8DC 55%,#EBD9C8 100%);border:1px solid rgba(176,116,102,.2);padding:0;display:flex;flex-direction:column;cursor:pointer;box-shadow:0 2px 16px rgba(176,116,102,.13);transition:box-shadow .22s,transform .15s;overflow:hidden;position:relative}
+.my-spaces-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,0) 60%);pointer-events:none}
 .my-spaces-banner:active{transform:scale(.99)}
-.my-spaces-banner:hover{box-shadow:var(--shadow-m)}
-.my-spaces-banner-ic{font-size:30px;flex-shrink:0;filter:drop-shadow(0 2px 6px rgba(176,116,102,.22))}
-.my-spaces-banner-body{flex:1}
-.my-spaces-banner-ttl{font-size:14px;font-weight:800;color:var(--t1);margin-bottom:3px;letter-spacing:-.01em}
-.my-spaces-banner-sub{font-size:11px;color:var(--t2);line-height:1.5}
-.my-spaces-banner-arr{font-size:18px;color:var(--primary);flex-shrink:0}
+.my-spaces-banner:hover{box-shadow:0 4px 22px rgba(176,116,102,.22)}
+.my-spaces-banner-top{display:flex;align-items:center;gap:13px;padding:16px 18px 10px}
+.my-spaces-banner-pin-wrap{width:42px;height:42px;border-radius:12px;background:rgba(176,116,102,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.my-spaces-banner-pin{font-size:22px;display:block}
+.my-spaces-banner-body{flex:1;min-width:0}
+.my-spaces-banner-ttl{font-size:13.5px;font-weight:800;color:var(--t1);margin-bottom:5px;letter-spacing:-.02em;line-height:1.3}
+.my-spaces-banner-nearest{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.my-spaces-banner-pulse{width:7px;height:7px;border-radius:50%;background:var(--primary);flex-shrink:0;animation:locationPulse 1.8s ease-in-out infinite}
+.my-spaces-banner-store{font-size:12px;font-weight:700;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.my-spaces-banner-dist{font-size:11px;color:var(--t3);background:rgba(176,116,102,.12);border-radius:20px;padding:1px 7px;flex-shrink:0;margin-left:2px}
+.my-spaces-banner-arr{font-size:20px;color:var(--primary);flex-shrink:0;opacity:.7}
+.my-spaces-banner-foot{padding:9px 18px 13px;border-top:1px solid rgba(176,116,102,.12)}
+.my-spaces-banner-sub{font-size:10.5px;color:var(--t3);line-height:1.5}
+@keyframes locationPulse{0%,100%{opacity:.6;transform:scale(.85)}50%{opacity:1;transform:scale(1.2)}}
 
 /* ── MAP (Leaflet) ──────────────────────── */
 .map-wrap{position:relative;height:230px;flex-shrink:0;background:#EDE8E0}
@@ -1464,14 +1487,25 @@ input,textarea{font-family:inherit;outline:none}
         <div class="sec-head"><div><p class="sec-ttl">시향 키트 신청 내역</p></div></div>
         <div id="orders-list"></div>
       </div>
-      <!-- 시향공간 찾기 배너 -->
+      <!-- 시향공간 찾기 배너 카드 -->
       <div class="my-spaces-banner" onclick="openStoreModal()">
-        <span class="my-spaces-banner-ic">📍</span>
-        <div class="my-spaces-banner-body">
-          <p class="my-spaces-banner-ttl">내 주변 시향공간 확인하기</p>
+        <div class="my-spaces-banner-top">
+          <div class="my-spaces-banner-pin-wrap">
+            <span class="my-spaces-banner-pin">📍</span>
+          </div>
+          <div class="my-spaces-banner-body">
+            <p class="my-spaces-banner-ttl">가장 가까운 시향 공간을 찾아보세요</p>
+            <div class="my-spaces-banner-nearest">
+              <span class="my-spaces-banner-pulse"></span>
+              <span class="my-spaces-banner-store" id="banner-nearest-store">올리브영 홍대점</span>
+              <span class="my-spaces-banner-dist" id="banner-nearest-dist">1.2km</span>
+            </div>
+          </div>
+          <span class="my-spaces-banner-arr">›</span>
+        </div>
+        <div class="my-spaces-banner-foot">
           <p class="my-spaces-banner-sub">직원 개입도 낮은 매장만 엄선 · 거리순 자동 정렬</p>
         </div>
-        <span class="my-spaces-banner-arr">›</span>
       </div>
       <div class="my-menu" style="margin-bottom:24px">
         <div class="my-menu-item" onclick="openSample()">
@@ -6506,6 +6540,23 @@ function closeStoreModal(){
   document.body.style.overflow='';
 }
 
+/* ── 마이 탭 시향공간 배너 맛보기 업데이트 ── */
+function _updateSpacesBanner(lat,lng){
+  try{
+    var useLat=lat!==undefined?lat:parseFloat(localStorage.getItem('tonote_user_lat')||'37.556');
+    var useLng=lng!==undefined?lng:parseFloat(localStorage.getItem('tonote_user_lng')||'126.923');
+    var nearest=null,minDist=Infinity;
+    STORES.forEach(function(s){
+      var d=_haversineDist(useLat,useLng,s.lat,s.lng);
+      if(d<minDist){minDist=d;nearest=s;}
+    });
+    var nameEl=document.getElementById('banner-nearest-store');
+    var distEl=document.getElementById('banner-nearest-dist');
+    if(nameEl&&nearest)nameEl.textContent=nearest.name;
+    if(distEl)distEl.textContent=_formatDist(minDist);
+  }catch(e){}
+}
+
 function locateUser(){
   var FALLBACK_LAT=37.556, FALLBACK_LNG=126.923;
   var btn=document.getElementById('locate-btn');
@@ -6557,6 +6608,9 @@ function locateUser(){
 
   /* ── ④ 성공 파이프라인 ── */
   function _onSuccess(lat,lng){
+    /* 위치 저장 — 마이 탭 배너 맛보기용 */
+    try{localStorage.setItem('tonote_user_lat',lat);localStorage.setItem('tonote_user_lng',lng);}catch(e){}
+    _updateSpacesBanner(lat,lng);
     _renderList(lat,lng);       /* 리스트 먼저 */
     showToast('📍 내 위치 기준으로 시향 공간을 정렬했어요');
     setTimeout(function(){_updateMap(lat,lng);},50);  /* 지도는 50ms 뒤 */
@@ -6567,6 +6621,7 @@ function locateUser(){
   function _onError(){
     /* 토스트 */
     showToast('실제 위치 정보를 가져올 수 없어 기본 위치(홍대 중심) 기준으로 시향 공간을 추천해 드립니다.');
+    _updateSpacesBanner(FALLBACK_LAT,FALLBACK_LNG);
     /* 리스트 즉시 갱신 */
     _renderList(FALLBACK_LAT,FALLBACK_LNG);
     /* 지도는 리스트 렌더(200ms) 이후 실행해 DOM 경합 방지 */
@@ -6757,16 +6812,17 @@ function sendChat(){
 
   const area=document.getElementById('chat-area');
 
-  /* ③ 로딩 인디케이터: 텍스트 라벨 + 점 세 개 */
+  /* ③ 감성 로딩 인디케이터: shimmer + 조향 문구 */
   const typing=document.createElement('div');
-  typing.className='typing';
-  typing.innerHTML=`<span class="typing-lbl">향수를 찾고 있어요</span><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  typing.className='ai-loading-wrap';
+  typing.innerHTML=`<p class="ai-loading-lbl">TONOTE AI가 취향 가이드를<br>조향하고 있습니다...</p><div class="ai-shimmer-row"><div class="ai-shimmer"></div><div class="ai-shimmer"></div><div class="ai-shimmer"></div></div><div class="ai-loading-dots"><span></span><span></span><span></span></div>`;
   area.appendChild(typing);
   _scrollChat();
 
   setTimeout(()=>{
-    /* ④ 인디케이터 제거 */
-    typing.remove();
+    /* ④ 인디케이터 부드럽게 페이드아웃 후 제거 */
+    typing.classList.add('ai-hiding');
+    setTimeout(()=>typing.remove(),420);
 
     const{scored,topMood,topTag}=matchPerfumes(txt);
     const hasMatch=scored.length>0;
@@ -7069,7 +7125,7 @@ function _renderComments(p){
       <div class="comm-reply-item">
         <div class="comm-reply-avatar" onclick="openUserProfile('${r.anon.name}','${r.anon.icon}')">${r.anon.icon}</div>
         <div class="comm-reply-bubble">
-          <p class="comm-reply-name" onclick="openUserProfile('${r.anon.name}','${r.anon.icon}')">${r.anon.name}</p>
+          <p class="comm-reply-name"${r.isMe?' data-isme="1"':''} onclick="openUserProfile('${r.anon.name}','${r.anon.icon}')">${r.anon.name}</p>
           <p class="comm-reply-txt">${_esc(r.text)}</p>
           <p class="comm-reply-time">${_commTimeAgo(r.ts)}</p>
         </div>
@@ -7078,7 +7134,7 @@ function _renderComments(p){
       <div class="comm-comment-item">
         <div class="comm-comment-avatar" onclick="openUserProfile('${c.anon.name}','${c.anon.icon}')">${c.anon.icon}</div>
         <div class="comm-comment-bubble">
-          <p class="comm-comment-name" onclick="openUserProfile('${c.anon.name}','${c.anon.icon}')">${c.anon.name}</p>
+          <p class="comm-comment-name"${c.isMe?' data-isme="1"':''} onclick="openUserProfile('${c.anon.name}','${c.anon.icon}')">${c.anon.name}</p>
           <p class="comm-comment-txt">${_esc(c.text)}</p>
           <p class="comm-comment-time">${_commTimeAgo(c.ts)}</p>
           <div class="comm-cmt-actions">
@@ -7140,7 +7196,7 @@ function _renderCard(p){
     return`<div class="comm-card" id="comm-card-${p.id}">
       <div class="comm-card-top">
         <div class="comm-anon-avatar" onclick="openUserProfile('${name}','${icon}')">${icon}</div>
-        <span class="comm-anon-name" onclick="openUserProfile('${name}','${icon}')">${name}</span>
+        <span class="comm-anon-name"${p.isMe?' data-isme="1"':''} onclick="openUserProfile('${name}','${icon}')">${name}</span>
         <span class="comm-time">${_commTimeAgo(p.ts)}</span>
       </div>
       <div class="comm-card-body">${_esc(p.text||'')}</div>
@@ -7264,8 +7320,8 @@ function _doSubCmt(pid){
   const post=posts.find(p=>p.id===pid);
   if(!post)return;
   if(!Array.isArray(post.comments))post.comments=[];
-  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
-  const newCmt={id:'c'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,replies:[]};
+  const anon=_getMyCommAnon();
+  const newCmt={id:'c'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,replies:[],isMe:true};
   post.comments.push(newCmt);
   _savePosts(posts);
 
@@ -7275,9 +7331,9 @@ function _doSubCmt(pid){
   if(cmtSection&&inputRow){
     const div=document.createElement('div');
     div.className='comm-comment-item';
-    div.innerHTML=`<div class="comm-comment-avatar">${anon.icon}</div>
+    div.innerHTML=`<div class="comm-comment-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.icon}</div>
       <div class="comm-comment-bubble">
-        <p class="comm-comment-name">${anon.name}</p>
+        <p class="comm-comment-name" data-isme="1" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.name}</p>
         <p class="comm-comment-txt">${_esc(text)}</p>
         <p class="comm-comment-time">방금 전</p>
         <div class="comm-cmt-actions">
@@ -7322,8 +7378,8 @@ function _doSubReply(pid,cid){
   const cmt=post.comments.find(c=>c.id===cid);
   if(!cmt)return;
   if(!Array.isArray(cmt.replies))cmt.replies=[];
-  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
-  const newReply={id:'r'+Date.now(),anon,text,ts:Date.now()};
+  const anon=_getMyCommAnon();
+  const newReply={id:'r'+Date.now(),anon,text,ts:Date.now(),isMe:true};
   cmt.replies.push(newReply);
   _savePosts(posts);
 
@@ -7340,9 +7396,9 @@ function _doSubReply(pid,cid){
     }
     const replyEl=document.createElement('div');
     replyEl.className='comm-reply-item';
-    replyEl.innerHTML=`<div class="comm-reply-avatar">${anon.icon}</div>
+    replyEl.innerHTML=`<div class="comm-reply-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.icon}</div>
       <div class="comm-reply-bubble">
-        <p class="comm-reply-name">${anon.name}</p>
+        <p class="comm-reply-name" data-isme="1" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.name}</p>
         <p class="comm-reply-txt">${_esc(text)}</p>
         <p class="comm-reply-time">방금 전</p>
       </div>`;
@@ -7360,14 +7416,23 @@ function _doSubReply(pid,cid){
   showToast('답글이 등록됐어요 💬');
 }
 
+/* ── 내 커뮤니티 익명 객체 생성 (프로필 + 취향 아이콘 연동) ── */
+function _getMyCommAnon(){
+  const prof=_loadProfile();
+  const myName=prof.nickname||'배연주';
+  const scentSaved=localStorage.getItem('tonote_scent_result');
+  const myIcon=(scentSaved&&SCENT_TYPES[scentSaved])?SCENT_TYPES[scentSaved].emoji:'🌿';
+  return{icon:myIcon,name:myName,isMe:true};
+}
+
 function submitPost(){
   const input=document.getElementById('comm-input');
   if(!input)return;
   const text=input.value.trim();
   if(!text){showToast('내용을 입력해주세요');return;}
   const posts=_loadPosts();
-  const anon=COMM_ANONS[Math.floor(Math.random()*COMM_ANONS.length)];
-  const newPost={id:'u'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,comments:[]};
+  const anon=_getMyCommAnon();
+  const newPost={id:'u'+Date.now(),anon,text,ts:Date.now(),likes:0,likedByMe:false,comments:[],isMe:true};
   posts.unshift(newPost);
   _savePosts(posts);
 
@@ -7378,8 +7443,8 @@ function submitPost(){
     card.className='comm-card';
     card.id='comm-card-'+newPost.id;
     card.innerHTML=`<div class="comm-card-top">
-        <div class="comm-anon-avatar">${anon.icon}</div>
-        <span class="comm-anon-name">${anon.name}</span>
+        <div class="comm-anon-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.icon}</div>
+        <span class="comm-anon-name" data-isme="1" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.name}</span>
         <span class="comm-time">방금 전</span>
       </div>
       <div class="comm-card-body">${_esc(text)}</div>
@@ -7607,17 +7672,50 @@ function closeProfileModal(){
 function saveProfile(){
   const nickname=(document.getElementById('p-nickname')?.value||'').trim();
   const sig=(document.getElementById('p-sig')?.value||'').trim();
-  const prof={nickname:nickname||'배연주',sig};
+  const oldProf=_loadProfile();
+  const oldNick=oldProf.nickname||'배연주';
+  const newNick=nickname||'배연주';
+  const prof={nickname:newNick,sig};
   localStorage.setItem(LS_PROFILE,JSON.stringify(prof));
+
+  /* ── 커뮤니티 데이터 실시간 동기화 (내 글·댓글·답글 닉네임 일괄 갱신) ── */
+  if(oldNick!==newNick){
+    try{
+      const posts=_loadPosts();
+      let changed=false;
+      posts.forEach(p=>{
+        if(p.isMe&&p.anon){p.anon.name=newNick;changed=true;}
+        (p.comments||[]).forEach(c=>{
+          if(c.isMe&&c.anon){c.anon.name=newNick;changed=true;}
+          (c.replies||[]).forEach(r=>{
+            if(r.isMe&&r.anon){r.anon.name=newNick;changed=true;}
+          });
+        });
+      });
+      if(changed){
+        _savePosts(posts);
+        /* DOM 동적 갱신 — 재렌더 없이 내 닉네임만 교체 */
+        document.querySelectorAll('.comm-anon-name[data-isme="1"],.comm-comment-name[data-isme="1"],.comm-reply-name[data-isme="1"]').forEach(el=>{
+          el.textContent=newNick;
+          /* onclick 속성도 새 이름으로 업데이트 */
+          const ic=el.previousElementSibling?.textContent||'🌿';
+          el.setAttribute('onclick',`openUserProfile('${newNick}','${ic}')`);
+        });
+      }
+    }catch(e){console.warn('[TONOTE] profile sync err:',e);}
+  }
+
   _applyProfile();
   closeProfileModal();
-  showToast((nickname||'배연주')+'님의 프로필이 저장됐어요 🌿');
+  showToast(newNick+'님의 프로필이 저장됐어요 🌿');
 }
 
 function updateMyPage(){
   // 좋아요 카운트 & 행
   document.getElementById('liked-count').textContent=liked.size;
   _syncLikedRow();
+  // 시향공간 배너 맛보기 갱신
+  _updateSpacesBanner();
   // 비교 레이블
   const lbl=document.getElementById('compare-count-lbl');
   if(lbl)lbl.textContent=compareList.length?`비교 중인 향수 ${compareList.length}개`:'비교 중인 향수 없음';
