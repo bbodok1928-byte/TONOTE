@@ -270,6 +270,8 @@ input,textarea{font-family:inherit;outline:none}
 .space-card{display:flex;gap:14px;background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:11px;cursor:pointer;transition:box-shadow .2s;box-shadow:var(--shadow)}
 .space-card:hover{box-shadow:var(--shadow-m)}
 .space-emoji-box{width:56px;height:56px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px}
+.store-logo-box{width:56px;height:56px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(0,0,0,.07);box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.store-logo-box img{width:38px;height:38px;object-fit:contain;display:block}
 .space-info{flex:1;min-width:0}
 .space-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px}
 .space-addr{font-size:11px;color:var(--t3);margin-bottom:8px}
@@ -6440,6 +6442,43 @@ function getStoreStatus(s){
     :{type:'closed',label:'● 영업 종료',cls:'sb-closed',hours:`${h.open} – ${h.close}`};
 }
 
+/* ── 브랜드 로고 URL 반환 (없으면 null → emoji 폴백) ── */
+const _BRAND_LOGO={
+  'OLIVE YOUNG':'https://logo.clearbit.com/oliveyoung.co.kr',
+  'CHICOR':     'https://logo.clearbit.com/chicor.com',
+  'DIPTYQUE':   'https://logo.clearbit.com/diptyqueparis.com',
+  'JO MALONE':  'https://logo.clearbit.com/jomalone.com',
+  "L'OCCITANE": 'https://logo.clearbit.com/loccitane.com',
+  'LE LABO':    'https://logo.clearbit.com/lelabofragrances.com',
+};
+const _NAME_LOGO=[
+  ['딥티크',            'https://logo.clearbit.com/diptyqueparis.com'],
+  ['조말론',            'https://logo.clearbit.com/jomalone.com'],
+  ['록시땅',            'https://logo.clearbit.com/loccitane.com'],
+  ['르 라보',           'https://logo.clearbit.com/lelabofragrances.com'],
+  ['바이레도',          'https://logo.clearbit.com/byredo.com'],
+  ['에르메스',          'https://logo.clearbit.com/hermes.com'],
+  ['크리드',            'https://logo.clearbit.com/creedperfume.com'],
+  ['아쿠아 디 파르마',  'https://logo.clearbit.com/acquadiparma.com'],
+  ['산타마리아 노벨라', 'https://logo.clearbit.com/smnovella.it'],
+  ['메종 마르지엘라',   'https://logo.clearbit.com/maisonmargiela.com'],
+  ['펜할리곤스',        'https://logo.clearbit.com/penhaligons.com'],
+  ['아뜰리에 코롱',     'https://logo.clearbit.com/ateliercologne.com'],
+  ['겔랑',              'https://logo.clearbit.com/guerlain.com'],
+  ['키엘',              'https://logo.clearbit.com/kiehls.com'],
+  ['이솝',              'https://logo.clearbit.com/aesop.com'],
+  ['엑스니힐로',        'https://logo.clearbit.com/exnihiloparis.com'],
+  ['킬리안',            'https://logo.clearbit.com/bykilian.com'],
+  ['쎈스프래그런스',    'https://logo.clearbit.com/scentsfragrance.com'],
+];
+function _getStoreLogo(s){
+  if(_BRAND_LOGO[s.brand])return _BRAND_LOGO[s.brand];
+  for(var i=0;i<_NAME_LOGO.length;i++){
+    if(s.name.indexOf(_NAME_LOGO[i][0])!==-1)return _NAME_LOGO[i][1];
+  }
+  return null;
+}
+
 function renderSpaces(sortedList,distMap){
   const pLbl=['낮음','보통','높음'],pCls=['pv-low','pv-med','pv-high'];
   const list=sortedList||STORES;
@@ -6465,8 +6504,12 @@ function renderSpaces(sortedList,distMap){
     const hoursRow=st.hours
       ?`<p style="font-size:10px;color:var(--t3);margin-top:3px;letter-spacing:.02em">🕐 ${st.hours}</p>`
       :'';
+    const _logo=_getStoreLogo(s);
+    const _iconHtml=_logo
+      ?`<div class="store-logo-box"><img src="${_logo}" alt="${s.brand}" loading="lazy" onerror="this.parentElement.outerHTML='<div class=\\'space-emoji-box\\' style=\\'background:${s.bg.replace(/'/g,"\\'")}\\'>${s.emoji||'🌿'}</div>'"></div>`
+      :`<div class="space-emoji-box" style="background:${s.bg}">${s.emoji||'🌿'}</div>`;
     return`<div class="space-card" id="scard-${s.id}" style="animation-delay:${i*.045}s" onclick="panToStore(${s.id})">
-    <div class="space-emoji-box" style="background:${s.bg}">${s.emoji}</div>
+    ${_iconHtml}
     <div class="space-info">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">
         <p class="space-name" style="flex:1;min-width:0;margin:0">${s.name}</p>${dist}<span class="space-badge ${st.cls}">${st.label}</span>
