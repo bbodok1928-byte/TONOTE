@@ -486,6 +486,14 @@ input,textarea{font-family:inherit;outline:none}
 .profile-input::placeholder{color:var(--t3)}
 .profile-save-btn{display:block;width:calc(100% - 40px);margin:20px 20px 28px;background:var(--primary);color:#fff;font-size:15px;font-weight:800;padding:16px;border:none;border-radius:16px;cursor:pointer;letter-spacing:.03em;transition:opacity .2s}
 .profile-save-btn:active{opacity:.85}
+/* ── 프로필 아바타 프리셋 ── */
+.profile-preset-lbl{display:block;font-size:11px;font-weight:700;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin:4px 20px 10px}
+.profile-preset-grid{display:flex;gap:10px;padding:0 20px 6px;overflow-x:auto;scrollbar-width:none}
+.profile-preset-grid::-webkit-scrollbar{display:none}
+.profile-preset-item{width:56px;height:56px;flex-shrink:0;border-radius:18px;background:var(--s2);border:2.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:border-color .22s,background .22s,transform .15s,box-shadow .22s;box-shadow:var(--shadow)}
+.profile-preset-item:active{transform:scale(.91)}
+.profile-preset-item:hover{border-color:rgba(176,116,102,.38);background:#FBF6F1}
+.profile-preset-item.sel{border-color:var(--primary);background:var(--primary-soft);box-shadow:0 0 0 3px rgba(176,116,102,.18),var(--shadow)}
 
 /* ── 향 취향 진단 오버레이 ── */
 #overlay-scent-test{position:absolute;inset:0;z-index:230;background:rgba(20,16,12,.72);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;opacity:0;pointer-events:none;transition:opacity .35s}
@@ -1967,11 +1975,19 @@ input,textarea{font-family:inherit;outline:none}
       <button class="profile-close-btn" onclick="closeProfileModal()">✕</button>
     </div>
     <div class="profile-avatar-area">
-      <div class="profile-avatar-big">🌿</div>
-      <p class="profile-avatar-hint">나를 표현하는 향기 유형</p>
+      <div class="profile-avatar-big" id="p-avatar-preview">🌿</div>
+      <p class="profile-avatar-hint">아래에서 프리셋을 골라 프로필을 꾸며보세요</p>
+    </div>
+    <label class="profile-preset-lbl">프로필 이미지 선택</label>
+    <div class="profile-preset-grid" id="profile-preset-grid">
+      <div class="profile-preset-item sel" data-icon="🌿" onclick="_selectPreset(this)" title="싱그러운 그린 잎사귀 · 우드/시트러스 무드">🌿</div>
+      <div class="profile-preset-item" data-icon="🌹" onclick="_selectPreset(this)" title="우아한 생화 장미 · 플로럴 무드">🌹</div>
+      <div class="profile-preset-item" data-icon="🤍" onclick="_selectPreset(this)" title="포근한 화이트 니트 · 코튼/소프 무드">🤍</div>
+      <div class="profile-preset-item" data-icon="🗿" onclick="_selectPreset(this)" title="미니멀한 스톤 오브제 · 모던/아방가르드 무드">🗿</div>
+      <div class="profile-preset-item" data-icon="🧴" onclick="_selectPreset(this)" title="정갈한 향수 보틀 · TONOTE 시그니처 무드">🧴</div>
     </div>
     <div class="profile-form">
-      <label class="profile-field-lbl">닉네임</label>
+      <label class="profile-field-lbl" style="margin-top:16px">닉네임</label>
       <input class="profile-input" id="p-nickname" type="text" maxlength="20" placeholder="배연주" autocomplete="off">
       <label class="profile-field-lbl" style="margin-top:16px">나만의 시그니처 향수</label>
       <input class="profile-input" id="p-sig" type="text" maxlength="50" placeholder="예: 르라보 상탈 33" autocomplete="off">
@@ -4776,6 +4792,7 @@ function initAll(){
   try{initCatChips();}catch(e){console.error('[initCatChips]',e);}
   try{document.getElementById('liked-count').textContent=liked.size;}catch(e){}
   try{updateMyPage();}catch(e){}
+  try{_applyProfile();}catch(e){}
   try{_loadAndApplyScentResult();}catch(e){}
   try{renderCommunity();}catch(e){}
   try{_updateSettingsBadge();}catch(e){}
@@ -7416,12 +7433,16 @@ function _doSubReply(pid,cid){
   showToast('답글이 등록됐어요 💬');
 }
 
-/* ── 내 커뮤니티 익명 객체 생성 (프로필 + 취향 아이콘 연동) ── */
+/* ── 내 커뮤니티 익명 객체 생성 (프로필 아바타 최우선 → 취향 아이콘 → 기본값) ── */
 function _getMyCommAnon(){
   const prof=_loadProfile();
   const myName=prof.nickname||'배연주';
-  const scentSaved=localStorage.getItem('tonote_scent_result');
-  const myIcon=(scentSaved&&SCENT_TYPES[scentSaved])?SCENT_TYPES[scentSaved].emoji:'🌿';
+  /* 우선순위: ① 프로필 저장 아바타 ② 취향진단 결과 아이콘 ③ 기본 🌿 */
+  let myIcon=prof.avatar||'';
+  if(!myIcon){
+    const scentSaved=localStorage.getItem('tonote_scent_result');
+    myIcon=(scentSaved&&SCENT_TYPES[scentSaved])?SCENT_TYPES[scentSaved].emoji:'🌿';
+  }
   return{icon:myIcon,name:myName,isMe:true};
 }
 
@@ -7634,11 +7655,23 @@ function _loadProfile(){
   try{return JSON.parse(localStorage.getItem(LS_PROFILE)||'{}');}catch(e){return{};}
 }
 
+/* ── 프리셋 선택 (모달 내 즉각 시각 피드백) ── */
+function _selectPreset(el){
+  document.querySelectorAll('.profile-preset-item').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');
+  const icon=el.dataset.icon||'🌿';
+  const prev=document.getElementById('p-avatar-preview');
+  if(prev)prev.textContent=icon;
+}
+
 function _applyProfile(){
   const prof=_loadProfile();
   const nameEl=document.getElementById('my-name-el');
   const sigEl=document.getElementById('my-sig-line');
+  const avatarEl=document.getElementById('my-avatar-el');
   if(nameEl)nameEl.textContent=prof.nickname||'배연주';
+  /* 마이 탭 아바타 아이콘 갱신 */
+  if(avatarEl)avatarEl.textContent=prof.avatar||'🌿';
   if(sigEl){
     if(prof.sig&&prof.sig.trim()){
       sigEl.textContent='시그니처 향 · '+prof.sig.trim();
@@ -7661,6 +7694,13 @@ function openProfileModal(){
   const si=document.getElementById('p-sig');
   if(ni)ni.value=prof.nickname||'';
   if(si)si.value=prof.sig||'';
+  /* 저장된 아바타 프리셋 복원 */
+  const savedIcon=prof.avatar||'🌿';
+  const prev=document.getElementById('p-avatar-preview');
+  if(prev)prev.textContent=savedIcon;
+  document.querySelectorAll('.profile-preset-item').forEach(item=>{
+    item.classList.toggle('sel',item.dataset.icon===savedIcon);
+  });
   document.getElementById('profile-modal').classList.add('open');
   setTimeout(()=>{if(ni)ni.focus();},420);
 }
@@ -7672,34 +7712,53 @@ function closeProfileModal(){
 function saveProfile(){
   const nickname=(document.getElementById('p-nickname')?.value||'').trim();
   const sig=(document.getElementById('p-sig')?.value||'').trim();
+  /* 선택된 프리셋 아이콘 수집 */
+  const selPreset=document.querySelector('.profile-preset-item.sel');
+  const newAvatar=selPreset?selPreset.dataset.icon:'🌿';
   const oldProf=_loadProfile();
   const oldNick=oldProf.nickname||'배연주';
+  const oldAvatar=oldProf.avatar||'🌿';
   const newNick=nickname||'배연주';
-  const prof={nickname:newNick,sig};
+  const prof={nickname:newNick,sig,avatar:newAvatar};
   localStorage.setItem(LS_PROFILE,JSON.stringify(prof));
 
-  /* ── 커뮤니티 데이터 실시간 동기화 (내 글·댓글·답글 닉네임 일괄 갱신) ── */
-  if(oldNick!==newNick){
+  /* ── 커뮤니티 데이터 실시간 동기화 (닉네임·아이콘 일괄 갱신) ── */
+  const nickChanged=oldNick!==newNick;
+  const iconChanged=oldAvatar!==newAvatar;
+  if(nickChanged||iconChanged){
     try{
       const posts=_loadPosts();
       let changed=false;
       posts.forEach(p=>{
-        if(p.isMe&&p.anon){p.anon.name=newNick;changed=true;}
+        if(p.isMe&&p.anon){
+          if(nickChanged)p.anon.name=newNick;
+          if(iconChanged)p.anon.icon=newAvatar;
+          changed=true;
+        }
         (p.comments||[]).forEach(c=>{
-          if(c.isMe&&c.anon){c.anon.name=newNick;changed=true;}
+          if(c.isMe&&c.anon){
+            if(nickChanged)c.anon.name=newNick;
+            if(iconChanged)c.anon.icon=newAvatar;
+            changed=true;
+          }
           (c.replies||[]).forEach(r=>{
-            if(r.isMe&&r.anon){r.anon.name=newNick;changed=true;}
+            if(r.isMe&&r.anon){
+              if(nickChanged)r.anon.name=newNick;
+              if(iconChanged)r.anon.icon=newAvatar;
+              changed=true;
+            }
           });
         });
       });
       if(changed){
         _savePosts(posts);
-        /* DOM 동적 갱신 — 재렌더 없이 내 닉네임만 교체 */
+        /* DOM 동적 갱신 — 재렌더 없이 내 닉네임·아이콘만 교체 */
         document.querySelectorAll('.comm-anon-name[data-isme="1"],.comm-comment-name[data-isme="1"],.comm-reply-name[data-isme="1"]').forEach(el=>{
-          el.textContent=newNick;
-          /* onclick 속성도 새 이름으로 업데이트 */
-          const ic=el.previousElementSibling?.textContent||'🌿';
-          el.setAttribute('onclick',`openUserProfile('${newNick}','${ic}')`);
+          if(nickChanged)el.textContent=newNick;
+          el.setAttribute('onclick',`openUserProfile('${newNick}','${newAvatar}')`);
+          /* 아바타 이모지(바로 앞 형제 요소) 갱신 */
+          const av=el.previousElementSibling;
+          if(av&&iconChanged)av.textContent=newAvatar;
         });
       }
     }catch(e){console.warn('[TONOTE] profile sync err:',e);}
@@ -7707,7 +7766,7 @@ function saveProfile(){
 
   _applyProfile();
   closeProfileModal();
-  showToast(newNick+'님의 프로필이 저장됐어요 🌿');
+  showToast(newNick+'님의 프로필이 저장됐어요 '+newAvatar);
 }
 
 function updateMyPage(){
