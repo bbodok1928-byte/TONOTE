@@ -7135,7 +7135,9 @@ const KW={
   '겨울':'늦은 밤','가을':'고요한 숲','담배':'늦은 밤','위스키':'늦은 밤','라벤더':'봄 산책',
   '벽난로':'늦은 밤','모닥불':'늦은 밤','연기':'늦은 밤','스모키':'늦은 밤','위스키':'늦은 밤',
   '자유':'고요한 숲','산림':'고요한 숲','편백':'고요한 숲','히노키':'고요한 숲','소나무':'고요한 숲',
-  '침대':'카페 오후','이불':'카페 오후','아침':'봄 산책','일요일':'카페 오후','주말':'카페 오후',
+  '침대':'늦은 밤','이불':'늦은 밤','잠':'늦은 밤','수면':'늦은 밤','베개':'늦은 밤','안락':'늦은 밤',
+  '아침':'봄 산책','일요일':'카페 오후','주말':'카페 오후',
+  '서점':'카페 오후','책방':'카페 오후','카페라테':'카페 오후','아메리카노':'카페 오후',
   '아쿠아틱':'바다 바람','수영장':'바다 바람','이슬':'봄 산책','안개':'고요한 숲','습한':'비 오는 날',
   /* 신규 50종 확장 키워드 */
   '튜베로즈':'플로럴','가르데니아':'플로럴','피오니':'플로럴','뮤게':'봄 산책','라일락':'봄 산책',
@@ -7224,8 +7226,17 @@ function matchPerfumes(input){
   return{scored,topMood,topTag};
 }
 
-// 매칭 결과에 맞는 시적 문장 선택
-function pickPoetic(topMood,topTag){
+// 매칭 결과에 맞는 시적 문장 선택 (rawInput으로 컨텍스트 우선 분기)
+function pickPoetic(topMood,topTag,rawInput){
+  const q=(rawInput||'').toLowerCase();
+  /* ── 컨텍스트 우선 분기 ── */
+  if(/침대|이불|잠|수면|베개|안락|자기 전|포근한 밤|새벽잠/.test(q)){
+    return '포근한 이불 속에 파묻혀 온전한 휴식을 취할 때 어울리는 아늑한 향이에요. 당신의 밤을 더 깊고 평온하게 채워줄 것 같아요. ✨';
+  }
+  if(/카페|커피|서점|책방|오후|독서|라테|아메리카노/.test(q)){
+    const cafePick=POETIC['카페 오후'];
+    return cafePick[Math.floor(Math.random()*cafePick.length)];
+  }
   const pool=POETIC[topMood]||POETIC[topTag]||POETIC['default'];
   return pool[Math.floor(Math.random()*pool.length)];
 }
@@ -7301,7 +7312,7 @@ function sendChat(){
 
     const{scored,topMood,topTag}=matchPerfumes(txt);
     const hasMatch=scored.length>0;
-    const poeticLine=userSettings.showPoetic?pickPoetic(topMood,topTag):'';
+    const poeticLine=userSettings.showPoetic?pickPoetic(topMood,topTag,txt):'';
     const replyTxt=hasMatch
       ?(poeticLine?poeticLine+'\n\n이런 향수들이 어울릴 것 같아요 ✦':'이런 향수들이 어울릴 것 같아요 ✦')
       :'조금 더 구체적인 감정이나 장면을 말씀해 주시면 더 잘 찾아드릴 수 있어요.\n예: "비 오는 날 창가", "숲속 산책", "따뜻한 카페 오후" 같은 느낌으로요 ☁️';
