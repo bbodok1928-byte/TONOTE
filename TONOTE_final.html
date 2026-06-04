@@ -1193,6 +1193,14 @@ input,textarea{font-family:inherit;outline:none}
 .notice-detail{max-height:0;overflow:hidden;transition:max-height .34s cubic-bezier(.4,0,.2,1)}
 .notice-item.open .notice-detail{max-height:260px}
 .notice-detail-inner{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:14px;font-weight:400;color:var(--t2);line-height:1.6;letter-spacing:-.2px;padding:10px 14px 14px;background:var(--s2);border-radius:12px;margin-top:10px;margin-bottom:4px}
+/* 향기 용어 사전 */
+.dict-item{padding:18px 0;border-bottom:1px solid var(--bd)}
+.dict-item:last-child{border-bottom:none}
+.dict-name{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:16px;font-weight:600;color:var(--t1);letter-spacing:-.2px;margin-bottom:6px;line-height:1.4}
+.dict-name em{font-family:var(--serif);font-style:italic;font-size:13px;font-weight:400;color:var(--primary);margin-left:6px;letter-spacing:.02em}
+.dict-desc{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:13.5px;font-weight:400;color:var(--t2);line-height:1.65;letter-spacing:-.15px}
+.dict-tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.dict-tag{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--primary-soft);color:var(--primary);letter-spacing:.04em}
 /* FAQ 아코디언 */
 .faq-item{border-bottom:1px solid var(--bd)}
 .faq-item:last-child{border-bottom:none}
@@ -1603,10 +1611,10 @@ input,textarea{font-family:inherit;outline:none}
           </div>
           <span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-support-item" onclick="showToast('준비 중인 기능입니다 🌿')">
+        <div class="my-support-item" onclick="openDictionary()">
           <div class="my-support-left">
-            <span class="my-support-icon">✉️</span>
-            <p class="my-support-lbl">1:1 카운셀링 문의</p>
+            <span class="my-support-icon">📜</span>
+            <p class="my-support-lbl">향기 용어 사전</p>
           </div>
           <span class="my-menu-arrow">›</span>
         </div>
@@ -2060,6 +2068,59 @@ input,textarea{font-family:inherit;outline:none}
           <p class="faq-a-inner">A. 기기의 GPS/위치 정보 권한이 차단된 경우, 기본 기준점인 '부산 센텀시티역' 좌표를 바탕으로 거리가 계산됩니다. 브라우저 위치 권한을 허용해 주시면 실시간 정렬이 가능합니다.</p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ 향기 용어 사전 모달 ════ -->
+<div class="supp-overlay" id="overlay-perfume-dictionary" onclick="if(event.target===this)closeDictionary()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">📜 &nbsp;향기 용어 사전</p>
+      <button class="supp-close" onclick="closeDictionary()">✕</button>
+    </div>
+    <div class="supp-body">
+
+      <div class="dict-item">
+        <p class="dict-name">시트러스<em>Citrus</em></p>
+        <p class="dict-desc">레몬, 베르가못, 그레이프프루트 등 감귤류에서 추출한 싱그럽고 청량한 향조. 가볍고 밝은 에너지로 아침이나 여름철에 잘 어울리며, 톱 노트에서 가장 먼저 빠르게 발산됩니다.</p>
+        <div class="dict-tag-row">
+          <span class="dict-tag">청량한</span>
+          <span class="dict-tag">여름·봄</span>
+          <span class="dict-tag">탑 노트</span>
+        </div>
+      </div>
+
+      <div class="dict-item">
+        <p class="dict-name">우디<em>Woody</em></p>
+        <p class="dict-desc">샌달우드, 시더우드, 베티버 등 나무와 깊은 숲에서 영감을 받은 차분하고 묵직한 향조. 온기와 깊이감을 동시에 지녀 가을·겨울철 베이스 노트로 오래 잔향을 남깁니다.</p>
+        <div class="dict-tag-row">
+          <span class="dict-tag">묵직한</span>
+          <span class="dict-tag">가을·겨울</span>
+          <span class="dict-tag">베이스 노트</span>
+        </div>
+      </div>
+
+      <div class="dict-item">
+        <p class="dict-name">플로럴<em>Floral</em></p>
+        <p class="dict-desc">장미, 자스민, 일랑일랑 등 화사하고 우아한 꽃들의 풍성한 향조. 향수의 가장 대표적인 계열로, 로맨틱하고 여성스러운 무드를 자연스럽게 연출합니다.</p>
+        <div class="dict-tag-row">
+          <span class="dict-tag">우아한</span>
+          <span class="dict-tag">사계절</span>
+          <span class="dict-tag">미들 노트</span>
+        </div>
+      </div>
+
+      <div class="dict-item">
+        <p class="dict-name">머스크<em>Musk</em></p>
+        <p class="dict-desc">살결처럼 포근하고 은은한 잔향을 남기는 살냄새 무드의 향조. 단독으로 사용하기보다 다른 향조를 부드럽게 감싸주는 픽서 역할을 하며, 베이스에서 오래 머뭅니다.</p>
+        <div class="dict-tag-row">
+          <span class="dict-tag">포근한</span>
+          <span class="dict-tag">사계절</span>
+          <span class="dict-tag">베이스 노트</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -5266,6 +5327,16 @@ function openNotice(){
 }
 function closeNotice(){
   document.getElementById('overlay-notice').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── 향기 용어 사전 모달 ── */
+function openDictionary(){
+  document.getElementById('overlay-perfume-dictionary').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDictionary(){
+  document.getElementById('overlay-perfume-dictionary').classList.remove('open');
   document.body.style.overflow='';
 }
 
