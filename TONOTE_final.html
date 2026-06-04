@@ -1123,6 +1123,30 @@ input,textarea{font-family:inherit;outline:none}
 .my-review-ctrl-btn{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;transition:color .15s}
 .my-review-ctrl-btn:hover{color:var(--primary)}
 .my-review-empty{text-align:center;padding:40px 0;font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:14px;color:var(--t3);font-style:italic}
+/* 좋아요 모아보기 */
+.my-like-item{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--bd)}
+.my-like-item:last-child{border-bottom:none}
+.my-like-thumb{width:48px;height:48px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;position:relative}
+.my-like-info{flex:1;min-width:0}
+.my-like-brand{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);font-weight:700;margin-bottom:2px}
+.my-like-name{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:14px;font-weight:600;color:var(--t1);letter-spacing:-.2px;margin-bottom:3px}
+.my-like-moods{display:flex;gap:5px;flex-wrap:wrap}
+.my-like-mood{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:10px;padding:2px 7px;border-radius:20px;background:var(--primary-soft);color:var(--primary);font-weight:600}
+/* AI 대화 기록 */
+.my-ai-bubble-wrap{margin-bottom:10px}
+.my-ai-bubble-bot{background:var(--s1);border:1px solid var(--bd);border-radius:4px 14px 14px 14px;padding:9px 12px;font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:12.5px;color:var(--t2);line-height:1.6;max-width:88%;display:inline-block}
+.my-ai-bubble-user{background:var(--primary);border-radius:14px 4px 14px 14px;padding:9px 12px;font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:12.5px;color:#fff;line-height:1.55;max-width:88%;display:inline-block;float:right;letter-spacing:-.1px}
+.my-ai-bubble-user-wrap{text-align:right;margin-bottom:10px}
+.my-ai-bubble-wrap::after,.my-ai-bubble-user-wrap::after{content:'';display:block;clear:both}
+/* 샘플 신청 */
+.my-order-item{padding:16px;background:var(--s1);border:1px solid var(--bd);border-radius:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.my-order-item:last-child{margin-bottom:0}
+.my-order-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.my-order-date{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:11px;color:var(--t3);letter-spacing:-.1px}
+.my-order-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--primary-soft);color:var(--primary)}
+.my-order-perfs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.my-order-perf{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:12.5px;color:var(--t1);display:flex;align-items:center;gap:4px}
+.my-order-addr{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:11px;color:var(--t3);letter-spacing:-.1px;border-top:1px dashed var(--bd);padding-top:7px;margin-top:4px}
 .data-action-btn{
   width:100%;padding:11px;border-radius:12px;
   font-size:13px;font-weight:700;
@@ -1950,10 +1974,10 @@ input,textarea{font-family:inherit;outline:none}
               </div>
             </div>
             <div class="data-stats" id="data-stats-panel">
-              <span class="data-stat-pill">좋아요 <em id="ds-liked">0</em>개</span>
+              <span class="data-stat-pill clickable" onclick="openMyLikes()" title="좋아요한 향수 모아보기">좋아요 <em id="ds-liked">0</em>개</span>
               <span class="data-stat-pill clickable" onclick="openMyReviews()" title="내가 쓴 리뷰 모아보기">작성 리뷰 <em id="ds-reviews">0</em>개</span>
-              <span class="data-stat-pill">AI 대화 <em id="ds-chats">0</em>회</span>
-              <span class="data-stat-pill">샘플 신청 <em id="ds-orders">0</em>건</span>
+              <span class="data-stat-pill clickable" onclick="openMyAiHistory()" title="AI 대화 기록 보기">AI 대화 <em id="ds-chats">0</em>회</span>
+              <span class="data-stat-pill clickable" onclick="openMySamples()" title="샘플 신청 내역 보기">샘플 신청 <em id="ds-orders">0</em>건</span>
             </div>
             <button class="data-action-btn outline" onclick="exportData()" style="font-size:12px">
               📤 &nbsp;취향 데이터 내보내기 (JSON)
@@ -2203,6 +2227,39 @@ input,textarea{font-family:inherit;outline:none}
       <button class="supp-close" onclick="closeMyReviews()">✕</button>
     </div>
     <div class="supp-body" id="my-reviews-body"></div>
+  </div>
+</div>
+
+<!-- ════ 좋아요 모아보기 ════ -->
+<div class="supp-overlay" id="overlay-my-likes" onclick="if(event.target===this)closeMyLikes()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">❤️ &nbsp;좋아요한 향수</p>
+      <button class="supp-close" onclick="closeMyLikes()">✕</button>
+    </div>
+    <div class="supp-body" id="my-likes-body"></div>
+  </div>
+</div>
+
+<!-- ════ AI 대화 기록 ════ -->
+<div class="supp-overlay" id="overlay-my-ai-history" onclick="if(event.target===this)closeMyAiHistory()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">✨ &nbsp;AI 대화 기록</p>
+      <button class="supp-close" onclick="closeMyAiHistory()">✕</button>
+    </div>
+    <div class="supp-body" id="my-ai-history-body"></div>
+  </div>
+</div>
+
+<!-- ════ 샘플 신청 내역 ════ -->
+<div class="supp-overlay" id="overlay-my-samples" onclick="if(event.target===this)closeMySamples()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">📦 &nbsp;샘플 신청 내역</p>
+      <button class="supp-close" onclick="closeMySamples()">✕</button>
+    </div>
+    <div class="supp-body" id="my-samples-body"></div>
   </div>
 </div>
 
@@ -4864,14 +4921,25 @@ function _refreshDataStats(){
   }catch(e){}
 }
 
-/* 리뷰 전체 삭제 후 상세 페이지 + 모아보기 모달 UI 즉시 동기화 */
+/* 데이터 삭제 후 관련 모달 DOM 즉시 동기화 */
 function _syncReviewUI(){
   if(currentDetailId){try{renderReviews(currentDetailId);}catch(e){}}
-  /* 모아보기 모달이 열려있으면 빈 상태로 갱신 */
-  var ovr=document.getElementById('overlay-my-reviews');
+  _closeSyncModal('overlay-my-reviews','my-reviews-body','아직 작성한 리뷰가 없어요.<br>향수 상세 페이지에서 첫 리뷰를 남겨보세요 🌿');
+}
+function _syncLikesUI(){
+  _closeSyncModal('overlay-my-likes','my-likes-body','좋아요한 향수가 없어요.<br>향수 카드의 🤍를 눌러 찜해보세요!');
+}
+function _syncSamplesUI(){
+  _closeSyncModal('overlay-my-samples','my-samples-body','신청된 샘플 내역이 없어요.<br>마이 탭에서 시향 키트를 신청해 보세요 📦');
+}
+function _syncAiUI(){
+  _closeSyncModal('overlay-my-ai-history','my-ai-history-body','아직 AI 대화 기록이 없어요.<br>AI 탭에서 향수를 추천받아 보세요 ✨');
+}
+function _closeSyncModal(overId,bodyId,emptyMsg){
+  var ovr=document.getElementById(overId);
   if(ovr&&ovr.classList.contains('open')){
-    var body=document.getElementById('my-reviews-body');
-    if(body)body.innerHTML='<p class="my-review-empty">아직 작성한 리뷰가 없어요.<br>향수 상세 페이지에서 첫 리뷰를 남겨보세요 🌿</p>';
+    var body=document.getElementById(bodyId);
+    if(body)body.innerHTML='<p class="my-review-empty">'+emptyMsg+'</p>';
   }
 }
 
@@ -4884,9 +4952,9 @@ function clearDataItem(type){
       localStorage.removeItem('tonote_reviews'); // 구버전 키도 함께 정리
       _syncReviewUI();                       // 상세 페이지 UI + 버튼 락 해제
     }
-    if(type==='liked'){localStorage.removeItem(LS_LIKED);liked=new Set();updateMyPage();}
-    if(type==='orders') localStorage.removeItem(LS_ORDERS);
-    if(type==='chat'){localStorage.removeItem('tonote_chat_count');clearChat();}
+    if(type==='liked'){localStorage.removeItem(LS_LIKED);liked=new Set();updateMyPage();_syncLikesUI();}
+    if(type==='orders'){localStorage.removeItem(LS_ORDERS);_syncSamplesUI();}
+    if(type==='chat'){localStorage.removeItem('tonote_chat_count');clearChat();_syncAiUI();}
     _refreshDataStats();
     showToast(`${labels[type]} 삭제 완료`);
   }catch(e){showToast('삭제 중 오류가 발생했습니다');}
@@ -4901,7 +4969,7 @@ function confirmFullReset(){
     userNotif={...DEFAULT_NOTIF};
     clearChat();updateMyPage();_syncSettingsUI();_syncNotifUI();_refreshDataStats();
     _updateSettingsBadge();_updateSettingsSummary();
-    _syncReviewUI();   // 상세 페이지 리뷰 UI + 등록 버튼 락 해제
+    _syncReviewUI();_syncLikesUI();_syncSamplesUI();_syncAiUI();
     showToast('앱이 초기화되었습니다');
     closeSettings();
   }catch(e){showToast('초기화 중 오류가 발생했습니다');}
@@ -5426,6 +5494,102 @@ function openNotice(){
 }
 function closeNotice(){
   document.getElementById('overlay-notice').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── 좋아요 모아보기 ── */
+function openMyLikes(){
+  var body=document.getElementById('my-likes-body');
+  if(!body)return;
+  var ids=[...liked];
+  if(ids.length===0){
+    body.innerHTML='<p class="my-review-empty">좋아요한 향수가 없어요.<br>향수 카드의 🤍를 눌러 찜해보세요!</p>';
+  }else{
+    body.innerHTML=ids.map(function(id){
+      var p=PERFUMES.find(function(x){return x.id===id;});
+      if(!p)return'';
+      var moodTags=(p.moods||[]).slice(0,3).map(function(m){
+        return'<span class="my-like-mood">'+m+'</span>';
+      }).join('');
+      return'<div class="my-like-item" onclick="closeMyLikes();setTimeout(function(){openDetail('+id+');},260)">'
+        +'<div class="my-like-thumb" style="background:'+p.bg+'"><span style="font-size:22px">'+p.emoji+'</span></div>'
+        +'<div class="my-like-info">'
+        +'<p class="my-like-brand">'+p.brand+'</p>'
+        +'<p class="my-like-name">'+p.name+'</p>'
+        +'<div class="my-like-moods">'+moodTags+'</div>'
+        +'</div>'
+        +'<span style="color:var(--primary);font-size:16px">❤️</span>'
+        +'</div>';
+    }).filter(Boolean).join('');
+  }
+  document.getElementById('overlay-my-likes').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMyLikes(){
+  document.getElementById('overlay-my-likes').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── AI 대화 기록 모아보기 ── */
+function openMyAiHistory(){
+  var body=document.getElementById('my-ai-history-body');
+  if(!body)return;
+  /* 채팅 DOM에서 메시지 역추적 */
+  var chatArea=document.getElementById('chat-area');
+  var msgs=chatArea?chatArea.querySelectorAll('.msg'):[];
+  if(!msgs||msgs.length===0){
+    body.innerHTML='<p class="my-review-empty">아직 AI 대화 기록이 없어요.<br>AI 탭에서 향수를 추천받아 보세요 ✨</p>'
+      +'<p style="text-align:center;font-family:\'Pretendard\',sans-serif;font-size:10.5px;color:var(--t3);margin-top:4px">※ 대화 기록은 앱 내에서만 유지됩니다</p>';
+  }else{
+    var html='';
+    msgs.forEach(function(el){
+      var isBot=el.classList.contains('msg-bot');
+      var isMsgCard=el.classList.contains('msg-card');
+      var text=el.textContent.trim();
+      if(!text)return;
+      if(isBot||isMsgCard){
+        html+='<div class="my-ai-bubble-wrap"><span class="my-ai-bubble-bot">'+text+'</span></div>';
+      }else{
+        html+='<div class="my-ai-bubble-user-wrap"><span class="my-ai-bubble-user">'+text+'</span></div>';
+      }
+    });
+    body.innerHTML=html||'<p class="my-review-empty">대화 내용을 불러올 수 없어요.</p>';
+  }
+  document.getElementById('overlay-my-ai-history').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMyAiHistory(){
+  document.getElementById('overlay-my-ai-history').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── 샘플 신청 내역 모아보기 ── */
+function openMySamples(){
+  var body=document.getElementById('my-samples-body');
+  if(!body)return;
+  var orders=_loadOrders();
+  if(orders.length===0){
+    body.innerHTML='<p class="my-review-empty">신청된 샘플 내역이 없어요.<br>마이 탭에서 시향 키트를 신청해 보세요 📦</p>';
+  }else{
+    body.innerHTML=orders.map(function(o){
+      var perfsHtml=(o.perfumes||[]).map(function(p){
+        return'<span class="my-order-perf"><span>'+p.emoji+'</span><span>'+p.name+'</span></span>';
+      }).join('');
+      return'<div class="my-order-item">'
+        +'<div class="my-order-head">'
+        +'<span class="my-order-date">'+o.date+'</span>'
+        +'<span class="my-order-status">'+(o.status||'배송 준비 중')+'</span>'
+        +'</div>'
+        +'<div class="my-order-perfs">'+perfsHtml+'</div>'
+        +(o.addr?'<p class="my-order-addr">📍 '+o.addr+'</p>':'')
+        +'</div>';
+    }).join('');
+  }
+  document.getElementById('overlay-my-samples').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMySamples(){
+  document.getElementById('overlay-my-samples').classList.remove('open');
   document.body.style.overflow='';
 }
 
