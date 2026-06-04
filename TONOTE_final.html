@@ -1866,12 +1866,12 @@ input,textarea{font-family:inherit;outline:none}
 
         <div style="padding-top:20px">
 
-          <!-- 계정 배너 -->
+          <!-- 계정 배너 — openSettings() 호출 시 _syncAccountBanner()로 실시간 바인딩 -->
           <div class="account-banner">
-            <div class="account-avatar">🌿</div>
+            <div class="account-avatar" id="settings-account-avatar">🌿</div>
             <div>
-              <p class="account-name">김지은</p>
-              <p class="account-sub">그린 우드 드리머 · 향수 탐색 14일째</p>
+              <p class="account-name" id="settings-account-name">배연주</p>
+              <p class="account-sub" id="settings-account-sub">그린 우드 드리머 · 향수 탐색 14일째</p>
               <span class="account-badge">로컬 체험판</span>
             </div>
           </div>
@@ -4673,7 +4673,8 @@ function openSettings(){
   _syncSettingsUI();
   _syncNotifUI();
   _refreshDataStats();
-  switchSettingsTab('preference');  // 항상 첫 탭으로 열기
+  _syncAccountBanner();            // 프로필 카드 실시간 동기화
+  switchSettingsTab('notification'); // 항상 첫 탭으로 열기
   document.getElementById('overlay-settings').classList.add('open');
 }
 
@@ -4681,6 +4682,35 @@ function openSettings(){
 function closeSettings(){
   document.getElementById('overlay-settings').classList.remove('open');
   _applySettings();
+}
+
+/* ── 설정 모달 계정 배너 → 마이페이지 실제 데이터 실시간 동기화 ── */
+function _syncAccountBanner(){
+  try{
+    /* ① 프로필 (닉네임·아바타) */
+    var prof=_loadProfile();
+    var nickname=prof.nickname||'배연주';
+    var avatar=prof.avatar||'';
+
+    /* ② 취향 진단 유형 */
+    var scentKey=localStorage.getItem('tonote_scent_result')||'';
+    var scentData=(scentKey&&typeof SCENT_TYPES!=='undefined')?SCENT_TYPES[scentKey]:null;
+    if(!avatar){
+      avatar=scentData?scentData.emoji:'🌿';
+    }
+
+    /* ③ 부제목: 마이 탭 DOM에서 역추적 (탐색 일수 + 취향 유형 이미 렌더됨) */
+    var mySubEl=document.getElementById('my-sub-el');
+    var subText=mySubEl?mySubEl.textContent:(scentData?scentData.name+' · 향수 탐색 중':'향수 탐색 중');
+
+    /* ④ 설정창 배너 갱신 */
+    var avatarEl=document.getElementById('settings-account-avatar');
+    var nameEl=document.getElementById('settings-account-name');
+    var subEl=document.getElementById('settings-account-sub');
+    if(avatarEl)avatarEl.textContent=avatar;
+    if(nameEl)nameEl.textContent=nickname;
+    if(subEl)subEl.textContent=subText;
+  }catch(e){console.warn('[TONOTE] _syncAccountBanner:',e);}
 }
 
 /* ── UI → userSettings 동기화 ── */
