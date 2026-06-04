@@ -6178,8 +6178,20 @@ const PERFUME_REVIEWS={
 
 /* localStorage 전체 리뷰 로드 */
 function _loadAllReviews(){
-  try{return JSON.parse(localStorage.getItem(_RK))||[];}
-  catch{return[];}
+  try{
+    var arr=JSON.parse(localStorage.getItem(_RK))||[];
+    /* rid 없는 레거시 리뷰에 소급 부여 후 재저장 */
+    var patched=false;
+    arr=arr.map(function(r){
+      if(!r.rid){
+        r.rid='rv'+Date.now()+'x'+Math.random().toString(36).slice(2,5);
+        patched=true;
+      }
+      return r;
+    });
+    if(patched)localStorage.setItem(_RK,JSON.stringify(arr));
+    return arr;
+  }catch(e){return[];}
 }
 
 /* 리뷰 저장 */
