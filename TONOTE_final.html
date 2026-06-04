@@ -1109,6 +1109,20 @@ input,textarea{font-family:inherit;outline:none}
   font-size:11px;color:var(--t2);font-weight:600;
 }
 .data-stat-pill em{color:var(--primary);font-style:normal}
+.data-stat-pill.clickable{cursor:pointer;transition:all .18s}
+.data-stat-pill.clickable:hover{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+/* 내가 쓴 리뷰 모아보기 모달 */
+.my-review-item{padding:16px 0;border-bottom:1px solid var(--bd)}
+.my-review-item:last-child{border-bottom:none}
+.my-review-perfume{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:14px;font-weight:600;color:var(--t1);letter-spacing:-.2px;margin-bottom:4px}
+.my-review-meta{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.my-review-stars{color:#F5C518;font-size:11px;letter-spacing:1px}
+.my-review-date{font-size:10px;color:var(--t3);margin-left:auto}
+.my-review-text{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:13px;color:var(--t2);line-height:1.65;letter-spacing:-.1px}
+.my-review-ctrl{display:flex;gap:8px;margin-top:8px}
+.my-review-ctrl-btn{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;transition:color .15s}
+.my-review-ctrl-btn:hover{color:var(--primary)}
+.my-review-empty{text-align:center;padding:40px 0;font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:14px;color:var(--t3);font-style:italic}
 .data-action-btn{
   width:100%;padding:11px;border-radius:12px;
   font-size:13px;font-weight:700;
@@ -1937,7 +1951,7 @@ input,textarea{font-family:inherit;outline:none}
             </div>
             <div class="data-stats" id="data-stats-panel">
               <span class="data-stat-pill">좋아요 <em id="ds-liked">0</em>개</span>
-              <span class="data-stat-pill">작성 리뷰 <em id="ds-reviews">0</em>개</span>
+              <span class="data-stat-pill clickable" onclick="openMyReviews()" title="내가 쓴 리뷰 모아보기">작성 리뷰 <em id="ds-reviews">0</em>개</span>
               <span class="data-stat-pill">AI 대화 <em id="ds-chats">0</em>회</span>
               <span class="data-stat-pill">샘플 신청 <em id="ds-orders">0</em>건</span>
             </div>
@@ -2178,6 +2192,17 @@ input,textarea{font-family:inherit;outline:none}
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- ════ 내가 쓴 리뷰 모아보기 모달 ════ -->
+<div class="supp-overlay" id="overlay-my-reviews" onclick="if(event.target===this)closeMyReviews()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">✦ &nbsp;내가 쓴 리뷰</p>
+      <button class="supp-close" onclick="closeMyReviews()">✕</button>
+    </div>
+    <div class="supp-body" id="my-reviews-body"></div>
   </div>
 </div>
 
@@ -4839,11 +4864,14 @@ function _refreshDataStats(){
   }catch(e){}
 }
 
-/* 리뷰 전체 삭제 후 상세 페이지 UI 즉시 동기화 */
+/* 리뷰 전체 삭제 후 상세 페이지 + 모아보기 모달 UI 즉시 동기화 */
 function _syncReviewUI(){
-  /* 현재 열린 상세 페이지가 있으면 재렌더 → 버튼 락도 자동 해제 */
-  if(currentDetailId){
-    try{renderReviews(currentDetailId);}catch(e){}
+  if(currentDetailId){try{renderReviews(currentDetailId);}catch(e){}}
+  /* 모아보기 모달이 열려있으면 빈 상태로 갱신 */
+  var ovr=document.getElementById('overlay-my-reviews');
+  if(ovr&&ovr.classList.contains('open')){
+    var body=document.getElementById('my-reviews-body');
+    if(body)body.innerHTML='<p class="my-review-empty">아직 작성한 리뷰가 없어요.<br>향수 상세 페이지에서 첫 리뷰를 남겨보세요 🌿</p>';
   }
 }
 
@@ -5399,6 +5427,88 @@ function openNotice(){
 function closeNotice(){
   document.getElementById('overlay-notice').classList.remove('open');
   document.body.style.overflow='';
+}
+
+/* ── 내가 쓴 리뷰 모아보기 모달 ── */
+function openMyReviews(){
+  var body=document.getElementById('my-reviews-body');
+  if(!body)return;
+  var reviews=_loadAllReviews().filter(function(r){return r.nick==='나';}).reverse();
+  if(reviews.length===0){
+    body.innerHTML='<p class="my-review-empty">아직 작성한 리뷰가 없어요.<br>향수 상세 페이지에서 첫 리뷰를 남겨보세요 🌿</p>';
+  }else{
+    body.innerHTML=reviews.map(function(r){
+      var perfume=PERFUMES.find(function(p){return p.id===r.pid;});
+      var perfumeName=perfume?(perfume.brand+' · '+perfume.name):'알 수 없는 향수';
+      var stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
+      var rid=r.rid||'';
+      var ctrlHtml=rid?('<div class="my-review-ctrl">'
+        +'<button class="my-review-ctrl-btn" onclick="myReviewEdit(\''+rid+'\',this)">수정</button>'
+        +'<span style="font-size:10px;color:var(--bd)">|</span>'
+        +'<button class="my-review-ctrl-btn" onclick="myReviewDelete(\''+rid+'\',this)">삭제</button>'
+        +'</div>'):'';
+      return'<div class="my-review-item" data-rid="'+rid+'">'
+        +'<p class="my-review-perfume">'+perfumeName+'</p>'
+        +'<div class="my-review-meta">'
+        +'<span class="my-review-stars">'+stars+'</span>'
+        +'<span class="my-review-date">'+r.date+'</span>'
+        +'</div>'
+        +'<p class="my-review-text" id="mrvt-'+rid+'">'+r.text+'</p>'
+        +ctrlHtml
+        +'</div>';
+    }).join('');
+  }
+  document.getElementById('overlay-my-reviews').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMyReviews(){
+  document.getElementById('overlay-my-reviews').classList.remove('open');
+  document.body.style.overflow='';
+}
+function myReviewDelete(rid,btn){
+  var item=btn.closest('.my-review-item');
+  if(!item)return;
+  item.style.transition='opacity .3s,transform .26s';
+  item.style.opacity='0';item.style.transform='translateY(-5px)';
+  setTimeout(function(){
+    item.remove();
+    var all=_loadAllReviews().filter(function(r){return r.rid!==rid;});
+    localStorage.setItem(_RK,JSON.stringify(all));
+    _refreshDataStats();
+    if(currentDetailId)try{renderReviews(currentDetailId);}catch(e){}
+    /* 목록 비었으면 빈 안내 */
+    var body=document.getElementById('my-reviews-body');
+    if(body&&!body.querySelector('.my-review-item')){
+      body.innerHTML='<p class="my-review-empty">아직 작성한 리뷰가 없어요.<br>향수 상세 페이지에서 첫 리뷰를 남겨보세요 🌿</p>';
+    }
+  },320);
+}
+function myReviewEdit(rid,btn){
+  var textEl=document.getElementById('mrvt-'+rid);
+  if(!textEl||textEl.tagName==='TEXTAREA')return;
+  var orig=textEl.textContent;
+  var ta=document.createElement('textarea');
+  ta.className='review-edit-area';ta.value=orig;ta.rows=3;
+  var saveBtn=document.createElement('button');
+  saveBtn.className='review-save-btn';saveBtn.textContent='저장';
+  saveBtn.onclick=function(){
+    var newText=(ta.value||'').trim();if(!newText){ta.focus();return;}
+    var all=_loadAllReviews();
+    var idx=all.findIndex(function(r){return r.rid===rid;});
+    if(idx!==-1){all[idx].text=newText;localStorage.setItem(_RK,JSON.stringify(all));}
+    textEl.textContent=newText;textEl.style.display='';
+    ta.remove();saveBtn.remove();
+    if(currentDetailId)try{renderReviews(currentDetailId);}catch(e){}
+    showToast('리뷰가 수정됐어요 ✦');
+    btn.closest('.my-review-ctrl').style.opacity='1';
+    btn.closest('.my-review-ctrl').style.pointerEvents='auto';
+  };
+  textEl.parentNode.insertBefore(ta,textEl);
+  textEl.parentNode.insertBefore(saveBtn,textEl.nextSibling);
+  textEl.style.display='none';
+  ta.focus();
+  btn.closest('.my-review-ctrl').style.opacity='.35';
+  btn.closest('.my-review-ctrl').style.pointerEvents='none';
 }
 
 /* ── 향기 용어 사전 모달 ── */
