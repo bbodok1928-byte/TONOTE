@@ -701,6 +701,14 @@ input,textarea{font-family:inherit;outline:none}
 .review-item-stars{color:#F5C518;font-size:12px;letter-spacing:1px}
 .review-item-date{font-size:10px;color:var(--t3)}
 .review-item-nick{font-size:10.5px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.review-item-nick.clickable{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(176,116,102,.35);text-underline-offset:2px;transition:opacity .15s}
+.review-item-nick.clickable:hover{opacity:.72}
+/* 타인 프로필 모달 — 향수 리뷰 탭 */
+.up-review-item{padding:14px 0;border-bottom:1px solid var(--bd)}
+.up-review-item:last-child{border-bottom:none}
+.up-review-perfume{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:13px;font-weight:600;color:var(--t1);letter-spacing:-.2px;margin-bottom:4px}
+.up-review-stars{color:#F5C518;font-size:11px;letter-spacing:1px;margin-bottom:4px;display:block}
+.up-review-text{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:12.5px;color:var(--t2);line-height:1.65;letter-spacing:-.1px}
 .review-item-text{font-size:13px;color:var(--t2);line-height:1.65}
 .review-ctrl-row{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
 .review-ctrl-btn{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;letter-spacing:.01em;transition:color .15s}
@@ -1793,8 +1801,8 @@ input,textarea{font-family:inherit;outline:none}
         </div>
       </div>
       <div class="up-tabs">
-        <button class="up-tab on" id="up-tab-posts" onclick="_switchUserTab('posts')">작성한 글</button>
-        <button class="up-tab" id="up-tab-cmts" onclick="_switchUserTab('cmts')">작성한 댓글</button>
+        <button class="up-tab on" id="up-tab-posts" onclick="_switchUserTab('posts')">향수 리뷰</button>
+        <button class="up-tab" id="up-tab-cmts" onclick="_switchUserTab('cmts')">커뮤니티 댓글</button>
       </div>
       <div class="up-content" id="up-content"></div>
     </div>
@@ -6977,7 +6985,9 @@ function renderReviews(pid){
         ${ctrlHtml}
         <span class="review-item-date" style="margin-left:${isMe?'0':'auto'}">${r.date}</span>
       </div>
-      <p class="review-item-nick">${r.nick==='나'?(_loadProfile().nickname||'배연주'):r.nick||'익명'}</p>
+      <p class="review-item-nick${isMe?'':' clickable'}" ${isMe?'':
+        'onclick="openUserProfile(\''+( r.nick||'익명').replace(/'/g,"\\'")+'\',\''+_getNickIcon(r.nick||'익명')+'\')"'
+      }>${r.nick==='나'?(_loadProfile().nickname||'배연주'):r.nick||'익명'}</p>
       <p class="review-item-text" id="rv-text-${rid}">${r.text}</p>
     </div>`;
   }).join('');
@@ -8106,15 +8116,27 @@ const ANON_PERSONA=[
   '니치 컬렉터 ✨',
 ];
 
+/* ── 닉네임 → 이모지 매핑 헬퍼 ── */
+function _getNickIcon(nick){
+  var anon=COMM_ANONS.find(function(a){return a.name===nick;});
+  if(anon)return anon.icon;
+  var emojis=['🌿','🌸','🍋','🤍','🌊','🪨','🖤','🌹','✨','🍬','🌺','🌙','🫧','🧴','🎋'];
+  var hash=0;for(var i=0;i<nick.length;i++)hash+=nick.charCodeAt(i);
+  return emojis[hash%emojis.length];
+}
+
 /* ── 유저 프로필 모달 ── */
 let _upCurrentUser=null,_upCurrentIcon='🌿';
 function openUserProfile(name,icon){
+  /* '나'·실제 유저 닉네임 클릭 시 예외 처리 */
+  var myNick=_loadProfile().nickname||'배연주';
+  if(name==='나'||name===myNick)return;
   _upCurrentUser=name;
-  _upCurrentIcon=icon||'🌿';
+  _upCurrentIcon=icon||_getNickIcon(name);
   const idx=COMM_ANONS.findIndex(a=>a.name===name);
   const persona=idx>=0?ANON_PERSONA[idx]:'향수 애호가 🌿';
   /* 헤더 채우기 */
-  document.getElementById('up-avatar').textContent=icon;
+  document.getElementById('up-avatar').textContent=_upCurrentIcon;
   document.getElementById('up-name').textContent=name;
   document.getElementById('up-badge').textContent=persona;
   /* 통계 */
@@ -8129,10 +8151,10 @@ function openUserProfile(name,icon){
   });
   document.getElementById('up-posts-n').textContent=myPosts.length;
   document.getElementById('up-cmts-n').textContent=myCmtCnt;
-  /* 탭 초기화 */
+  /* 탭 초기화 — 향수 리뷰 탭 우선 */
   document.getElementById('up-tab-posts').classList.add('on');
   document.getElementById('up-tab-cmts').classList.remove('on');
-  _renderUserPosts(name);
+  _renderUserReviews(name);
   document.getElementById('overlay-user-profile').classList.add('open');
 }
 function closeUserProfile(){
@@ -8141,8 +8163,34 @@ function closeUserProfile(){
 function _switchUserTab(tab){
   document.getElementById('up-tab-posts').classList.toggle('on',tab==='posts');
   document.getElementById('up-tab-cmts').classList.toggle('on',tab==='cmts');
-  if(tab==='posts')_renderUserPosts(_upCurrentUser);
+  if(tab==='posts')_renderUserReviews(_upCurrentUser);
   else _renderUserComments(_upCurrentUser);
+}
+/* ── 타인 프로필: 향수 리뷰 탭 ── */
+function _renderUserReviews(name){
+  var c=document.getElementById('up-content');
+  var reviews=[];
+  /* PERFUME_REVIEWS 프리셋에서 해당 닉네임 리뷰 수집 */
+  Object.keys(PERFUME_REVIEWS||{}).forEach(function(pidStr){
+    var pid=parseInt(pidStr);
+    (PERFUME_REVIEWS[pid]||[]).forEach(function(r){
+      if(r.nick===name){
+        var perfume=PERFUMES.find(function(p){return p.id===pid;});
+        reviews.push({pid:pid,perfumeName:perfume?(perfume.brand+' · '+perfume.name):'알 수 없는 향수',star:r.star,text:r.text,date:r.date||''});
+      }
+    });
+  });
+  if(!reviews.length){
+    c.innerHTML='<p class="up-empty">아직 작성한 향수 리뷰가 없어요 🌿</p>';return;
+  }
+  c.innerHTML=reviews.map(function(r){
+    return'<div class="up-review-item">'
+      +'<p class="up-review-perfume">'+r.perfumeName+'</p>'
+      +'<span class="up-review-stars">'+'★'.repeat(r.star)+'☆'.repeat(5-r.star)+'</span>'
+      +'<p class="up-review-text">'+_esc(r.text)+'</p>'
+      +(r.date?'<p style="font-size:10px;color:var(--t3);margin-top:4px;font-family:\'Pretendard\',sans-serif">'+r.date+'</p>':'')
+      +'</div>';
+  }).join('');
 }
 function _renderUserPosts(name){
   const posts=_loadPosts();
