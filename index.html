@@ -1136,6 +1136,17 @@ input,textarea{font-family:inherit;outline:none}
   background:var(--primary);color:#fff;
   padding:2px 7px;border-radius:50px;margin-top:4px;
 }
+/* 취향 재진단 버튼 */
+.data-rediag-btn{width:100%;padding:13px 16px;border-radius:14px;background:var(--primary-soft);border:1.5px solid rgba(176,116,102,.3);color:var(--primary);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:14px;transition:all .2s;letter-spacing:.01em}
+.data-rediag-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* 선택 초기화 미니멀 리스트 */
+.data-reset-list{margin-top:4px}
+.data-reset-item{display:flex;align-items:center;gap:10px;width:100%;padding:12px 0;border:none;background:none;border-bottom:1px solid var(--bd);cursor:pointer;transition:opacity .15s;text-align:left;font-family:inherit}
+.data-reset-item:last-child{border-bottom:none}
+.data-reset-item:active{opacity:.55}
+.data-reset-icon{font-size:14px;width:18px;flex-shrink:0;text-align:center}
+.data-reset-lbl{flex:1;font-size:13px;font-weight:600;color:#B85C54}
+.data-reset-arr{font-size:16px;color:rgba(185,92,84,.4);flex-shrink:0}
 /* 앱 버전 푸터 */
 .set-version-footer{
   text-align:center;padding:24px 0 8px;
@@ -1822,7 +1833,7 @@ input,textarea{font-family:inherit;outline:none}
           </div>
 
           <!-- 마케팅 알림 -->
-          <div class="notif-card" style="margin-bottom:0">
+          <div class="notif-card">
             <div class="notif-card-top">
               <div class="notif-card-icon">🎁</div>
               <div class="notif-card-info">
@@ -1830,6 +1841,18 @@ input,textarea{font-family:inherit;outline:none}
                 <p class="notif-card-desc">새로 추가된 향수, 한정 샘플 이벤트, 시즌 큐레이션 소식을 전달해 드려요</p>
               </div>
               <button class="set-toggle" id="toggle-notif-marketing" onclick="toggleNotif('marketing',this)"></button>
+            </div>
+          </div>
+
+          <!-- 야간 알림 제한 -->
+          <div class="notif-card" style="margin-bottom:0">
+            <div class="notif-card-top">
+              <div class="notif-card-icon" style="background:#EEF2FB">🌙</div>
+              <div class="notif-card-info">
+                <p class="notif-card-title">야간 푸시 알림 제한</p>
+                <p class="notif-card-desc">21:00 ~ 08:00 사이에는 모든 푸시 알림을 보내지 않아요</p>
+              </div>
+              <button class="set-toggle on" id="toggle-notif-night" onclick="toggleNotif('night',this)"></button>
             </div>
           </div>
         </div>
@@ -1852,6 +1875,11 @@ input,textarea{font-family:inherit;outline:none}
               <span class="account-badge">로컬 체험판</span>
             </div>
           </div>
+
+          <!-- 취향 재진단 버튼 -->
+          <button class="data-rediag-btn" onclick="closeSettings();setTimeout(openScentTest,220)">
+            🔄 &nbsp;내 향 취향 재진단하기
+          </button>
 
           <!-- 내 취향 아카이브 현황 -->
           <div class="data-card">
@@ -1882,18 +1910,26 @@ input,textarea{font-family:inherit;outline:none}
                 <p class="data-card-sub">특정 항목만 골라서 삭제할 수 있어요</p>
               </div>
             </div>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <button class="data-action-btn outline" onclick="clearDataItem('reviews')" style="font-size:12px;text-align:left;padding:10px 14px">
-                💬 &nbsp;작성한 리뷰 전체 삭제
+            <div class="data-reset-list">
+              <button class="data-reset-item" onclick="clearDataItem('reviews')">
+                <span class="data-reset-icon">💬</span>
+                <span class="data-reset-lbl">작성한 리뷰 전체 삭제</span>
+                <span class="data-reset-arr">›</span>
               </button>
-              <button class="data-action-btn outline" onclick="clearDataItem('liked')" style="font-size:12px;text-align:left;padding:10px 14px">
-                🤍 &nbsp;좋아요 목록 초기화
+              <button class="data-reset-item" onclick="clearDataItem('liked')">
+                <span class="data-reset-icon">🤍</span>
+                <span class="data-reset-lbl">좋아요 목록 초기화</span>
+                <span class="data-reset-arr">›</span>
               </button>
-              <button class="data-action-btn outline" onclick="clearDataItem('orders')" style="font-size:12px;text-align:left;padding:10px 14px">
-                📦 &nbsp;샘플 신청 내역 삭제
+              <button class="data-reset-item" onclick="clearDataItem('orders')">
+                <span class="data-reset-icon">📦</span>
+                <span class="data-reset-lbl">샘플 신청 내역 삭제</span>
+                <span class="data-reset-arr">›</span>
               </button>
-              <button class="data-action-btn outline" onclick="clearDataItem('chat')" style="font-size:12px;text-align:left;padding:10px 14px">
-                ✨ &nbsp;AI 채팅 히스토리 비우기
+              <button class="data-reset-item" onclick="clearDataItem('chat')">
+                <span class="data-reset-icon">✨</span>
+                <span class="data-reset-lbl">AI 채팅 히스토리 비우기</span>
+                <span class="data-reset-arr">›</span>
               </button>
             </div>
           </div>
