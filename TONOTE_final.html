@@ -693,6 +693,14 @@ input,textarea{font-family:inherit;outline:none}
 .review-item-date{font-size:10px;color:var(--t3)}
 .review-item-nick{font-size:10.5px;font-weight:700;color:var(--primary);margin-bottom:4px}
 .review-item-text{font-size:13px;color:var(--t2);line-height:1.65}
+.review-ctrl-row{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.review-ctrl-btn{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;letter-spacing:.01em;transition:color .15s}
+.review-ctrl-btn:hover{color:var(--primary)}
+.review-ctrl-sep{font-size:10px;color:var(--bd);line-height:1}
+.review-edit-area{width:100%;border:1.5px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:13px;color:var(--t2);font-family:inherit;line-height:1.65;resize:none;background:var(--s2);margin-top:6px;transition:border-color .2s;box-sizing:border-box}
+.review-edit-area:focus{border-color:var(--primary);outline:none}
+.review-save-btn{margin-top:7px;padding:6px 14px;border-radius:8px;background:var(--primary);color:#fff;font-size:12px;font-weight:700;border:none;cursor:pointer;transition:background .2s;font-family:inherit}
+.review-save-btn:hover{background:var(--primary-dk)}
 @keyframes shakeStar{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 
 /* ── COMPARE OVERLAY ─────────────────────── */
@@ -6164,7 +6172,8 @@ function _saveReview(pid,star,text){
   const all=_loadAllReviews();
   const now=new Date();
   const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-  all.push({pid,star,text,date,nick:'나'});
+  const rid='rv'+Date.now();
+  all.push({rid,pid,star,text,date,nick:'나'});
   localStorage.setItem(_RK,JSON.stringify(all));
 }
 
@@ -6408,15 +6417,75 @@ function renderReviews(pid){
     container.innerHTML='<p class="review-list-empty">아직 작성된 리뷰가 없어요. 첫 리뷰를 남겨주세요!</p>';
     return;
   }
-  container.innerHTML=all.map(r=>`
-    <div class="review-item">
+  container.innerHTML=all.map(r=>{
+    const isMe=r.nick==='나';
+    const rid=r.rid||'';
+    const ctrlHtml=isMe&&rid?`<span class="review-ctrl-row">
+      <button class="review-ctrl-btn" onclick="editReview('${rid}',${pid},this)">수정</button>
+      <span class="review-ctrl-sep">|</span>
+      <button class="review-ctrl-btn" onclick="deleteReview('${rid}',${pid},this)">삭제</button>
+    </span>`:'';
+    return`<div class="review-item" data-rid="${rid}">
       <div class="review-item-header">
         <span class="review-item-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</span>
-        <span class="review-item-date">${r.date}</span>
+        ${ctrlHtml}
+        <span class="review-item-date" style="margin-left:${isMe?'0':'auto'}">${r.date}</span>
       </div>
-      <p class="review-item-nick">${r.nick||'익명'}</p>
-      <p class="review-item-text">${r.text}</p>
-    </div>`).join('');
+      <p class="review-item-nick">${r.nick==='나'?(_loadProfile().nickname||'배연주'):r.nick||'익명'}</p>
+      <p class="review-item-text" id="rv-text-${rid}">${r.text}</p>
+    </div>`;
+  }).join('');
+}
+
+/* ── 내 리뷰 삭제 ── */
+function deleteReview(rid,pid,btn){
+  var item=btn.closest('.review-item');
+  if(!item)return;
+  item.style.transition='opacity .32s,transform .28s';
+  item.style.opacity='0';
+  item.style.transform='translateY(-6px)';
+  setTimeout(function(){
+    item.remove();
+    var all=_loadAllReviews().filter(function(r){return r.rid!==rid;});
+    localStorage.setItem(_RK,JSON.stringify(all));
+    renderReviews(pid);
+  },340);
+}
+
+/* ── 내 리뷰 수정: 텍스트 → textarea 전환 ── */
+function editReview(rid,pid,btn){
+  var textEl=document.getElementById('rv-text-'+rid);
+  if(!textEl||textEl.tagName==='TEXTAREA')return;
+  var orig=textEl.textContent;
+  var ta=document.createElement('textarea');
+  ta.className='review-edit-area';
+  ta.value=orig;
+  ta.rows=3;
+  var saveBtn=document.createElement('button');
+  saveBtn.className='review-save-btn';
+  saveBtn.textContent='저장';
+  saveBtn.onclick=function(){saveEditReview(rid,pid,ta,textEl,saveBtn);};
+  textEl.parentNode.insertBefore(ta,textEl);
+  textEl.parentNode.insertBefore(saveBtn,textEl.nextSibling);
+  textEl.style.display='none';
+  ta.focus();
+  btn.closest('.review-ctrl-row').style.opacity='.35';
+  btn.closest('.review-ctrl-row').style.pointerEvents='none';
+}
+
+/* ── 수정 내용 저장 ── */
+function saveEditReview(rid,pid,ta,textEl,saveBtn){
+  var newText=(ta.value||'').trim();
+  if(!newText){ta.focus();return;}
+  var all=_loadAllReviews();
+  var idx=all.findIndex(function(r){return r.rid===rid;});
+  if(idx!==-1){all[idx].text=newText;localStorage.setItem(_RK,JSON.stringify(all));}
+  textEl.textContent=newText;
+  textEl.style.display='';
+  ta.remove();
+  saveBtn.remove();
+  renderReviews(pid);
+  showToast('리뷰가 수정됐어요 ✦');
 }
 
 /* 리뷰 등록 */
