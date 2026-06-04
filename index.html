@@ -682,9 +682,11 @@ input,textarea{font-family:inherit;outline:none}
 .review-star:active{transform:scale(1.25)}
 .review-input{width:100%;box-sizing:border-box;background:var(--bg);border:1.5px solid var(--bd);border-radius:12px;padding:10px 13px;font-size:13px;font-family:var(--sans);color:var(--t1);resize:none;line-height:1.6;transition:border-color .2s;min-height:70px}
 .review-input:focus{outline:none;border-color:rgba(176,116,102,.5)}
-.review-submit-btn{margin-top:10px;width:100%;padding:11px;border-radius:12px;background:var(--primary);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:opacity .2s}
+.review-submit-btn{margin-top:10px;width:100%;padding:11px;border-radius:12px;background:var(--primary);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:all .2s}
 .review-submit-btn:hover{opacity:.88}
 .review-submit-btn:active{opacity:.72}
+.review-submit-btn.done{background:var(--s2);color:var(--t3);cursor:default;border:1.5px solid var(--bd);font-weight:600}
+.review-submit-btn.done:hover{opacity:1}
 .review-list-empty{font-size:12px;color:var(--t3);text-align:center;padding:20px 0;font-style:italic}
 .review-item{padding:14px 0;border-top:1px solid var(--bd)}
 .review-item:first-child{border-top:none}
@@ -5550,7 +5552,7 @@ function openDetail(id){
       </div>
       <textarea class="review-input" id="review-ta-${id}" rows="2"
         placeholder="이 향수에 대한 솔직한 리뷰를 남겨주세요."></textarea>
-      <button class="review-submit-btn" onclick="submitReview(${id})">등록하기</button>
+      <button class="review-submit-btn" id="review-submit-btn-${id}" onclick="submitReview(${id})">등록하기</button>
     </div>
 
     <div id="review-list-${id}"></div>
@@ -6435,6 +6437,8 @@ function renderReviews(pid){
       <p class="review-item-text" id="rv-text-${rid}">${r.text}</p>
     </div>`;
   }).join('');
+  /* 버튼 상태: 이미 내 리뷰 있으면 비활성 */
+  _updateReviewSubmitBtn(pid);
 }
 
 /* ── 내 리뷰 삭제 ── */
@@ -6488,8 +6492,33 @@ function saveEditReview(rid,pid,ta,textEl,saveBtn){
   showToast('리뷰가 수정됐어요 ✦');
 }
 
+/* ── 내 리뷰 존재 여부 확인 ── */
+function _hasMyReview(pid){
+  return _loadAllReviews().some(function(r){return r.pid===pid&&r.nick==='나';});
+}
+
+/* ── 리뷰 등록 버튼 상태 갱신 ── */
+function _updateReviewSubmitBtn(pid){
+  var btn=document.getElementById('review-submit-btn-'+pid);
+  if(!btn)return;
+  if(_hasMyReview(pid)){
+    btn.classList.add('done');
+    btn.disabled=true;
+    btn.textContent='✓ 리뷰 작성 완료';
+  }else{
+    btn.classList.remove('done');
+    btn.disabled=false;
+    btn.textContent='등록하기';
+  }
+}
+
 /* 리뷰 등록 */
 function submitReview(pid){
+  /* ── 중복 차단 ── */
+  if(_hasMyReview(pid)){
+    showToast('이미 리뷰를 작성한 향수예요. 기존 리뷰를 수정하거나 삭제해 주세요.');
+    return;
+  }
   const sel=parseInt(document.getElementById('rsel-'+pid)?.value||0);
   if(!sel){
     const row=document.getElementById('rstar-row-'+pid);
