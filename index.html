@@ -1182,6 +1182,13 @@ input,textarea{font-family:inherit;outline:none}
 .notice-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--primary-soft);color:var(--primary);padding:2px 8px;border-radius:20px;margin-bottom:8px;font-family:var(--sans)}
 .notice-ttl{font-family:var(--serif);font-size:14.5px;font-weight:400;color:var(--t1);line-height:1.65;letter-spacing:-.3px;margin-bottom:5px}
 .notice-date{font-family:var(--serif);font-style:italic;font-size:10.5px;color:var(--t3);letter-spacing:.02em}
+.notice-item-hd{cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;width:100%;background:none;border:none;text-align:left;font-family:inherit;padding:0}
+.notice-item-hd-body{flex:1;min-width:0}
+.notice-arr{font-size:14px;color:var(--t3);transition:transform .26s;flex-shrink:0;margin-top:3px;line-height:1}
+.notice-item.open .notice-arr{transform:rotate(180deg)}
+.notice-detail{max-height:0;overflow:hidden;transition:max-height .34s cubic-bezier(.4,0,.2,1)}
+.notice-item.open .notice-detail{max-height:260px}
+.notice-detail-inner{font-family:var(--serif);font-size:12.5px;color:var(--t2);line-height:1.85;letter-spacing:.01em;padding:10px 14px 14px;background:var(--s2);border-radius:12px;margin-top:10px;margin-bottom:4px}
 /* FAQ 아코디언 */
 .faq-item{border-bottom:1px solid var(--bd)}
 .faq-item:last-child{border-bottom:none}
@@ -1993,15 +2000,31 @@ input,textarea{font-family:inherit;outline:none}
       <button class="supp-close" onclick="closeNotice()">✕</button>
     </div>
     <div class="supp-body">
-      <div class="notice-item">
-        <span class="notice-tag">안내</span>
-        <p class="notice-ttl">TONOTE 서비스 정식 런칭 및<br>감성 취향 진단 오픈</p>
-        <p class="notice-date">2026.06.01</p>
+      <div class="notice-item" id="notice-0">
+        <button class="notice-item-hd" onclick="toggleNotice(0)">
+          <div class="notice-item-hd-body">
+            <span class="notice-tag">안내</span>
+            <p class="notice-ttl">TONOTE 서비스 정식 런칭 및<br>감성 취향 진단 오픈</p>
+            <p class="notice-date">2026.06.01</p>
+          </div>
+          <span class="notice-arr">⌄</span>
+        </button>
+        <div class="notice-detail">
+          <p class="notice-detail-inner">당신의 기억 속에 잠든 향을 찾아드리는 TONOTE가 정식 서비스로 첫 발을 내딛습니다. 고감도 6단계 취향 진단을 통해 나만의 시그니처 향조를 발견하고, 나만을 위한 AI 큐레이션 및 커뮤니티 공간을 지금 바로 탐색해 보세요!</p>
+        </div>
       </div>
-      <div class="notice-item">
-        <span class="notice-tag">업데이트</span>
-        <p class="notice-ttl">AI 추천 엔진 고도화 및<br>200종 니치 향수 대용량 풀 업데이트 완료</p>
-        <p class="notice-date">2026.06.03</p>
+      <div class="notice-item" id="notice-1">
+        <button class="notice-item-hd" onclick="toggleNotice(1)">
+          <div class="notice-item-hd-body">
+            <span class="notice-tag">업데이트</span>
+            <p class="notice-ttl">AI 추천 엔진 고도화 및<br>200종 니치 향수 대용량 풀 업데이트 완료</p>
+            <p class="notice-date">2026.06.03</p>
+          </div>
+          <span class="notice-arr">⌄</span>
+        </button>
+        <div class="notice-detail">
+          <p class="notice-detail-inner">더욱 정밀하고 깊이 있는 향수 추천을 위해 AI 엔진 알고리즘 튜닝과 더불어 이솝, 바이레도 등 많은 분들이 요청해 주신 프리미엄 니치 향수 20종의 대용량 데이터 풀 업데이트가 완료되었습니다. 새로워진 추천 탭을 확인해 보세요.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -5240,6 +5263,15 @@ function openNotice(){
 function closeNotice(){
   document.getElementById('overlay-notice').classList.remove('open');
   document.body.style.overflow='';
+}
+
+/* ── 공지사항 아코디언 ── */
+function toggleNotice(idx){
+  var item=document.getElementById('notice-'+idx);
+  if(!item)return;
+  var wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.notice-item.open').forEach(function(el){el.classList.remove('open');});
+  if(!wasOpen)item.classList.add('open');
 }
 
 /* ── FAQ 모달 + 아코디언 ── */
