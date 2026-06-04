@@ -1130,6 +1130,21 @@ input,textarea{font-family:inherit;outline:none}
 .my-review-ctrl-btn{font-size:11px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;transition:color .15s}
 .my-review-ctrl-btn:hover{color:var(--primary)}
 .my-review-empty{text-align:center;padding:40px 0;font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:14px;color:var(--t3);font-style:italic}
+/* 리뷰 모달 서브 탭 */
+.mr-tab-bar{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0;background:var(--bg)}
+.mr-tab{flex:1;padding:10px 0;font-size:12px;font-weight:600;color:var(--t3);text-align:center;cursor:pointer;border:none;background:none;border-bottom:2.5px solid transparent;transition:color .18s,border-color .18s;font-family:inherit;margin-bottom:-1px;letter-spacing:.01em}
+.mr-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+/* 커뮤니티 댓글 아이템 */
+.mr-comm-item{padding:14px 0;border-bottom:1px solid var(--bd)}
+.mr-comm-item:last-child{border-bottom:none}
+.mr-comm-head{display:flex;align-items:center;gap:12px;margin-bottom:5px}
+.mr-comm-type{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);background:var(--primary-soft);padding:2px 7px;border-radius:10px;flex-shrink:0}
+.mr-comm-ctrl-row{display:flex;align-items:center;gap:5px;margin-left:auto;flex-shrink:0}
+.mr-comm-ctrl-btn{font-size:10.5px;color:var(--t3);background:none;border:none;cursor:pointer;padding:0;font-family:inherit;transition:color .15s}
+.mr-comm-ctrl-btn:hover{color:var(--primary)}
+.mr-comm-date{font-size:10px;color:var(--t3);flex-shrink:0}
+.mr-comm-ref{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:11.5px;color:var(--t2);font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.1px}
+.mr-comm-text{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:13px;color:var(--t1);line-height:1.65;letter-spacing:-.1px}
 /* 좋아요 모아보기 */
 .my-like-item{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid var(--bd)}
 .my-like-item:last-child{border-bottom:none}
@@ -2230,10 +2245,15 @@ input,textarea{font-family:inherit;outline:none}
 <div class="supp-overlay" id="overlay-my-reviews" onclick="if(event.target===this)closeMyReviews()">
   <div class="supp-sheet">
     <div class="supp-hd">
-      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">✦ &nbsp;내가 쓴 리뷰</p>
+      <p class="supp-ttl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-weight:600;letter-spacing:-.1px">✦ &nbsp;내가 쓴 글</p>
       <button class="supp-close" onclick="closeMyReviews()">✕</button>
     </div>
+    <div class="mr-tab-bar">
+      <button class="mr-tab active" id="mr-tab-perfume" onclick="_switchMrTab('perfume')">향수 리뷰</button>
+      <button class="mr-tab" id="mr-tab-comm" onclick="_switchMrTab('comm')">커뮤니티 댓글</button>
+    </div>
     <div class="supp-body" id="my-reviews-body"></div>
+    <div class="supp-body" id="my-comm-body" style="display:none"></div>
   </div>
 </div>
 
@@ -4917,12 +4937,14 @@ function _syncNotifUI(){
 function _refreshDataStats(){
   try{
     const likedArr=JSON.parse(localStorage.getItem(LS_LIKED)||'[]');
-    const reviewsArr=_loadAllReviews();          // ← 올바른 키(_RK) 사용
+    const reviewsArr=_loadAllReviews().filter(function(r){return r.nick==='나';});
+    const commItems=_getMyCommItems();
+    const totalWritten=reviewsArr.length+commItems.length;
     const ordersArr=JSON.parse(localStorage.getItem(LS_ORDERS)||'[]');
     const chatLen=parseInt(localStorage.getItem('tonote_chat_count')||'0');
     const el=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
     el('ds-liked',likedArr.length);
-    el('ds-reviews',reviewsArr.length);
+    el('ds-reviews',totalWritten);  // 향수 리뷰 + 커뮤니티 댓글 합산
     el('ds-orders',ordersArr.length);
     el('ds-chats',chatLen);
   }catch(e){}
@@ -4955,9 +4977,10 @@ function clearDataItem(type){
   if(!confirm(`${labels[type]}을(를) 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`))return;
   try{
     if(type==='reviews'){
-      localStorage.removeItem(_RK);         // ← 올바른 키
-      localStorage.removeItem('tonote_reviews'); // 구버전 키도 함께 정리
-      _syncReviewUI();                       // 상세 페이지 UI + 버튼 락 해제
+      localStorage.removeItem(_RK);
+      localStorage.removeItem('tonote_reviews');
+      _clearMyCommItems();        // 커뮤니티 내 내 댓글/답글도 삭제
+      _syncReviewUI();
     }
     if(type==='liked'){localStorage.removeItem(LS_LIKED);liked=new Set();updateMyPage();_syncLikesUI();}
     if(type==='orders'){localStorage.removeItem(LS_ORDERS);_syncSamplesUI();}
@@ -4976,6 +4999,7 @@ function confirmFullReset(){
     userNotif={...DEFAULT_NOTIF};
     clearChat();updateMyPage();_syncSettingsUI();_syncNotifUI();_refreshDataStats();
     _updateSettingsBadge();_updateSettingsSummary();
+    _clearMyCommItems();   // 커뮤니티 내 내 댓글/답글 전체 삭제
     _syncReviewUI();_syncLikesUI();_syncSamplesUI();_syncAiUI();
     showToast('앱이 초기화되었습니다');
     closeSettings();
@@ -5601,7 +5625,145 @@ function closeMySamples(){
 }
 
 /* ── 내가 쓴 리뷰 모아보기 모달 ── */
+/* ── 내 커뮤니티 댓글/답글 역추적 ── */
+function _getMyCommItems(){
+  var result=[];
+  try{
+    var posts=_loadPosts();
+    posts.forEach(function(p){
+      var postRef=(p.text||'').slice(0,30)+(p.text&&p.text.length>30?'…':'');
+      (p.comments||[]).forEach(function(c){
+        if(c.isMe)result.push({type:'댓글',pid:p.id,cid:c.id,rid:null,postRef:postRef,text:c.text,ts:c.ts});
+        (c.replies||[]).forEach(function(r){
+          if(r.isMe)result.push({type:'답글',pid:p.id,cid:c.id,rid:r.id,postRef:postRef,text:r.text,ts:r.ts});
+        });
+      });
+    });
+  }catch(e){}
+  return result.sort(function(a,b){return b.ts-a.ts;});
+}
+/* ── 내 커뮤니티 댓글/답글 전체 삭제 ── */
+function _clearMyCommItems(){
+  try{
+    var posts=_loadPosts();
+    posts.forEach(function(p){
+      p.comments=(p.comments||[]).filter(function(c){return!c.isMe;});
+      p.comments.forEach(function(c){
+        c.replies=(c.replies||[]).filter(function(r){return!r.isMe;});
+      });
+    });
+    _savePosts(posts);
+    renderCommunity();
+  }catch(e){}
+}
+/* ── 리뷰 모달 서브 탭 전환 ── */
+function _switchMrTab(tab){
+  var perfBody=document.getElementById('my-reviews-body');
+  var commBody=document.getElementById('my-comm-body');
+  var perfTab=document.getElementById('mr-tab-perfume');
+  var commTab=document.getElementById('mr-tab-comm');
+  if(!perfBody||!commBody)return;
+  if(tab==='perfume'){
+    perfBody.style.display='';commBody.style.display='none';
+    if(perfTab)perfTab.classList.add('active');
+    if(commTab)commTab.classList.remove('active');
+  }else{
+    perfBody.style.display='none';commBody.style.display='';
+    if(commTab)commTab.classList.add('active');
+    if(perfTab)perfTab.classList.remove('active');
+    _renderMyCommTab();
+  }
+}
+/* ── 커뮤니티 댓글 탭 렌더 ── */
+function _renderMyCommTab(){
+  var body=document.getElementById('my-comm-body');
+  if(!body)return;
+  var items=_getMyCommItems();
+  if(items.length===0){
+    body.innerHTML='<p class="my-review-empty">커뮤니티에 작성한 댓글이 없어요.<br>커뮤니티 탭에서 이야기를 나눠보세요 💬</p>';
+    return;
+  }
+  body.innerHTML=items.map(function(item){
+    var elId='mrci-'+item.pid+'-'+(item.rid||item.cid);
+    var ctrl='<span class="mr-comm-ctrl-row">'
+      +'<button class="mr-comm-ctrl-btn" onclick="_mrCommEdit(\''+item.pid+'\',\''+item.cid+'\',\''+item.rid+'\',this)">수정</button>'
+      +'<span style="font-size:10px;color:var(--bd)">|</span>'
+      +'<button class="mr-comm-ctrl-btn" onclick="_mrCommDelete(\''+item.pid+'\',\''+item.cid+'\',\''+item.rid+'\',this)">삭제</button>'
+      +'</span>';
+    return'<div class="mr-comm-item" id="'+elId+'">'
+      +'<div class="mr-comm-head">'
+      +'<span class="mr-comm-type">'+item.type+'</span>'
+      +ctrl
+      +'<span class="mr-comm-date">'+_commTimeAgo(item.ts)+'</span>'
+      +'</div>'
+      +'<p class="mr-comm-ref">📝 '+item.postRef+'</p>'
+      +'<p class="mr-comm-text" id="mrc-text-'+elId+'">'+item.text+'</p>'
+      +'</div>';
+  }).join('');
+}
+/* ── 커뮤니티 댓글 모달 내 삭제 ── */
+function _mrCommDelete(pid,cid,rid,btn){
+  var item=btn.closest('.mr-comm-item');
+  if(!item)return;
+  item.style.transition='opacity .3s';item.style.opacity='0';
+  setTimeout(function(){
+    item.remove();
+    var posts=_loadPosts();
+    var p=posts.find(function(x){return x.id===pid;});
+    if(p){
+      if(rid&&rid!=='null'){
+        var c=(p.comments||[]).find(function(x){return x.id===cid;});
+        if(c)c.replies=(c.replies||[]).filter(function(r){return r.id!==rid;});
+      }else{
+        p.comments=(p.comments||[]).filter(function(c){return c.id!==cid;});
+      }
+    }
+    _savePosts(posts);
+    renderCommunity();
+    _refreshDataStats();
+    var body=document.getElementById('my-comm-body');
+    if(body&&!body.querySelector('.mr-comm-item')){
+      body.innerHTML='<p class="my-review-empty">커뮤니티에 작성한 댓글이 없어요.</p>';
+    }
+  },320);
+}
+/* ── 커뮤니티 댓글 모달 내 수정 ── */
+function _mrCommEdit(pid,cid,rid,btn){
+  var item=btn.closest('.mr-comm-item');
+  var elId='mrci-'+pid+'-'+(rid&&rid!=='null'?rid:cid);
+  var textEl=document.getElementById('mrc-text-'+elId);
+  if(!textEl||textEl.tagName==='TEXTAREA')return;
+  var orig=textEl.textContent;
+  var ta=document.createElement('textarea');
+  ta.className='comm-edit-area';ta.value=orig;ta.rows=2;
+  var saveBtn=document.createElement('button');
+  saveBtn.className='comm-edit-save';saveBtn.textContent='저장';
+  saveBtn.onclick=function(){
+    var newText=(ta.value||'').trim();if(!newText){ta.focus();return;}
+    var posts=_loadPosts();
+    var p=posts.find(function(x){return x.id===pid;});
+    if(p){
+      var c=(p.comments||[]).find(function(x){return x.id===cid;});
+      if(c){
+        if(rid&&rid!=='null'){var r=(c.replies||[]).find(function(x){return x.id===rid;});if(r)r.text=newText;}
+        else{c.text=newText;}
+      }
+    }
+    _savePosts(posts);renderCommunity();
+    textEl.textContent=newText;textEl.style.display='';
+    ta.remove();saveBtn.remove();showToast('댓글이 수정됐어요 ✦');
+    btn.closest('.mr-comm-ctrl-row').style.opacity='1';
+    btn.closest('.mr-comm-ctrl-row').style.pointerEvents='auto';
+  };
+  textEl.parentNode.insertBefore(ta,textEl);
+  textEl.parentNode.insertBefore(saveBtn,textEl.nextSibling);
+  textEl.style.display='none';ta.focus();
+  btn.closest('.mr-comm-ctrl-row').style.opacity='.3';
+  btn.closest('.mr-comm-ctrl-row').style.pointerEvents='none';
+}
+
 function openMyReviews(){
+  /* 향수 리뷰 탭 렌더 */
   var body=document.getElementById('my-reviews-body');
   if(!body)return;
   var reviews=_loadAllReviews().filter(function(r){return r.nick==='나';}).reverse();
@@ -5629,6 +5791,8 @@ function openMyReviews(){
         +'</div>';
     }).join('');
   }
+  /* 탭 초기 상태: 향수 리뷰 탭 활성 */
+  _switchMrTab('perfume');
   document.getElementById('overlay-my-reviews').classList.add('open');
   document.body.style.overflow='hidden';
 }
