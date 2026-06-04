@@ -4828,7 +4828,7 @@ function _syncNotifUI(){
 function _refreshDataStats(){
   try{
     const likedArr=JSON.parse(localStorage.getItem(LS_LIKED)||'[]');
-    const reviewsArr=JSON.parse(localStorage.getItem('tonote_reviews')||'[]');
+    const reviewsArr=_loadAllReviews();          // ← 올바른 키(_RK) 사용
     const ordersArr=JSON.parse(localStorage.getItem(LS_ORDERS)||'[]');
     const chatLen=parseInt(localStorage.getItem('tonote_chat_count')||'0');
     const el=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
@@ -4839,11 +4839,23 @@ function _refreshDataStats(){
   }catch(e){}
 }
 
+/* 리뷰 전체 삭제 후 상세 페이지 UI 즉시 동기화 */
+function _syncReviewUI(){
+  /* 현재 열린 상세 페이지가 있으면 재렌더 → 버튼 락도 자동 해제 */
+  if(currentDetailId){
+    try{renderReviews(currentDetailId);}catch(e){}
+  }
+}
+
 function clearDataItem(type){
   const labels={reviews:'리뷰 내역',liked:'좋아요 목록',orders:'샘플 신청 내역',chat:'AI 채팅 히스토리'};
   if(!confirm(`${labels[type]}을(를) 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`))return;
   try{
-    if(type==='reviews') localStorage.removeItem('tonote_reviews');
+    if(type==='reviews'){
+      localStorage.removeItem(_RK);         // ← 올바른 키
+      localStorage.removeItem('tonote_reviews'); // 구버전 키도 함께 정리
+      _syncReviewUI();                       // 상세 페이지 UI + 버튼 락 해제
+    }
     if(type==='liked'){localStorage.removeItem(LS_LIKED);liked=new Set();updateMyPage();}
     if(type==='orders') localStorage.removeItem(LS_ORDERS);
     if(type==='chat'){localStorage.removeItem('tonote_chat_count');clearChat();}
@@ -4855,12 +4867,13 @@ function clearDataItem(type){
 function confirmFullReset(){
   if(!confirm('⚠️ 정말로 전체 초기화할까요?\n\n좋아요, 리뷰, 주문 내역, AI 채팅, 취향 설정이 모두 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.'))return;
   try{
-    [LS_LIKED,LS_ORDERS,LS_SETTINGS,LS_NOTIF,'tonote_reviews','tonote_chat_count'].forEach(k=>localStorage.removeItem(k));
+    [LS_LIKED,LS_ORDERS,LS_SETTINGS,LS_NOTIF,_RK,'tonote_reviews','tonote_chat_count'].forEach(k=>localStorage.removeItem(k));
     liked=new Set();
     userSettings={...DEFAULT_SETTINGS};
     userNotif={...DEFAULT_NOTIF};
     clearChat();updateMyPage();_syncSettingsUI();_syncNotifUI();_refreshDataStats();
     _updateSettingsBadge();_updateSettingsSummary();
+    _syncReviewUI();   // 상세 페이지 리뷰 UI + 등록 버튼 락 해제
     showToast('앱이 초기화되었습니다');
     closeSettings();
   }catch(e){showToast('초기화 중 오류가 발생했습니다');}
