@@ -1650,9 +1650,9 @@ input,textarea{font-family:inherit;outline:none}
           <div class="my-menu-left"><span class="my-menu-icon">📦</span><div><p class="my-menu-lbl">샘플 키트 신청</p><p class="my-menu-sub">최대 3개 · 집에서 눈치 없이</p></div></div>
           <span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-menu-item">
+        <div class="my-menu-item" onclick="openCompare()">
           <div class="my-menu-left"><span class="my-menu-icon">⚖️</span><div><p class="my-menu-lbl">비교 목록</p><p class="my-menu-sub" id="compare-count-lbl">비교 중인 향수 없음</p></div></div>
-          <span class="my-menu-arrow" onclick="openCompare()">›</span>
+          <span class="my-menu-arrow">›</span>
         </div>
         <div class="my-menu-item" onclick="openSettings()">
           <div class="my-menu-left"><span class="my-menu-icon">⚙️</span><div><p class="my-menu-lbl">설정</p></div></div>
@@ -7081,19 +7081,74 @@ function _updateNotifBadge(){
 
 function openCompare(){renderCompare();document.getElementById('overlay-compare').classList.add('open');}
 function closeCompare(){document.getElementById('overlay-compare').classList.remove('open');}
+/* 향수 쌍별 특화 AI 브리핑 */
+function _getAiBriefing(a,b){
+  /* Santal 33 vs Super Cedar 특화 분석 */
+  const pair=new Set([a.id,b.id]);
+  if(pair.has(1)&&pair.has(126)){
+    return'두 향수 모두 매력적인 우디 계열이지만, [산탈 33]은 가죽과 카르다몸의 알싸하고 거친 스파이시함이 초반에 강하게 몰아치는 반면, [슈퍼 시더]는 시더우드 고유의 빳빳하고 깨끗한 연필심 느낌에 장미 잔향이 섞여 한층 더 미니멀하고 단정한 인상을 줍니다.';
+  }
+  /* 같은 카테고리일 때 범용 심층 분석 */
+  if(a.cat===b.cat){
+    const catMap={
+      '우디':'같은 우디 계열이지만 '+a.name+'은 더 스모키하고 무게감 있는 잔향을 남기는 반면, '+b.name+'은 보다 가볍고 깨끗한 건조한 느낌을 지닙니다.',
+      '플로럴':'두 플로럴 향수 모두 화사하지만, '+a.name+'이 로맨틱하고 달콤한 무드라면, '+b.name+'은 더 그린하고 자연스러운 꽃다발에 가깝습니다.',
+      '머스크':'두 머스크 모두 피부에 밀착되지만, '+a.name+'이 더 따뜻하고 관능적인 반면 '+b.name+'은 세탁된 린넨처럼 클린한 느낌에 가깝습니다.',
+      '시트러스':a.name+'이 상큼하고 밝은 탑 노트를 강조한다면, '+b.name+'은 시트러스 뒤에 오는 화이트 베이스가 더 오래 머뭅니다.',
+    };
+    return catMap[a.cat]||(a.name+'의 깊은 감성과 '+b.name+'의 산뜻함, 오늘 당신의 무드는 어느 쪽인가요?');
+  }
+  /* 다른 카테고리 기본 분석 */
+  return a.name+'('+a.cat+')은 '+a.poem.slice(0,20)+'... 의 무드라면, '+b.name+'('+b.cat+')은 '+b.poem.slice(0,20)+'... 의 결이에요. 기분과 계절에 따라 하나씩 갖춰두면 완벽합니다.';
+}
+
 function renderCompare(){
+  /* 비교 목록이 비어있으면 Santal 33 + Super Cedar 쇼케이스 표시 */
+  const SHOWCASE_IDS=[1,126];
+  const isShowcase=compareList.length<2;
+  const displayList=isShowcase
+    ?SHOWCASE_IDS.map(function(id){return PERFUMES.find(function(p){return p.id===id;});}).filter(Boolean)
+    :compareList;
+
   const slots=document.getElementById('cmp-slots');
-  slots.innerHTML=[0,1].map(i=>{const p=compareList[i];
-    if(p)return `<div class="cmp-slot filled"><span class="cmp-slot-emoji">${p.emoji}</span><p class="cmp-slot-brand">${p.brand}</p><p class="cmp-slot-name">${p.name}</p><span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span></div>`;
-    return `<div class="cmp-slot" onclick="openCmpSearch(${i})"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">검색해서 추가</p></div>`;
+  slots.innerHTML=[0,1].map(function(i){
+    var p=isShowcase?displayList[i]:compareList[i];
+    if(p)return`<div class="cmp-slot filled">`
+      +`<span class="cmp-slot-emoji">${p.emoji}</span>`
+      +`<p class="cmp-slot-brand">${p.brand}</p>`
+      +`<p class="cmp-slot-name">${p.name}</p>`
+      +(isShowcase?'':`<span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span>`)
+      +`</div>`;
+    return`<div class="cmp-slot" onclick="openCmpSearch(${i})"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">검색해서 추가</p></div>`;
   }).join('');
+
   const body=document.getElementById('cmp-body');
-  if(compareList.length<2){body.innerHTML='<p class="cmp-empty-hint">향수 2개를 추가하면<br>차이를 비교해드려요</p>';return;}
-  const [a,b]=compareList;
-  const sums=[`${a.name}이 더 우디하고 지속력이 강하다면, ${b.name}은 더 가볍고 일상적으로 쓰기 좋아요.`,`두 향수 모두 매력적이지만, ${a.name}은 혼자만의 조용한 시간에, ${b.name}은 봄날 외출에 더 어울려요.`,`${a.name}의 깊은 감성과 ${b.name}의 신선함, 오늘 당신의 무드는 어느 쪽인가요?`];
-  body.innerHTML=`<div class="cmp-ai-summary"><p class="cmp-ai-lbl">✦ AI 비교 한 줄 요약</p><p class="cmp-ai-txt">${sums[Math.floor(Math.random()*sums.length)]}</p></div>
-  ${[['분위기',a.poem.slice(0,22)+'...',b.poem.slice(0,22)+'...'],['계절',a.season.join(', '),b.season.join(', ')],['지속력',`${a.longevity}/5`,`${b.longevity}/5`],['확산력',`${a.sillage}/5`,`${b.sillage}/5`],['샘플',a.sampleAvail?`₩${a.samplePrice.toLocaleString()}`:'품절',b.sampleAvail?`₩${b.samplePrice.toLocaleString()}`:'품절'],['평점',`★ ${a.rating}`,`★ ${b.rating}`]].map(([l,av,bv])=>`<div class="cmp-row"><span class="cmp-row-lbl">${l}</span><div class="cmp-cells"><p class="cmp-cell">${av}</p><p class="cmp-cell">${bv}</p></div></div>`).join('')}
-  <div style="display:flex;gap:10px;margin-top:20px"><button class="gbtn" style="flex:1;justify-content:center" onclick="openSample()">📦 샘플 신청</button></div><div style="height:16px"></div>`;
+  if(displayList.length<2){body.innerHTML='<p class="cmp-empty-hint">향수 2개를 추가하면<br>차이를 비교해드려요</p>';return;}
+
+  const [a,b]=displayList;
+  const briefing=_getAiBriefing(a,b);
+  const showcaseBadge=isShowcase?'<p style="font-size:10px;color:var(--t3);font-family:\'Pretendard\',sans-serif;letter-spacing:-.1px;margin-bottom:8px">✦ 예시 비교 — 탐색 탭에서 향수를 담아 나만의 비교를 만들어보세요</p>':'';
+
+  body.innerHTML=showcaseBadge
+    +`<div class="cmp-ai-summary">`
+    +`<p class="cmp-ai-lbl" style="font-family:'Maru Buri','ChosunIlbo_Myungjo',serif">✦ AI 차이점 브리핑</p>`
+    +`<p class="cmp-ai-txt" style="font-family:'Pretendard','Noto Sans KR',sans-serif;font-size:13px;line-height:1.7;letter-spacing:-.2px;color:var(--t2)">${briefing}</p>`
+    +`</div>`
+    +[['분위기',a.poem.slice(0,22)+'…',b.poem.slice(0,22)+'…'],
+      ['계절',a.season.join(', '),b.season.join(', ')],
+      ['향 강도',a.intensity+'/5',b.intensity+'/5'],
+      ['지속력',a.longevity+'/5',b.longevity+'/5'],
+      ['확산력',a.sillage+'/5',b.sillage+'/5'],
+      ['샘플',a.sampleAvail?'₩'+a.samplePrice.toLocaleString():'품절',b.sampleAvail?'₩'+b.samplePrice.toLocaleString():'품절'],
+      ['평점','★ '+a.rating,'★ '+b.rating]
+    ].map(function(row){
+      return`<div class="cmp-row"><span class="cmp-row-lbl">${row[0]}</span><div class="cmp-cells"><p class="cmp-cell">${row[1]}</p><p class="cmp-cell">${row[2]}</p></div></div>`;
+    }).join('')
+    +`<div style="display:flex;gap:10px;margin-top:20px">`
+    +(isShowcase
+      ?`<button class="gbtn" style="flex:1;justify-content:center" onclick="closeCompare();switchTab('explore')">🔍 내 취향 향수 탐색</button>`
+      :`<button class="gbtn" style="flex:1;justify-content:center" onclick="openSample()">📦 샘플 신청</button>`)
+    +`</div><div style="height:16px"></div>`;
 }
 function removeCompare(id){compareList=compareList.filter(p=>p.id!==id);renderCompare();}
 
