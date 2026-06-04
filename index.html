@@ -370,12 +370,12 @@ input,textarea{font-family:inherit;outline:none}
 #overlay-user-profile{position:fixed;inset:0;z-index:820;background:rgba(30,24,20,.46);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:24px 20px}
 #overlay-user-profile.open{display:flex}
 .up-panel-wrap{position:relative;width:100%;max-width:378px}
-.up-panel{width:100%;background:var(--bg);border-radius:24px;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,.24);animation:upIn .34s cubic-bezier(.32,1,.28,1) both;max-height:78vh;display:flex;flex-direction:column}
+.up-panel{width:100%;background:var(--bg);border-radius:24px;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,.24);animation:upIn .34s cubic-bezier(.32,1,.28,1) both;max-height:84vh;display:flex;flex-direction:column}
 @keyframes upIn{from{opacity:0;transform:scale(.93) translateY(14px)}to{opacity:1;transform:none}}
 .up-close{position:absolute;top:-10px;right:-10px;width:30px;height:30px;border-radius:50%;background:var(--s1);border:1px solid var(--bd);cursor:pointer;font-size:12px;color:var(--t2);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:all .18s;z-index:2}
 .up-close:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
 /* 헤더 */
-.up-header{padding:22px 20px 14px;text-align:center;border-bottom:1px solid var(--bd);flex-shrink:0;position:relative}
+.up-header{padding:26px 20px 18px;text-align:center;border-bottom:1px solid var(--bd);flex-shrink:0;position:relative}
 .up-avatar{width:54px;height:54px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 9px;border:2px solid rgba(176,116,102,.15)}
 .up-name{font-size:15px;font-weight:800;color:var(--t1);margin-bottom:5px;letter-spacing:-.01em}
 .up-badge{display:inline-block;background:var(--primary-soft);color:var(--primary);font-size:10px;font-weight:800;padding:3px 11px;border-radius:50px;letter-spacing:.05em}
@@ -389,7 +389,7 @@ input,textarea{font-family:inherit;outline:none}
 .up-tab{flex:1;padding:10px 0;font-size:12px;font-weight:600;color:var(--t3);text-align:center;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;margin-bottom:-1px;letter-spacing:.02em}
 .up-tab.on{color:var(--primary);border-bottom-color:var(--primary);background:var(--bg)}
 /* 콘텐츠 */
-.up-content{flex:1;overflow-y:auto;scrollbar-width:none}
+.up-content{flex:1;overflow-y:auto;scrollbar-width:none;padding:16px 0 26px}
 .up-content::-webkit-scrollbar{display:none}
 .up-post-item{padding:13px 18px;border-bottom:1px solid var(--bd);transition:background .15s}
 .up-post-item:last-child{border-bottom:none}
@@ -704,7 +704,7 @@ input,textarea{font-family:inherit;outline:none}
 .review-item-nick.clickable{cursor:pointer;text-decoration:underline;text-decoration-color:rgba(176,116,102,.35);text-underline-offset:2px;transition:opacity .15s}
 .review-item-nick.clickable:hover{opacity:.72}
 /* 타인 프로필 모달 — 향수 리뷰 탭 */
-.up-review-item{padding:14px 0;border-bottom:1px solid var(--bd)}
+.up-review-item{padding:14px 18px;border-bottom:1px solid var(--bd)}
 .up-review-item:last-child{border-bottom:none}
 .up-review-perfume{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:13px;font-weight:600;color:var(--t1);letter-spacing:-.2px;margin-bottom:4px}
 .up-review-stars{color:#F5C518;font-size:11px;letter-spacing:1px;margin-bottom:4px;display:block}
