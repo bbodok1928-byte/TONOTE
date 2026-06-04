@@ -1281,6 +1281,24 @@ input,textarea{font-family:inherit;outline:none}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1)}
 .faq-item.open .faq-a{max-height:200px}
 .faq-a-inner{font-size:12.5px;color:var(--t2);line-height:1.75;padding:0 0 16px;border-radius:0}
+/* ── 커스텀 확인 모달 ── */
+.confirm-overlay{position:fixed;inset:0;z-index:1100;display:none;align-items:center;justify-content:center;background:rgba(30,24,20,.48);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.confirm-overlay.open{display:flex}
+.confirm-box{width:min(340px,88vw);background:var(--bg);border-radius:20px;padding:28px 24px 20px;box-shadow:0 8px 40px rgba(0,0,0,.18);animation:confirmIn .22s cubic-bezier(.4,0,.2,1)}
+@keyframes confirmIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+.confirm-icon{font-size:32px;text-align:center;margin-bottom:12px}
+.confirm-title{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:16px;font-weight:600;color:var(--t1);text-align:center;margin-bottom:8px;letter-spacing:-.2px}
+.confirm-body{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:13px;color:var(--t3);text-align:center;line-height:1.65;letter-spacing:-.1px;margin-bottom:22px}
+.confirm-btns{display:flex;gap:8px}
+.confirm-btn-cancel{flex:1;padding:12px;border-radius:12px;background:var(--s2);border:1px solid var(--bd);color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s}
+.confirm-btn-cancel:hover{border-color:var(--primary);color:var(--primary)}
+.confirm-btn-ok{flex:1;padding:12px;border-radius:12px;background:var(--primary);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .18s}
+.confirm-btn-ok:hover{opacity:.88}
+.confirm-btn-ok.danger{background:#D94040}
+/* ── 향기 용어 사전 숏컷 ── */
+.det-dict-shortcut{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;font-size:12px;color:var(--t3);text-align:center;padding:6px 0 18px;letter-spacing:-.1px}
+.det-dict-link{color:var(--primary);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px;transition:opacity .15s}
+.det-dict-link:hover{opacity:.75}
 .toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--t1);color:#fff;font-size:13px;font-weight:600;padding:12px 20px;border-radius:50px;white-space:nowrap;opacity:0;transition:opacity .3s,transform .3s;z-index:999;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -2287,6 +2305,19 @@ input,textarea{font-family:inherit;outline:none}
       <button class="supp-close" onclick="closeMySamples()">✕</button>
     </div>
     <div class="supp-body" id="my-samples-body"></div>
+  </div>
+</div>
+
+<!-- ════ 커스텀 확인 모달 ════ -->
+<div class="confirm-overlay" id="overlay-confirm">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <p class="confirm-title" id="confirm-title">정말 삭제할까요?</p>
+    <p class="confirm-body" id="confirm-body">이 작업은 되돌릴 수 없습니다.</p>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" onclick="_closeConfirm()">취소</button>
+      <button class="confirm-btn-ok" id="confirm-ok-btn" onclick="_doConfirm()">확인</button>
+    </div>
   </div>
 </div>
 
@@ -4973,8 +5004,18 @@ function _closeSyncModal(overId,bodyId,emptyMsg){
 }
 
 function clearDataItem(type){
+  const labels={reviews:'리뷰 및 댓글',liked:'좋아요 목록',orders:'샘플 신청 내역',chat:'AI 채팅 히스토리'};
+  _showConfirm({
+    icon:'🗂️',
+    title:labels[type]+' 전체 삭제',
+    body:'모든 '+labels[type]+' 데이터가 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.',
+    okLabel:'삭제',
+    danger:true,
+    onConfirm:function(){_doClearDataItem(type);}
+  });
+}
+function _doClearDataItem(type){
   const labels={reviews:'리뷰 내역',liked:'좋아요 목록',orders:'샘플 신청 내역',chat:'AI 채팅 히스토리'};
-  if(!confirm(`${labels[type]}을(를) 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`))return;
   try{
     if(type==='reviews'){
       localStorage.removeItem(_RK);
@@ -4984,20 +5025,29 @@ function clearDataItem(type){
     }
     if(type==='liked'){localStorage.removeItem(LS_LIKED);liked=new Set();updateMyPage();_syncLikesUI();}
     if(type==='orders'){localStorage.removeItem(LS_ORDERS);_syncSamplesUI();}
-    if(type==='chat'){localStorage.removeItem('tonote_chat_count');clearChat();_syncAiUI();}
+    if(type==='chat'){localStorage.removeItem('tonote_chat_count');clearChat(true);_syncAiUI();}
     _refreshDataStats();
     showToast(`${labels[type]} 삭제 완료`);
   }catch(e){showToast('삭제 중 오류가 발생했습니다');}
 }
 
 function confirmFullReset(){
-  if(!confirm('⚠️ 정말로 전체 초기화할까요?\n\n좋아요, 리뷰, 주문 내역, AI 채팅, 취향 설정이 모두 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.'))return;
+  _showConfirm({
+    icon:'🗑️',
+    title:'내 취향 아카이브 전체 초기화',
+    body:'좋아요, 리뷰, 주문 내역, AI 채팅, 취향 설정이 모두 삭제되며 복구할 수 없습니다.\n정말 진행하시겠어요?',
+    okLabel:'전체 초기화',
+    danger:true,
+    onConfirm:_doFullReset
+  });
+}
+function _doFullReset(){
   try{
     [LS_LIKED,LS_ORDERS,LS_SETTINGS,LS_NOTIF,_RK,'tonote_reviews','tonote_chat_count'].forEach(k=>localStorage.removeItem(k));
     liked=new Set();
     userSettings={...DEFAULT_SETTINGS};
     userNotif={...DEFAULT_NOTIF};
-    clearChat();updateMyPage();_syncSettingsUI();_syncNotifUI();_refreshDataStats();
+    clearChat(true);updateMyPage();_syncSettingsUI();_syncNotifUI();_refreshDataStats();
     _updateSettingsBadge();_updateSettingsSummary();
     _clearMyCommItems();   // 커뮤니티 내 내 댓글/답글 전체 삭제
     _syncReviewUI();_syncLikesUI();_syncSamplesUI();_syncAiUI();
@@ -5883,6 +5933,29 @@ function toggleFaq(idx){
   if(!wasOpen)item.classList.add('open');
 }
 
+/* ── 커스텀 확인 모달 ── */
+var _confirmCallback=null;
+function _showConfirm(opts){
+  /* opts: {icon, title, body, okLabel, danger, onConfirm} */
+  document.getElementById('confirm-icon').textContent=opts.icon||'⚠️';
+  document.getElementById('confirm-title').textContent=opts.title||'정말 진행할까요?';
+  document.getElementById('confirm-body').textContent=opts.body||'이 작업은 되돌릴 수 없습니다.';
+  var okBtn=document.getElementById('confirm-ok-btn');
+  okBtn.textContent=opts.okLabel||'확인';
+  okBtn.className='confirm-btn-ok'+(opts.danger?' danger':'');
+  _confirmCallback=opts.onConfirm||null;
+  document.getElementById('overlay-confirm').classList.add('open');
+}
+function _closeConfirm(){
+  document.getElementById('overlay-confirm').classList.remove('open');
+  _confirmCallback=null;
+}
+function _doConfirm(){
+  document.getElementById('overlay-confirm').classList.remove('open');
+  if(typeof _confirmCallback==='function')_confirmCallback();
+  _confirmCallback=null;
+}
+
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -5979,7 +6052,7 @@ function openDetail(id){
       <span class="det-section-label" style="margin:0">향의 강도</span>
       <div class="det-intensity-dots">${dotsHTML}</div>
     </div>
-    <div class="det-metrics">
+    <div class="det-metrics" style="margin-bottom:8px">
       <div class="det-metric-row">
         <span class="det-metric-label">지속</span>${bar(p.longevity)}
       </div>
@@ -5987,6 +6060,7 @@ function openDetail(id){
         <span class="det-metric-label">확산</span>${bar(p.sillage)}
       </div>
     </div>
+    <p class="det-dict-shortcut">💡 낯설거나 어려운 향기 용어가 있나요? <span class="det-dict-link" onclick="openDictionary()">사전 보기 →</span></p>
     <div class="det-divider"></div>
 
     <span class="det-section-label">비슷한 향수</span>
@@ -7864,13 +7938,28 @@ function pickPoetic(topMood,topTag,rawInput){
 
 function initChat(){
   const area=document.getElementById('chat-area');area.innerHTML='';
-  appendMsg('bot','지금 이 순간, 어떤 감정이나 장면이 떠오르시나요?\n기억 속 한 장면이어도 좋고, 지금의 기분을 그냥 말씀해 주셔도 좋아요.');
+  appendMsg('bot','안녕하세요, TONOTE AI 가이드입니다. ✨\n오늘 문득 떠오른 감정이나 머무르고 싶은 장면을 편하게 문장으로 들려주세요.\n(예: \'자기 전에 안락한 침대\', \'비 오는 날 서점 창가\')');
   document.getElementById('chat-send').onclick=sendChat;
   const ta=document.getElementById('chat-input');
   ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}};
   ta.oninput=()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px'};
 }
-function clearChat(){document.getElementById('chat-area').innerHTML='';initChat();}
+function clearChat(skipConfirm){
+  if(skipConfirm){
+    document.getElementById('chat-area').innerHTML='';initChat();return;
+  }
+  var area=document.getElementById('chat-area');
+  var hasChat=area&&area.children.length>1;
+  if(!hasChat){document.getElementById('chat-area').innerHTML='';initChat();return;}
+  _showConfirm({
+    icon:'✨',
+    title:'AI 대화를 초기화할까요?',
+    body:'지금까지의 대화 내용이 모두 사라집니다.\n정말 처음부터 다시 시작하시겠어요?',
+    okLabel:'초기화',
+    danger:false,
+    onConfirm:function(){document.getElementById('chat-area').innerHTML='';initChat();}
+  });
+}
 function fillSug(el){document.getElementById('chat-input').value=el.textContent;switchTab('ai');setTimeout(sendChat,200);}
 
 /* 채팅 스크롤 헬퍼 — smooth 로 부드럽게 최하단 이동 */
