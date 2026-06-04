@@ -1165,6 +1165,33 @@ input,textarea{font-family:inherit;outline:none}
 .set-apply-badge.show{opacity:1}
 
 /* ── TOAST ── */
+/* ── 공지사항 / FAQ 오버레이 공통 ── */
+.supp-overlay{position:fixed;inset:0;z-index:900;display:none;align-items:flex-end;justify-content:center;background:rgba(30,24,20,.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.supp-overlay.open{display:flex}
+.supp-sheet{width:100%;max-width:420px;max-height:82svh;background:var(--bg);border-radius:24px 24px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:sheetUp .32s cubic-bezier(.4,0,.2,1)}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.supp-hd{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.supp-ttl{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--t1)}
+.supp-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--bd);background:var(--s2);color:var(--t2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.supp-close:hover{background:var(--primary-soft);color:var(--primary)}
+.supp-body{overflow-y:auto;padding:16px 22px 28px;scrollbar-width:none}
+.supp-body::-webkit-scrollbar{display:none}
+/* 공지사항 */
+.notice-item{padding:16px 0;border-bottom:1px solid var(--bd)}
+.notice-item:last-child{border-bottom:none}
+.notice-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--primary-soft);color:var(--primary);padding:2px 8px;border-radius:20px;margin-bottom:7px}
+.notice-ttl{font-size:13.5px;font-weight:700;color:var(--t1);line-height:1.45;margin-bottom:4px}
+.notice-date{font-size:10.5px;color:var(--t3)}
+/* FAQ 아코디언 */
+.faq-item{border-bottom:1px solid var(--bd)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 0;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:inherit}
+.faq-q-txt{font-size:13.5px;font-weight:700;color:var(--t1);line-height:1.5;flex:1}
+.faq-q-arr{font-size:16px;color:var(--t3);flex-shrink:0;transition:transform .26s;margin-top:1px}
+.faq-item.open .faq-q-arr{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1)}
+.faq-item.open .faq-a{max-height:200px}
+.faq-a-inner{font-size:12.5px;color:var(--t2);line-height:1.75;padding:0 0 16px;border-radius:0}
 .toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--t1);color:#fff;font-size:13px;font-weight:600;padding:12px 20px;border-radius:50px;white-space:nowrap;opacity:0;transition:opacity .3s,transform .3s;z-index:999;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -1551,14 +1578,14 @@ input,textarea{font-family:inherit;outline:none}
       <!-- ── 고객 지원 섹션 ── -->
       <p class="my-section-ttl">고객 지원</p>
       <div class="my-support-menu">
-        <div class="my-support-item" onclick="showToast('준비 중인 기능입니다 🌿')">
+        <div class="my-support-item" onclick="openNotice()">
           <div class="my-support-left">
             <span class="my-support-icon">📢</span>
             <p class="my-support-lbl">공지사항</p>
           </div>
           <span class="my-menu-arrow">›</span>
         </div>
-        <div class="my-support-item" onclick="showToast('준비 중인 기능입니다 🌿')">
+        <div class="my-support-item" onclick="openFaq()">
           <div class="my-support-left">
             <span class="my-support-icon">❓</span>
             <p class="my-support-lbl">자주 묻는 질문</p>
@@ -1957,6 +1984,58 @@ input,textarea{font-family:inherit;outline:none}
     </div><!-- /settings-body -->
   </div><!-- /settings-sheet -->
 </div><!-- /#overlay-settings -->
+
+<!-- ════ 공지사항 모달 ════ -->
+<div class="supp-overlay" id="overlay-notice" onclick="if(event.target===this)closeNotice()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl">📢 &nbsp;공지사항</p>
+      <button class="supp-close" onclick="closeNotice()">✕</button>
+    </div>
+    <div class="supp-body">
+      <div class="notice-item">
+        <span class="notice-tag">안내</span>
+        <p class="notice-ttl">TONOTE 서비스 정식 런칭 및<br>감성 취향 진단 오픈</p>
+        <p class="notice-date">2026.06.01</p>
+      </div>
+      <div class="notice-item">
+        <span class="notice-tag">업데이트</span>
+        <p class="notice-ttl">AI 추천 엔진 고도화 및<br>200종 니치 향수 대용량 풀 업데이트 완료</p>
+        <p class="notice-date">2026.06.03</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ FAQ 모달 ════ -->
+<div class="supp-overlay" id="overlay-faq" onclick="if(event.target===this)closeFaq()">
+  <div class="supp-sheet">
+    <div class="supp-hd">
+      <p class="supp-ttl">❓ &nbsp;자주 묻는 질문</p>
+      <button class="supp-close" onclick="closeFaq()">✕</button>
+    </div>
+    <div class="supp-body">
+      <div class="faq-item" id="faq-0">
+        <button class="faq-q" onclick="toggleFaq(0)">
+          <span class="faq-q-txt">Q. 샘플 시향 키트는 어떻게 신청하고 비용은 얼마인가요?</span>
+          <span class="faq-q-arr">⌄</span>
+        </button>
+        <div class="faq-a">
+          <p class="faq-a-inner">A. TONOTE 회원분들께는 월 1회, 최대 3개 향수의 샘플 키트를 집에서 편안하게 시향하실 수 있도록 제공합니다. (배송비 별도)</p>
+        </div>
+      </div>
+      <div class="faq-item" id="faq-1">
+        <button class="faq-q" onclick="toggleFaq(1)">
+          <span class="faq-q-txt">Q. 매장 거리가 정확하지 않고 센텀시티역 기준으로만 보여요.</span>
+          <span class="faq-q-arr">⌄</span>
+        </button>
+        <div class="faq-a">
+          <p class="faq-a-inner">A. 기기의 GPS/위치 정보 권한이 차단된 경우, 기본 기준점인 '부산 센텀시티역' 좌표를 바탕으로 거리가 계산됩니다. 브라우저 위치 권한을 허용해 주시면 실시간 정렬이 가능합니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ════ TOAST ════ -->
 <div class="toast" id="toast"></div>
@@ -5153,6 +5232,34 @@ function renderExplore(){
 }
 
 /* ── TOAST ── */
+/* ── 공지사항 모달 ── */
+function openNotice(){
+  document.getElementById('overlay-notice').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeNotice(){
+  document.getElementById('overlay-notice').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── FAQ 모달 + 아코디언 ── */
+function openFaq(){
+  document.getElementById('overlay-faq').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeFaq(){
+  document.getElementById('overlay-faq').classList.remove('open');
+  document.body.style.overflow='';
+}
+function toggleFaq(idx){
+  var item=document.getElementById('faq-'+idx);
+  if(!item)return;
+  var wasOpen=item.classList.contains('open');
+  /* 다른 항목 닫기 */
+  document.querySelectorAll('.faq-item.open').forEach(function(el){el.classList.remove('open');});
+  if(!wasOpen)item.classList.add('open');
+}
+
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
