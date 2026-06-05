@@ -733,8 +733,10 @@ input,textarea{font-family:inherit;outline:none}
 .cmp-title{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:19px;font-weight:600;color:var(--t1);letter-spacing:-.2px}
 .cmp-close{font-size:20px;color:var(--t3);cursor:pointer}
 .cmp-slots{display:flex;gap:12px;padding:18px 24px;flex-shrink:0}
-.cmp-slot{flex:1;background:var(--s1);border:1.5px dashed var(--bd);border-radius:16px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .2s;position:relative;padding:14px;box-shadow:var(--shadow)}
-.cmp-slot.filled{border-style:solid;border-color:var(--primary)}
+.cmp-slot{flex:1;background:var(--s1);border:1.5px dashed var(--bd);border-radius:16px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .2s,transform .18s,box-shadow .18s;position:relative;padding:14px;box-shadow:var(--shadow)}
+.cmp-slot.filled{border-style:solid;border-color:var(--primary);cursor:pointer}
+.cmp-slot.filled:hover{transform:scale(1.025);box-shadow:0 6px 22px rgba(176,116,102,.18)}
+.cmp-slot-img{width:72px;height:72px;object-fit:contain;display:block;mix-blend-mode:multiply}
 .cmp-slot-emoji{font-size:40px}
 .cmp-slot-brand{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);font-weight:700}
 .cmp-slot-name{font-family:var(--serif);font-size:13px;color:var(--t1);text-align:center}
@@ -7247,15 +7249,17 @@ function renderCompare(){
   slots.innerHTML=[0,1].map(function(i){
     var p=isShowcase?displayList[i]:compareList[i];
     if(p){
-      /* 슬롯 아이콘: id별 SVG 우선, 없으면 카테고리 → 프리셋 매핑 */
-      var catKey={'우디':'leaf','플로럴':'rose','머스크':'heart','시트러스':'bottle','아쿠아틱':'stone','프루티':'bottle','스파이시':'stone','구르망':'rose'};
-      var slotSvgKey=catKey[p.cat]||'leaf';
-      var slotSvg=_presetSvg(slotSvgKey,36);
-      return`<div class="cmp-slot filled">`
-        +`<span class="cmp-slot-emoji" style="display:flex;align-items:center;justify-content:center;color:#A07466">${slotSvg}</span>`
+      /* 실제 향수 보틀 이미지 + 상세 페이지 클릭 내비 */
+      var imgHtml=p.img
+        ?`<img class="cmp-slot-img" src="${p.img}" alt="${p.name}" loading="lazy"
+           style="background:${p.bg};border-radius:10px;padding:6px"
+           onerror="this.style.display='none'">`
+        :`<div style="width:72px;height:72px;border-radius:10px;background:${p.bg};display:flex;align-items:center;justify-content:center;color:#A07466">${_presetSvg(({'우디':'leaf','플로럴':'rose','머스크':'heart','시트러스':'bottle','아쿠아틱':'stone','프루티':'bottle'}[p.cat]||'leaf'),36)}</div>`;
+      return`<div class="cmp-slot filled" onclick="closeCompare();setTimeout(function(){openDetail(${p.id});},240)">`
+        +imgHtml
         +`<p class="cmp-slot-brand">${p.brand}</p>`
         +`<p class="cmp-slot-name">${p.name}</p>`
-        +(isShowcase?'':`<span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span>`)
+        +(isShowcase?'':`<span class="cmp-slot-remove" onclick="event.stopPropagation();removeCompare(${p.id})">✕</span>`)
         +`</div>`;
     }
     return`<div class="cmp-slot" onclick="openCmpSearch(${i})"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">검색해서 추가</p></div>`;
