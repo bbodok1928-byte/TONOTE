@@ -9094,6 +9094,13 @@ function _applyScentResult(type){
   const ttlEl=document.getElementById('persona-ttl-el');
   const descEl=document.getElementById('persona-desc-el');
   const iconEl=document.getElementById('persona-icon-el');
+  /* ── my-sub-el 동기화 (프로필 서브텍스트) ── */
+  const subEl=document.getElementById('my-sub-el');
+  if(subEl){
+    const dayMatch=(subEl.textContent||'').match(/향수 탐색 \d+일째/);
+    const dayStr=dayMatch?dayMatch[0]:'향수 탐색 14일째';
+    subEl.textContent=dayStr+' · '+data.ttl;
+  }
   if(ttlEl)ttlEl.textContent=data.ttl;
   if(descEl)descEl.textContent=data.desc;
   /* emoji → 프리셋 SVG 오브제 매핑 */
