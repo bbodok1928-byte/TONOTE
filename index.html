@@ -314,7 +314,7 @@ input,textarea{font-family:inherit;outline:none}
 .comm-feed{padding:0 20px}
 .comm-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px 16px 12px;margin-bottom:11px;box-shadow:var(--shadow)}
 .comm-card-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.comm-anon-avatar{width:32px;height:32px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.comm-anon-avatar{width:32px;height:32px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;overflow:hidden}
 .comm-anon-name{font-size:12px;font-weight:700;color:var(--t2)}
 .comm-time{font-size:11px;color:var(--t3);margin-left:auto}
 .comm-card-body{font-size:13px;color:var(--t1);line-height:1.7;word-break:break-word;white-space:pre-wrap}
@@ -351,7 +351,7 @@ input,textarea{font-family:inherit;outline:none}
   border-top-color:var(--bd);
 }
 .comm-comment-item{display:flex;gap:8px;margin-bottom:10px}
-.comm-comment-avatar{width:24px;height:24px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px}
+.comm-comment-avatar{width:24px;height:24px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;overflow:hidden}
 .comm-comment-bubble{flex:1;min-width:0}
 .comm-comment-name{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:2px}
 .comm-comment-txt{font-size:12px;color:var(--t1);line-height:1.6;word-break:break-word;white-space:pre-wrap}
@@ -379,7 +379,7 @@ input,textarea{font-family:inherit;outline:none}
 .up-close:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
 /* 헤더 */
 .up-header{padding:26px 20px 18px;text-align:center;border-bottom:1px solid var(--bd);flex-shrink:0;position:relative}
-.up-avatar{width:54px;height:54px;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 9px;border:2px solid rgba(176,116,102,.15)}
+.up-avatar{width:54px;height:54px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 9px;border:none;overflow:hidden}
 .up-name{font-size:15px;font-weight:800;color:var(--t1);margin-bottom:5px;letter-spacing:-.01em}
 .up-badge{display:inline-block;background:var(--primary-soft);color:var(--primary);font-size:10px;font-weight:800;padding:3px 11px;border-radius:50px;letter-spacing:.05em}
 .up-stats{display:flex;justify-content:center;margin-top:12px;border-top:1px solid var(--bd);padding-top:11px}
@@ -423,7 +423,7 @@ input,textarea{font-family:inherit;outline:none}
 /* 대댓글 영역 */
 .comm-replies{margin-top:8px;padding-left:14px;border-left:2px solid var(--bd);display:flex;flex-direction:column;gap:8px}
 .comm-reply-item{display:flex;gap:7px}
-.comm-reply-avatar{width:20px;height:20px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.comm-reply-avatar{width:20px;height:20px;border-radius:50%;background:transparent;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;overflow:hidden}
 .comm-reply-bubble{flex:1;min-width:0}
 .comm-reply-name{font-size:10px;font-weight:700;color:var(--t2);margin-bottom:1px}
 .comm-reply-txt{font-size:11px;color:var(--t1);line-height:1.55;word-break:break-word;white-space:pre-wrap}
@@ -1795,7 +1795,7 @@ input,textarea{font-family:inherit;outline:none}
   <div class="up-panel-wrap">
     <div class="up-panel">
       <div class="up-header">
-        <div class="up-avatar" id="up-avatar">🌿</div>
+        <div class="up-avatar" id="up-avatar"></div>
         <p class="up-name" id="up-name">향수 입문자</p>
         <span class="up-badge" id="up-badge">그린 우드 드리머 🌿</span>
         <div class="up-stats">
@@ -8179,6 +8179,42 @@ function _getNickIcon(nick){
   return emojis[hash%emojis.length];
 }
 
+/* ── 닉네임 기반 미니멀 모노그램 SVG 아바타 생성 ──
+   name: 유저 닉네임, size: px 크기 (기본 24)
+   TONOTE 컬러 팔레트 10종 → name 해시로 결정론적 배정
+   첫 글자를 Maru Buri 명조로 감싼 원형 배지 */
+function _makeAvatar(name,size){
+  size=size||24;
+  var PALS=[
+    {bg:'#F5E8E4',fg:'#B07466'},
+    {bg:'#EAE0D8',fg:'#8C6B58'},
+    {bg:'#E8EFF0',fg:'#4F8090'},
+    {bg:'#EAF0E8',fg:'#5A8060'},
+    {bg:'#F0ECE8',fg:'#907060'},
+    {bg:'#EAE8F2',fg:'#7878A8'},
+    {bg:'#F0E8F2',fg:'#9060A0'},
+    {bg:'#EFF0E8',fg:'#788060'},
+    {bg:'#E8F0F0',fg:'#408080'},
+    {bg:'#F2F0E8',fg:'#908060'},
+  ];
+  var s=name||'T';
+  var hash=0;
+  for(var i=0;i<s.length;i++)hash+=s.charCodeAt(i);
+  var pal=PALS[hash%PALS.length];
+  var ch=s.charAt(0);
+  var r=size/2;
+  var fs=Math.round(size*0.42);
+  var ty=r+fs*0.37;
+  return'<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size
+    +'" xmlns="http://www.w3.org/2000/svg">'
+    +'<circle cx="'+r+'" cy="'+r+'" r="'+r+'" fill="'+pal.bg+'"/>'
+    +'<circle cx="'+r+'" cy="'+r+'" r="'+(r-1)+'" fill="none" stroke="'+pal.fg+'" stroke-width="0.8" opacity="0.3"/>'
+    +'<text x="'+r+'" y="'+ty+'" text-anchor="middle" dominant-baseline="auto" '
+    +'font-family="\'Maru Buri\',serif" font-size="'+fs+'" font-weight="600" fill="'+pal.fg+'">'
+    +ch+'</text>'
+    +'</svg>';
+}
+
 /* ── 유저 프로필 모달 ── */
 let _upCurrentUser=null,_upCurrentIcon='🌿';
 function openUserProfile(name,icon){
@@ -8190,7 +8226,7 @@ function openUserProfile(name,icon){
   const idx=COMM_ANONS.findIndex(a=>a.name===name);
   const persona=idx>=0?ANON_PERSONA[idx]:'향수 애호가 🌿';
   /* 헤더 채우기 */
-  document.getElementById('up-avatar').textContent=_upCurrentIcon;
+  document.getElementById('up-avatar').innerHTML=_makeAvatar(name,54);
   document.getElementById('up-name').textContent=name;
   document.getElementById('up-badge').textContent=persona;
   /* 통계 */
@@ -8427,7 +8463,7 @@ function _renderComments(p){
         <button class="comm-ctrl-btn" onclick="_doDeleteReply('${p.id}','${c.id}','${r.id}',this)">삭제</button>
       </span>`:'';
       return`<div class="comm-reply-item" data-rid="${r.id}">
-        <div class="comm-reply-avatar" onclick="openUserProfile('${r.anon.name}','${r.anon.icon}')">${r.anon.icon}</div>
+        <div class="comm-reply-avatar" onclick="openUserProfile('${r.anon.name}','${r.anon.icon}')">${_makeAvatar(r.anon.name,20)}</div>
         <div class="comm-reply-bubble">
           <div style="display:flex;align-items:center;gap:12px">
             <p class="comm-reply-name"${r.isMe?' data-isme="1"':''} onclick="openUserProfile('${r.anon.name}','${r.anon.icon}')">${r.anon.name}</p>
@@ -8447,7 +8483,7 @@ function _renderComments(p){
     </span>`:'';
     return`
       <div class="comm-comment-item" data-cid="${c.id}">
-        <div class="comm-comment-avatar" onclick="openUserProfile('${c.anon.name}','${c.anon.icon}')">${c.anon.icon}</div>
+        <div class="comm-comment-avatar" onclick="openUserProfile('${c.anon.name}','${c.anon.icon}')">${_makeAvatar(c.anon.name,24)}</div>
         <div class="comm-comment-bubble">
           <div style="display:flex;align-items:center;gap:12px">
             <p class="comm-comment-name"${c.isMe?' data-isme="1"':''} onclick="openUserProfile('${c.anon.name}','${c.anon.icon}')">${c.anon.name}</p>
@@ -8513,7 +8549,7 @@ function _renderCard(p){
     const name=p.anon?.name||'향수 입문자';
     return`<div class="comm-card" id="comm-card-${p.id}">
       <div class="comm-card-top">
-        <div class="comm-anon-avatar" onclick="openUserProfile('${name}','${icon}')">${icon}</div>
+        <div class="comm-anon-avatar" onclick="openUserProfile('${name}','${icon}')">${_makeAvatar(name,32)}</div>
         <span class="comm-anon-name"${p.isMe?' data-isme="1"':''} onclick="openUserProfile('${name}','${icon}')">${name}</span>
         <span class="comm-time">${_commTimeAgo(p.ts)}</span>
       </div>
@@ -8744,7 +8780,7 @@ function _doSubCmt(pid){
   if(cmtSection&&inputRow){
     const div=document.createElement('div');
     div.className='comm-comment-item';
-    div.innerHTML=`<div class="comm-comment-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.icon}</div>
+    div.innerHTML=`<div class="comm-comment-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${_makeAvatar(anon.name,24)}</div>
       <div class="comm-comment-bubble">
         <p class="comm-comment-name" data-isme="1" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.name}</p>
         <p class="comm-comment-txt">${_esc(text)}</p>
@@ -8809,7 +8845,7 @@ function _doSubReply(pid,cid){
     }
     const replyEl=document.createElement('div');
     replyEl.className='comm-reply-item';
-    replyEl.innerHTML=`<div class="comm-reply-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.icon}</div>
+    replyEl.innerHTML=`<div class="comm-reply-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${_makeAvatar(anon.name,20)}</div>
       <div class="comm-reply-bubble">
         <p class="comm-reply-name" data-isme="1" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.name}</p>
         <p class="comm-reply-txt">${_esc(text)}</p>
@@ -8860,7 +8896,7 @@ function submitPost(){
     card.className='comm-card';
     card.id='comm-card-'+newPost.id;
     card.innerHTML=`<div class="comm-card-top">
-        <div class="comm-anon-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.icon}</div>
+        <div class="comm-anon-avatar" onclick="openUserProfile('${anon.name}','${anon.icon}')">${_makeAvatar(anon.name,32)}</div>
         <span class="comm-anon-name" data-isme="1" onclick="openUserProfile('${anon.name}','${anon.icon}')">${anon.name}</span>
         <span class="comm-time">방금 전</span>
       </div>
