@@ -721,15 +721,15 @@ input,textarea{font-family:inherit;outline:none}
 
 /* ── COMPARE OVERLAY ─────────────────────── */
 #overlay-compare{
-  position:absolute;inset:0;z-index:101;
+  position:fixed;inset:0;z-index:820;
+  max-width:420px;left:50%;transform:translateX(-50%) translateY(100%);
   background:var(--bg);
   display:flex;flex-direction:column;
-  transform:translateY(100%);
   transition:transform .45s cubic-bezier(.4,0,.2,1);
 }
-#overlay-compare.open{transform:none}
+#overlay-compare.open{transform:translateX(-50%) translateY(0)}
 .cmp-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
-.cmp-title{font-family:var(--serif);font-size:19px;color:var(--t1)}
+.cmp-title{font-family:'Maru Buri','ChosunIlbo_Myungjo',var(--serif);font-size:19px;font-weight:600;color:var(--t1);letter-spacing:-.2px}
 .cmp-close{font-size:20px;color:var(--t3);cursor:pointer}
 .cmp-slots{display:flex;gap:10px;padding:16px 20px;flex-shrink:0}
 .cmp-slot{flex:1;background:var(--s1);border:1.5px dashed var(--bd);border-radius:16px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .2s;position:relative;padding:14px;box-shadow:var(--shadow)}
