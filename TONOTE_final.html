@@ -721,11 +721,12 @@ input,textarea{font-family:inherit;outline:none}
 
 /* ── COMPARE OVERLAY ─────────────────────── */
 #overlay-compare{
-  position:fixed;inset:0;z-index:820;
+  position:fixed;inset:0;z-index:2000;
   max-width:420px;left:50%;transform:translateX(-50%) translateY(100%);
-  background:var(--bg);
-  display:flex;flex-direction:column;
+  background:#FBF8F4;
+  display:flex;flex-direction:column;overflow:hidden;
   transition:transform .45s cubic-bezier(.4,0,.2,1);
+  box-shadow:-8px 0 40px rgba(0,0,0,.12),8px 0 40px rgba(0,0,0,.12);
 }
 #overlay-compare.open{transform:translateX(-50%) translateY(0)}
 .cmp-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
@@ -7245,12 +7246,18 @@ function renderCompare(){
   const slots=document.getElementById('cmp-slots');
   slots.innerHTML=[0,1].map(function(i){
     var p=isShowcase?displayList[i]:compareList[i];
-    if(p)return`<div class="cmp-slot filled">`
-      +`<span class="cmp-slot-emoji">${p.emoji}</span>`
-      +`<p class="cmp-slot-brand">${p.brand}</p>`
-      +`<p class="cmp-slot-name">${p.name}</p>`
-      +(isShowcase?'':`<span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span>`)
-      +`</div>`;
+    if(p){
+      /* 슬롯 아이콘: id별 SVG 우선, 없으면 카테고리 → 프리셋 매핑 */
+      var catKey={'우디':'leaf','플로럴':'rose','머스크':'heart','시트러스':'bottle','아쿠아틱':'stone','프루티':'bottle','스파이시':'stone','구르망':'rose'};
+      var slotSvgKey=catKey[p.cat]||'leaf';
+      var slotSvg=_presetSvg(slotSvgKey,36);
+      return`<div class="cmp-slot filled">`
+        +`<span class="cmp-slot-emoji" style="display:flex;align-items:center;justify-content:center;color:#A07466">${slotSvg}</span>`
+        +`<p class="cmp-slot-brand">${p.brand}</p>`
+        +`<p class="cmp-slot-name">${p.name}</p>`
+        +(isShowcase?'':`<span class="cmp-slot-remove" onclick="removeCompare(${p.id})">✕</span>`)
+        +`</div>`;
+    }
     return`<div class="cmp-slot" onclick="openCmpSearch(${i})"><span class="cmp-slot-empty">+</span><p class="cmp-slot-add">검색해서 추가</p></div>`;
   }).join('');
 
