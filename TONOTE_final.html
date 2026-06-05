@@ -1717,9 +1717,9 @@ input,textarea{font-family:inherit;outline:none}
 
       <!-- ── 계정 관리 ── -->
       <div class="my-account-row">
-        <button class="my-account-lnk" onclick="showToast('준비 중인 기능입니다 🌿')">로그아웃</button>
+        <button class="my-account-lnk" onclick="doLogout()">로그아웃</button>
         <div class="my-account-div"></div>
-        <button class="my-account-lnk" onclick="showToast('준비 중인 기능입니다 🌿')">회원 탈퇴</button>
+        <button class="my-account-lnk" style="color:#C04848" onclick="doWithdraw()">회원 탈퇴</button>
       </div>
 
       <!-- ── 브랜드 푸터 ── -->
@@ -5965,6 +5965,57 @@ function _doConfirm(){
   document.getElementById('overlay-confirm').classList.remove('open');
   if(typeof _confirmCallback==='function')_confirmCallback();
   _confirmCallback=null;
+}
+
+/* ── 로그아웃 ── */
+function doLogout(){
+  _showConfirm({
+    icon:'👋',
+    title:'로그아웃',
+    body:'TONOTE에서 로그아웃하시겠습니까?\n지금까지의 탐색 기록은 이 기기에 그대로 유지됩니다.',
+    okLabel:'로그아웃',
+    danger:false,
+    onConfirm:function(){
+      /* 세션 상태 초기화(현재 탭 활성·AI 채팅·비교 목록) */
+      try{clearChat(true);}catch(e){}
+      try{compareList=[];}catch(e){}
+      /* 스플래시 재실행 후 홈 리셋 */
+      var sp=document.getElementById('splash');
+      if(sp){sp.style.display='flex';sp.style.opacity='1';sp.style.transform='none';
+        setTimeout(function(){sp.classList.remove('out');},50);
+        setTimeout(function(){sp.classList.add('out');
+          setTimeout(function(){sp.style.display='none';switchTab('home');},600);
+        },2000);
+      }else{
+        switchTab('home');
+      }
+      showToast('로그아웃되었습니다 🌿');
+    }
+  });
+}
+
+/* ── 회원탈퇴 ── */
+function doWithdraw(){
+  _showConfirm({
+    icon:'⚠️',
+    title:'정말 탈퇴하시겠습니까?',
+    body:'탈퇴 시 취향 진단 결과, 좋아요 목록, 작성한 리뷰 및 댓글 등 모든 아카이브 데이터가 영구히 삭제되며 복구할 수 없습니다.',
+    okLabel:'탈퇴하기',
+    danger:true,
+    onConfirm:function(){
+      localStorage.clear();
+      /* 스플래시 → 홈 완전 초기화 */
+      var sp=document.getElementById('splash');
+      if(sp){sp.style.display='flex';sp.style.opacity='1';sp.style.transform='none';
+        setTimeout(function(){sp.classList.remove('out');},50);
+        setTimeout(function(){sp.classList.add('out');
+          setTimeout(function(){sp.style.display='none';window.location.reload();},600);
+        },2200);
+      }else{
+        window.location.reload();
+      }
+    }
+  });
 }
 
 function showToast(msg){
