@@ -8270,7 +8270,7 @@ function _renderUserReviews(name){
     });
   });
   if(!reviews.length){
-    c.innerHTML='<p class="up-empty">아직 작성한 향수 리뷰가 없어요 🌿</p>';return;
+    c.innerHTML='<p class="up-empty">아직 작성한 향수 리뷰가 없어요</p>';return;
   }
   c.innerHTML=reviews.map(function(r){
     return'<div class="up-review-item">'
@@ -8285,7 +8285,7 @@ function _renderUserPosts(name){
   const posts=_loadPosts();
   const mine=posts.filter(p=>p.anon&&p.anon.name===name);
   const c=document.getElementById('up-content');
-  if(!mine.length){c.innerHTML='<p class="up-empty">아직 작성한 게시글이 없어요 🌿</p>';return;}
+  if(!mine.length){c.innerHTML='<p class="up-empty">아직 작성한 게시글이 없어요</p>';return;}
   c.innerHTML=mine.map(p=>`
     <div class="up-post-item">
       <p class="up-post-text">${_esc(p.text||'')}</p>
@@ -8315,7 +8315,7 @@ function _renderUserComments(name){
   });
   items.sort((a,b)=>b.ts-a.ts);
   const ct=document.getElementById('up-content');
-  if(!items.length){ct.innerHTML='<p class="up-empty">아직 작성한 댓글이 없어요 🌿</p>';return;}
+  if(!items.length){ct.innerHTML='<p class="up-empty">아직 작성한 댓글이 없어요</p>';return;}
   ct.innerHTML=items.map(it=>`
     <div class="up-cmt-item">
       <p class="up-cmt-orig">↩ ${_esc(it.orig)}</p>
