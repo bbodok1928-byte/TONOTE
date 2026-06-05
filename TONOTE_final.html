@@ -7357,13 +7357,15 @@ function renderCmpSearchResults(q){
 function pickCmpPerfume(id){
   const p=PERFUMES.find(x=>x.id===id);if(!p)return;
   if(compareList.find(c=>c.id===id)){closeCmpSearch();return;}
-  if(_cmpSearchSlot===0){
-    if(compareList.length===0) compareList.push(p);
-    else compareList[0]=p;
-  } else {
-    if(compareList.length<2) compareList.push(p);
-    else compareList[1]=p;
+  /* 쇼케이스 모드(compareList<2)에서 swap 시 쇼케이스 기준값으로 먼저 채움 */
+  const SHOWCASE_IDS=[1,126];
+  if(compareList.length<2){
+    while(compareList.length<2){
+      const fill=PERFUMES.find(x=>x.id===SHOWCASE_IDS[compareList.length]);
+      if(fill)compareList.push(fill); else break;
+    }
   }
+  compareList[_cmpSearchSlot]=p;
   closeCmpSearch();
   renderCompare();
   updateMyPage();
