@@ -8172,39 +8172,45 @@ function _getNickIcon(nick){
   return emojis[hash%emojis.length];
 }
 
-/* ── 닉네임 기반 미니멀 모노그램 SVG 아바타 생성 ──
-   name: 유저 닉네임, size: px 크기 (기본 24)
-   TONOTE 컬러 팔레트 10종 → name 해시로 결정론적 배정
-   첫 글자를 Maru Buri 명조로 감싼 원형 배지 */
+/* ── 5종 SVG 오브제 아바타 생성 ──
+   name: 유저 닉네임 → 해시로 결정론적 매핑
+   5종 프리셋(leaf·rose·heart·stone·bottle) × 5종 컬러 팔레트
+   40×40 viewBox 경로를 scale 변환으로 원 안에 중앙 배치 */
+var _AV_PATHS=[
+  /* 0 leaf  */ 'M20 35C20 35 8 25 8 14C8 7 13 4 20 4C27 4 32 7 32 14C32 25 20 35 20 35Z M20 35L20 10 M20 20C17 17 12 16 12 16 M20 25C23 22 28 21 28 21',
+  /* 1 rose  */ 'M20 29C13 29 9 25 9 20C9 15 13 11 18 12.5C16 10 17 6 20 6C23 6 24 10 22 12.5C27 11 31 15 31 20C31 25 27 29 20 29Z M20 29L19 35 M17 34H23',
+  /* 2 heart */ 'M20 33C16 31 7 24 7 17C7 11 12 8 16 9C17.8 9.5 19 11 20 12.5C21 11 22.2 9.5 24 9C28 8 33 11 33 17C33 24 24 31 20 33Z',
+  /* 3 stone */ 'M20 5.5C15.8 5.5 13 9.2 13 14C13 18.8 15.8 22 20 22C24.2 22 27 18.8 27 14C27 9.2 24.2 5.5 20 5.5Z M13.5 22H26.5 M13.5 22C12 26 13.5 30 14.5 31.5C16 33.5 18 34.5 20 34.5C22 34.5 24 33.5 25.5 31.5C26.5 30 28 26 26.5 22',
+  /* 4 bottle*/ 'M13 17H27 M13 17C13 13.5 16 11 20 10.5C24 11 27 13.5 27 17V32C27 33.7 25.7 35 24 35H16C14.3 35 13 33.7 13 32V17Z M17.5 7.5H22.5C23.3 7.5 24 8.2 24 9V11.5H16V9C16 8.2 16.7 7.5 17.5 7.5Z M15 24Q20 22 25 24',
+];
+var _AV_PALS=[
+  {bg:'#F5E8E4',fg:'#A87060'},
+  {bg:'#EAE0D8',fg:'#8C6B58'},
+  {bg:'#F0ECE8',fg:'#907060'},
+  {bg:'#EAF0E8',fg:'#5A8060'},
+  {bg:'#EAE8F0',fg:'#7878A8'},
+];
 function _makeAvatar(name,size){
   size=size||24;
-  var PALS=[
-    {bg:'#F5E8E4',fg:'#B07466'},
-    {bg:'#EAE0D8',fg:'#8C6B58'},
-    {bg:'#E8EFF0',fg:'#4F8090'},
-    {bg:'#EAF0E8',fg:'#5A8060'},
-    {bg:'#F0ECE8',fg:'#907060'},
-    {bg:'#EAE8F2',fg:'#7878A8'},
-    {bg:'#F0E8F2',fg:'#9060A0'},
-    {bg:'#EFF0E8',fg:'#788060'},
-    {bg:'#E8F0F0',fg:'#408080'},
-    {bg:'#F2F0E8',fg:'#908060'},
-  ];
   var s=name||'T';
   var hash=0;
   for(var i=0;i<s.length;i++)hash+=s.charCodeAt(i);
-  var pal=PALS[hash%PALS.length];
-  var ch=s.charAt(0);
+  var pal=_AV_PALS[hash%_AV_PALS.length];
+  var path=_AV_PATHS[hash%_AV_PATHS.length];
   var r=size/2;
-  var fs=Math.round(size*0.42);
-  var ty=r+fs*0.37;
+  /* 40×40 viewBox → 원 내 중앙 배치 (65% 채움) */
+  var inner=size*0.65;
+  var off=(size-inner)/2;
+  var sc=inner/40;
+  var sw=(1.25/sc).toFixed(2);
   return'<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size
     +'" xmlns="http://www.w3.org/2000/svg">'
     +'<circle cx="'+r+'" cy="'+r+'" r="'+r+'" fill="'+pal.bg+'"/>'
-    +'<circle cx="'+r+'" cy="'+r+'" r="'+(r-1)+'" fill="none" stroke="'+pal.fg+'" stroke-width="0.8" opacity="0.3"/>'
-    +'<text x="'+r+'" y="'+ty+'" text-anchor="middle" dominant-baseline="auto" '
-    +'font-family="\'Maru Buri\',serif" font-size="'+fs+'" font-weight="600" fill="'+pal.fg+'">'
-    +ch+'</text>'
+    +'<circle cx="'+r+'" cy="'+r+'" r="'+(r-0.5)+'" fill="none" stroke="'+pal.fg+'" stroke-width="0.5" opacity="0.25"/>'
+    +'<g transform="translate('+off.toFixed(2)+','+off.toFixed(2)+') scale('+sc.toFixed(3)+')" '
+    +'fill="none" stroke="'+pal.fg+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-linejoin="round">'
+    +'<path d="'+path+'"/>'
+    +'</g>'
     +'</svg>';
 }
 
