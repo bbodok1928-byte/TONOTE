@@ -464,7 +464,7 @@ input,textarea{font-family:inherit;outline:none}
 .my-stat-num{font-family:var(--serif);font-size:22px;color:var(--primary)}
 .my-stat-lbl{font-size:10px;color:var(--t3);margin-top:3px}
 .persona-card{margin:0 20px 24px;background:linear-gradient(135deg,#FFF8F5,#FFF0EB);border:1.5px solid rgba(176,116,102,.2);border-radius:18px;padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
-.persona-icon{width:52px;height:52px;border-radius:14px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.persona-icon{width:52px;height:52px;border-radius:14px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;color:var(--primary)}
 .persona-ttl{font-size:16px;font-weight:800;color:var(--t1);margin-bottom:3px}
 .persona-desc{font-size:11px;color:var(--t3);line-height:1.5}
 .persona-action{font-size:11px;font-weight:700;color:var(--primary);border:1.5px solid var(--primary);border-radius:50px;padding:6px 12px;white-space:nowrap;flex-shrink:0}
@@ -1637,7 +1637,7 @@ input,textarea{font-family:inherit;outline:none}
         <div class="my-stat"><p class="my-stat-num">5</p><p class="my-stat-lbl">리뷰</p></div>
       </div>
       <div class="persona-card">
-        <div class="persona-icon" id="persona-icon-el">🌿</div>
+        <div class="persona-icon" id="persona-icon-el"></div>
         <div style="flex:1">
           <p class="persona-ttl" id="persona-ttl-el">그린 우드 드리머</p>
           <p class="persona-desc" id="persona-desc-el">촉촉한 숲, 비 온 뒤 흙냄새를 좋아하는 유형</p>
@@ -9069,7 +9069,14 @@ function _applyScentResult(type){
   const iconEl=document.getElementById('persona-icon-el');
   if(ttlEl)ttlEl.textContent=data.ttl;
   if(descEl)descEl.textContent=data.desc;
-  if(iconEl)iconEl.textContent=data.emoji;
+  /* emoji → 프리셋 SVG 오브제 매핑 */
+  if(iconEl){
+    var emojiToKey={
+      '🌿':'leaf','🍋':'bottle','🌸':'rose','🤍':'heart','🖤':'stone'
+    };
+    var svgKey=emojiToKey[data.emoji]||'leaf';
+    iconEl.innerHTML=_presetSvg(svgKey,34);
+  }
 }
 
 function _loadAndApplyScentResult(){
